@@ -1,5 +1,6 @@
 #include "D3D9Renderer.h"
 #include <cassert>
+
 namespace d3dgfx
 {
 	D3D9Renderer::D3D9Renderer()
@@ -39,8 +40,8 @@ namespace d3dgfx
 		D3DPRESENT_PARAMETERS params;
 		ZeroMemory(&params, sizeof(params));
 
-		params.BackBufferWidth = NULL;
-		params.BackBufferHeight = NULL;
+		params.BackBufferWidth = SCREEN_WIDTH;
+		params.BackBufferHeight = SCREEN_HEIGHT;
 		params.BackBufferFormat = D3DFMT_X8R8G8B8;
 		params.BackBufferCount = 1;
 
@@ -49,7 +50,7 @@ namespace d3dgfx
 		if (CheckMultiSampleSupport(D3DMULTISAMPLE_4_SAMPLES, &quality, true) == S_OK)
 		{
 			params.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
-			params.MultiSampleQuality = quality;
+			params.MultiSampleQuality = 0; //quality 1 not supported
 			params.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		}
 		else
@@ -70,7 +71,7 @@ namespace d3dgfx
 		m_device->SetDeviceCharateristics(params);
 
 		auto result = CreateD3DDevice(&params);
-		assert(result != S_OK);
+		assert(result == S_OK);
 	}
 	void D3D9Renderer::OnDeviceLost()
 	{
@@ -92,8 +93,7 @@ namespace d3dgfx
 #else
 		HALResult = m_d3d9->CheckDeviceType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, displayMode.Format, displayMode.Format, true);
 #endif
-
-		HRESULT VPResult = E_NOTIMPL;
+		assert(HALResult == S_OK);
 
 		//Checking for HW Vertex Processing
 		D3DCAPS9 d3dCaps;
@@ -103,9 +103,6 @@ namespace d3dgfx
 		if (d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 		{
 			flags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
-
-			if (d3dCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
-				flags |= D3DDEVCAPS_PUREDEVICE;
 		}
 		return flags;
 	}
@@ -116,9 +113,11 @@ namespace d3dgfx
 	}
 	HRESULT D3D9Renderer::CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp)
 	{
+		assert(m_hWindow != nullptr);
+		
 		HRESULT result = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT,
 			D3DDEVTYPE_HAL,
-			nullptr,
+			m_hWindow,
 			GetSupportedFeaturesBehavioralFlags(),
 			d3dpp,
 			m_device->GetDeviceObjectRef());

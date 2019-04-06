@@ -5,6 +5,9 @@
 #include <memory>
 #pragma comment (lib, "d3d9.lib")
 
+#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1280
+
 namespace d3dgfx
 {
     //>Singleton Class
