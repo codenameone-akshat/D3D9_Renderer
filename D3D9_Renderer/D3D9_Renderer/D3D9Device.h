@@ -8,7 +8,7 @@ public:
 
     D3D9Device(D3D9Device&&) = default;
 
-    inline void SetDeviceCharateristics(D3DPRESENT_PARAMETERS presentParams) { m_d3dPresentParams = presentParams; }
+    inline void SetDeviceCharateristics(D3DPRESENT_PARAMETERS presentParams) { memcpy(&m_d3dPresentParams, &presentParams, sizeof(D3DPRESENT_PARAMETERS)); }
 
 	//>Getters
 	inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }

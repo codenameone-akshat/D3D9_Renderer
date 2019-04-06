@@ -4,15 +4,17 @@ namespace d3dgfx
 {
 	D3D9Renderer::D3D9Renderer()
 		:m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
-		m_device(nullptr)
+		m_device(std::make_unique<D3D9Device>()),
+		m_hWindow()
 	{
 	}
 	D3D9Renderer::~D3D9Renderer()
 	{
 		m_d3d9 = nullptr;
 	}
-	void D3D9Renderer::Init()
+	void D3D9Renderer::Init(HWND hWindow)
 	{
+		memcpy(&m_hWindow, &hWindow, sizeof(HWND)); //@GD is this fine?
 		SetupDeviceConfiguration();
 	}
 	void D3D9Renderer::UnInit()
@@ -28,12 +30,12 @@ namespace d3dgfx
 	}
 	HRESULT D3D9Renderer::CheckDeviceStatus()
 	{
-		//check everyframe for lost devices
+		//check every-frame for lost devices
 		return E_NOTIMPL;
 	}
 	//>Present Params Setup
 	void D3D9Renderer::SetupDeviceConfiguration()
-	{
+{
 		D3DPRESENT_PARAMETERS params;
 		ZeroMemory(&params, sizeof(params));
 
@@ -43,7 +45,7 @@ namespace d3dgfx
 		params.BackBufferCount = 1;
 
 		DWORD quality;
-		//Multisampling sanity check
+		//Multi-Sampling sanity check
 		if (CheckMultiSampleSupport(D3DMULTISAMPLE_4_SAMPLES, &quality, true) == S_OK)
 		{
 			params.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
@@ -54,10 +56,10 @@ namespace d3dgfx
 		{
 			params.MultiSampleType = D3DMULTISAMPLE_NONE;
 			params.MultiSampleQuality = 0;
-			params.SwapEffect = D3DSWAPEFFECT_DISCARD; //just in case we want something else when multisampling is off.
+			params.SwapEffect = D3DSWAPEFFECT_DISCARD; //just in case we want something else when Multi-Sampling is off.
 		}
 
-		params.hDeviceWindow = nullptr; //lol did not make window yet XD. Will assign when I do LOL XD
+		params.hDeviceWindow = m_hWindow;
 		params.Windowed = true;
 		params.EnableAutoDepthStencil = true; //for now let's just dx9 take care of this
 		params.AutoDepthStencilFormat = D3DFMT_D24S8;

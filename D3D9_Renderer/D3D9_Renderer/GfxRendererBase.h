@@ -1,4 +1,5 @@
 #pragma once
+#include <windows.h>
 namespace d3dgfx
 {
 	class GfxRendererBase
@@ -11,7 +12,7 @@ namespace d3dgfx
 		GfxRendererBase(const GfxRendererBase&) = delete;
 		GfxRendererBase& operator=(const GfxRendererBase&) = delete;
 
-		virtual void Init() = 0;
+		virtual void Init(HWND hWindow) = 0;
 		virtual void UnInit() = 0;
 		virtual void RenderFrame() = 0;
 		
