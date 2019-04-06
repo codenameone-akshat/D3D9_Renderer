@@ -22,14 +22,19 @@ namespace d3dgfx
         void Init() override;
 		void UnInit() override;
 		void RenderFrame() override;
-		bool CheckDeviceStatus() override;
-        void OnDeviceLost() override;
+  
+		//>Events
+		void OnDeviceLost() override;
         void OnDeviceReset() override;
         
-        [[nodiscard]] HRESULT CheckForDeviceSupport();
-        
-        [[nodiscard]] HRESULT CheckDeviceSupportFor_HALandVertexProcessing();
-        
+		//>Checks for Sanity and Support
+        [[nodiscard]] HRESULT CheckDeviceStatus() override;
+        [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags();
+		[[nodiscard]] HRESULT CheckMultiSampleSupport(D3DMULTISAMPLE_TYPE type, DWORD* quality, bool isWindowed) const;
+		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
+
+		void SetupDeviceConfiguration();
+
         inline D3D9Renderer& GetInstance() const //>Meyers' Singleton
         {
             static D3D9Renderer instance;

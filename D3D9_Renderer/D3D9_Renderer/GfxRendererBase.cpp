@@ -1,12 +1,9 @@
 #include "GfxRendererBase.h"
 
-namespace d3dgfx
+d3dgfx::GfxRendererBase::GfxRendererBase()
 {
-	GfxRendererBase::GfxRendererBase()
-	{
-	}
+}
 
-	GfxRendererBase::~GfxRendererBase()
-	{
-	}
+d3dgfx::GfxRendererBase::~GfxRendererBase()
+{
 }

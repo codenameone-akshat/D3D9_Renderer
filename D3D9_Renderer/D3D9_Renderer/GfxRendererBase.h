@@ -1,5 +1,4 @@
 #pragma once
-
 namespace d3dgfx
 {
 	class GfxRendererBase
@@ -15,8 +14,12 @@ namespace d3dgfx
 		virtual void Init() = 0;
 		virtual void UnInit() = 0;
 		virtual void RenderFrame() = 0;
-		virtual bool CheckDeviceStatus() = 0;
+		
+		//>Events
 		virtual void OnDeviceLost() = 0;
 		virtual void OnDeviceReset() = 0;
+
+		//>Device Handler | long <-> HRESULT
+		[[nodiscard]] virtual long CheckDeviceStatus() = 0;
 	};
 }
