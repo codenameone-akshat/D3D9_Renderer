@@ -39,16 +39,17 @@ namespace d3dgfx
 		D3D9Renderer::GetInstance().Init(m_window->GetHandleToWindow());
 
 		MSG msg;
-		while (TRUE)
+		while (TRUE) //Main Loop
 		{
 			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //0,0 here represents to take any input possible
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-
 			if (msg.message == WM_QUIT)
 				break;
+
+			D3D9Renderer::GetInstance().RenderFrame();
 		}
 	}
 }
