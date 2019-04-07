@@ -14,6 +14,8 @@ public:
 	inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }
 	inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; }
 	inline void SetDeviceObject(IDirect3DDevice9* device) { m_d3dDevice = device; }
+
+	HRESULT CheckCoorparativeLevel();
 private:
     IDirect3DDevice9* m_d3dDevice;
     D3DPRESENT_PARAMETERS m_d3dPresentParams;
