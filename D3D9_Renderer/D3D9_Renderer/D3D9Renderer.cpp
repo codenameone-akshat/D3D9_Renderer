@@ -1,5 +1,6 @@
 #include "D3D9Renderer.h"
 #include <cassert>
+#include <windows.h>
 
 namespace d3dgfx
 {
@@ -23,15 +24,43 @@ namespace d3dgfx
 		if (m_d3d9)
 		{
 			m_d3d9->Release();
+            m_device->Release();
 		}
 	}
 	void D3D9Renderer::RenderFrame()
 	{
-		//update loop
+        HRESULT result = CheckDeviceStatus();
+        if (result != S_OK)
+            return;
+
+        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(120, 120, 120), 1.0f, 0);
+        m_device->BeginScene();
+        m_device->EndScene();
+        m_device->Present(nullptr, nullptr, nullptr, nullptr);
 	}
 	HRESULT D3D9Renderer::CheckDeviceStatus()
 	{
 		//check every-frame for lost devices
+        HRESULT result = m_device->CheckCoorparativeLevel();
+        
+        if (result == D3DERR_DEVICELOST)
+        {
+            OnDeviceLost();
+            return E_FAIL;
+        }
+        else if (result == D3DERR_DRIVERINTERNALERROR)
+        {
+            MessageBox(nullptr, L"Interal Driver Error... Quitting Program.", nullptr, NULL);
+            return E_UNEXPECTED;
+        }
+        else if (result == D3DERR_DEVICENOTRESET)
+        {
+            OnDeviceAvailable();
+            return E_FAIL;
+        }
+        else
+            return S_OK;
+
 		return E_NOTIMPL;
 	}
 	//>Present Params Setup
@@ -75,9 +104,11 @@ namespace d3dgfx
 	}
 	void D3D9Renderer::OnDeviceLost()
 	{
+        Sleep(200);
 	}
-	void D3D9Renderer::OnDeviceReset()
+	void D3D9Renderer::OnDeviceAvailable()
 	{
+        m_device->ResetDevice();
 	}
 	//>Handle this in the mainloop of the game, define "FULLSCREEN" for fullscreen support in the game
 	DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags()

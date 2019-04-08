@@ -28,7 +28,7 @@ namespace d3dgfx
   
 		//>Events
 		void OnDeviceLost() override;
-        void OnDeviceReset() override;
+        void OnDeviceAvailable() override;
         
 		//>Checks for Sanity and Support
         [[nodiscard]] HRESULT CheckDeviceStatus() override;

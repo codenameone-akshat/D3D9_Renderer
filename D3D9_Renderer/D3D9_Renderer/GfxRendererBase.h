@@ -18,7 +18,7 @@ namespace d3dgfx
 		
 		//>Events
 		virtual void OnDeviceLost() = 0;
-		virtual void OnDeviceReset() = 0;
+		virtual void OnDeviceAvailable() = 0;
 
 		//>Device Handler | long <-> HRESULT
 		[[nodiscard]] virtual long CheckDeviceStatus() = 0;
