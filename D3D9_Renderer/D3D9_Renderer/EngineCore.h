@@ -17,5 +17,7 @@ namespace d3dgfx
 
 	private:
 		std::unique_ptr<Window> m_window;
+		double m_time;
+		short m_numFrames;
 	};
 }

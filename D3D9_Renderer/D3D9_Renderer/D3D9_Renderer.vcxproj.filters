@@ -37,6 +37,9 @@
     <ClCompile Include="GfxRendererBase.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="GfxRendererBase.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>EngineCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

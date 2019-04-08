@@ -29,6 +29,12 @@ namespace d3dgfx
 	}
 	void D3D9Renderer::RenderFrame()
 	{
+		for (unsigned long long i = 0; i < 99999999 ; i++)
+		{
+			long double j = 100000.0;
+			long double k = j / 1500;
+		}
+
         HRESULT result = CheckDeviceStatus();
         if (result != S_OK)
             return;

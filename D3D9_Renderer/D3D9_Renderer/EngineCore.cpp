@@ -1,10 +1,21 @@
 #include "EngineCore.h"
 #include "D3D9Renderer.h"
+#include <chrono>
+#include <sstream>
+
+#define LogInfo( s )            \
+{                             \
+   std::wostringstream os_;    \
+   os_ << s << std::endl;                   \
+   OutputDebugString(os_.str().c_str());  \
+}
 
 namespace d3dgfx
 {
 	EngineCore::EngineCore()
-		:m_window(std::make_unique<Window>())
+		:m_window(std::make_unique<Window>()),
+		m_time(0.0),
+		m_numFrames(0)
 	{
 	}
 
@@ -16,7 +27,6 @@ namespace d3dgfx
 	{
 		const auto windowClassName = L"DX9Window_Class";
 		const auto windowName = L"DirectX 9 Window";
-
 
 		m_window->SetUpAndRegesterWindow(hInstance, windowClassName);
 
@@ -36,11 +46,16 @@ namespace d3dgfx
 
 	void EngineCore::PollMessage()
 	{
-		D3D9Renderer::GetInstance().Init(m_window->GetHandleToWindow());
-
 		MSG msg;
+
+		auto& renderer = D3D9Renderer::GetInstance();
+		renderer.Init(m_window->GetHandleToWindow());
+
 		while (TRUE) //Main Loop
 		{
+			using namespace std::chrono;
+			auto tStart = high_resolution_clock::now();
+			
 			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //0,0 here represents to take any input possible
 			{
 				TranslateMessage(&msg);
@@ -48,8 +63,25 @@ namespace d3dgfx
 			}
 			if (msg.message == WM_QUIT)
 				break;
+			
+			renderer.RenderFrame();
+			
+			++m_numFrames; //increment num of frames
+			
+			auto tEnd = high_resolution_clock::now();
+			auto tDiff = duration_cast<milliseconds>(tEnd - tStart);
+			auto dt = tDiff.count();
+			
+			m_time += dt; //increment time
+			
+			if (m_time >= 1000)
+			{
+				auto fps = m_numFrames;
+				m_time = 0.0;
+				m_numFrames = 0;
 
-			D3D9Renderer::GetInstance().RenderFrame();
+				LogInfo(std::to_string(fps).c_str());
+			}
 		}
 	}
 }

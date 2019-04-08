@@ -121,6 +121,7 @@
     <ClInclude Include="D3D9Renderer.h" />
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="GfxRendererBase.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +130,7 @@
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="GfxRendererBase.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
