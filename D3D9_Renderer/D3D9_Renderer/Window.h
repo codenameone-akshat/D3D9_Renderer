@@ -10,13 +10,16 @@ namespace d3dgfx
 		Window();
 		~Window();
 
-		void CreateD3DWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
+		void CreateD3DWindow(const LPCWSTR lpClassName, const LPCWSTR lpWindowName, const DWORD dwStyle, 
+            const int X, const int Y, const int nWidth, const int nHeight, const HWND hWndParent,
+            const HMENU hMenu, const HINSTANCE hInstance, const LPVOID lpParam);
+
 		void SetUpAndRegesterWindow(HINSTANCE hInstance, LPCWSTR windowName);
 
 		//>Getter
 		inline HWND GetHandleToWindow() const { return m_hWindow; };
 
-		inline void ShowD3DWindow(int nShowCmd)
+		inline void ShowD3DWindow(const int nShowCmd) const
 		{
 			if (m_hWindow)
 				ShowWindow(m_hWindow, nShowCmd);

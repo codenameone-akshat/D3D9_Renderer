@@ -1,21 +1,14 @@
 #include "EngineCore.h"
 #include "D3D9Renderer.h"
-#include <chrono>
-#include <sstream>
+#include "Time.h"
 
-#define LogInfo( s )            \
-{                             \
-   std::wostringstream os_;    \
-   os_ << s << std::endl;                   \
-   OutputDebugString(os_.str().c_str());  \
-}
+#include <chrono>
 
 namespace d3dgfx
 {
 	EngineCore::EngineCore()
 		:m_window(std::make_unique<Window>()),
-		m_time(0.0),
-		m_numFrames(0)
+        m_timer(std::make_unique<Time>())
 	{
 	}
 
@@ -35,8 +28,8 @@ namespace d3dgfx
 			WS_OVERLAPPEDWINDOW,
 			300,
 			300,
-			1280,
-			720,
+			SCREEN_WIDTH,
+			SCREEN_HEIGHT,
 			nullptr,
 			nullptr,
 			hInstance,
@@ -53,9 +46,7 @@ namespace d3dgfx
 
 		while (TRUE) //Main Loop
 		{
-			using namespace std::chrono;
-			auto tStart = high_resolution_clock::now();
-			
+            m_timer->BeginTimer();
 			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //0,0 here represents to take any input possible
 			{
 				TranslateMessage(&msg);
@@ -66,22 +57,7 @@ namespace d3dgfx
 			
 			renderer.RenderFrame();
 			
-			++m_numFrames; //increment num of frames
-			
-			auto tEnd = high_resolution_clock::now();
-			auto tDiff = duration_cast<milliseconds>(tEnd - tStart);
-			auto dt = tDiff.count();
-			
-			m_time += dt; //increment time
-			
-			if (m_time >= 1000)
-			{
-				auto fps = m_numFrames;
-				m_time = 0.0;
-				m_numFrames = 0;
-
-				LogInfo(std::to_string(fps).c_str());
-			}
+            m_timer->EndTimer();
 		}
 	}
 }

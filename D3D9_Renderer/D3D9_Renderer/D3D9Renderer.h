@@ -32,8 +32,8 @@ namespace d3dgfx
         
 		//>Checks for Sanity and Support
         [[nodiscard]] HRESULT CheckDeviceStatus() override;
-        [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags();
-		[[nodiscard]] HRESULT CheckMultiSampleSupport(D3DMULTISAMPLE_TYPE type, DWORD* quality, bool isWindowed) const;
+        [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags() const;
+		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
 		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
 
         inline static D3D9Renderer& GetInstance() //>Meyers' Singleton | @GD: Should I use std::unique_ptr<> instead??

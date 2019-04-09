@@ -11,7 +11,7 @@ D3D9Device::~D3D9Device()
 {
 }
 
-HRESULT D3D9Device::CheckCoorparativeLevel()
+HRESULT D3D9Device::CheckCoorparativeLevel() const
 {
 	assert(m_d3dDevice);
 	return m_d3dDevice->TestCooperativeLevel();

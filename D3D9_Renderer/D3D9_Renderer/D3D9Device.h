@@ -16,13 +16,13 @@ public:
 	inline void SetDeviceObject(IDirect3DDevice9* device) { m_d3dDevice = device; }
 
     inline void ResetDevice() { m_d3dDevice->Reset(&m_d3dPresentParams); }
-    inline void Clear(DWORD count, const D3DRECT* pRects, DWORD flags, D3DCOLOR color, float z, DWORD stencil) { m_d3dDevice->Clear(count, pRects, flags, color, z, stencil); }
-    inline void Release() { m_d3dDevice->Release(); }
-    inline void BeginScene() { m_d3dDevice->BeginScene(); }
-    inline void EndScene() { m_d3dDevice->EndScene(); }
-    inline void Present(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA *pDirtyRegion) { m_d3dDevice->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion); }
+    inline void Clear(const DWORD count, const D3DRECT* pRects, const DWORD flags, const D3DCOLOR color, const float z, const DWORD stencil) const { m_d3dDevice->Clear(count, pRects, flags, color, z, stencil); }
+    inline void Release() const { m_d3dDevice->Release(); }
+    inline void BeginScene() const { m_d3dDevice->BeginScene(); }
+    inline void EndScene() const { m_d3dDevice->EndScene(); }
+    inline void Present(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA *pDirtyRegion) const { m_d3dDevice->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion); }
 
-	HRESULT CheckCoorparativeLevel();
+	HRESULT CheckCoorparativeLevel() const;
 private:
     IDirect3DDevice9* m_d3dDevice;
     D3DPRESENT_PARAMETERS m_d3dPresentParams;

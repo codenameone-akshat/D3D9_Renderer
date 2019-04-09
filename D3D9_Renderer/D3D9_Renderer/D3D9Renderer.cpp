@@ -29,12 +29,6 @@ namespace d3dgfx
 	}
 	void D3D9Renderer::RenderFrame()
 	{
-		for (unsigned long long i = 0; i < 99999999 ; i++)
-		{
-			long double j = 100000.0;
-			long double k = j / 1500;
-		}
-
         HRESULT result = CheckDeviceStatus();
         if (result != S_OK)
             return;
@@ -117,7 +111,7 @@ namespace d3dgfx
         m_device->ResetDevice();
 	}
 	//>Handle this in the mainloop of the game, define "FULLSCREEN" for fullscreen support in the game
-	DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags()
+	DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags() const
 	{
 		D3DDISPLAYMODE displayMode;
 		m_d3d9->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
@@ -143,7 +137,7 @@ namespace d3dgfx
 		}
 		return flags;
 	}
-	HRESULT D3D9Renderer::CheckMultiSampleSupport(D3DMULTISAMPLE_TYPE type, DWORD * quality, bool isWindowed) const
+	HRESULT D3D9Renderer::CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD * quality, const bool isWindowed) const
 	{
 		HRESULT result = m_d3d9->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_D24S8, isWindowed, type, quality);
 		return result;
