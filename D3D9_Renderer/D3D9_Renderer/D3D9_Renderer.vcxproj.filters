@@ -46,6 +46,15 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>EngineCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -67,6 +76,15 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>

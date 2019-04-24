@@ -14,6 +14,9 @@ namespace d3dgfx
 	class D3D9Renderer :
 		public GfxRendererBase
 	{
+		using super = GfxRendererBase;
+
+	private:
 		D3D9Renderer();
 	public:
 		virtual ~D3D9Renderer();

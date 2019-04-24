@@ -1,9 +1,12 @@
 #include "Camera.h"
 
-Camera::Camera()
+namespace d3dgfx
 {
-}
+	Camera::Camera()
+	{
+	}
 
-Camera::~Camera()
-{
+	Camera::~Camera()
+	{
+	}
 }

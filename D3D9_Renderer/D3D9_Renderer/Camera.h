@@ -1,7 +1,10 @@
 #pragma once
-class Camera
+namespace d3dgfx
 {
-public:
-    Camera();
-    ~Camera();
-};
+	class Camera
+	{
+	public:
+		Camera();
+		~Camera();
+	};
+}
