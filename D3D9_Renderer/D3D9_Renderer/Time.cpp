@@ -19,7 +19,8 @@ namespace d3dgfx
         m_tEnd(),
         m_dt(0),
         m_systemTimer(0),
-        m_numFrames(0)
+        m_numFrames(0),
+        m_fps(0)
     {
     }
     Time::~Time()

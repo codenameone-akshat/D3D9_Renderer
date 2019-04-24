@@ -3,6 +3,7 @@
 #include "Time.h"
 
 #include <chrono>
+#include <thread>
 
 namespace d3dgfx
 {
@@ -11,11 +12,9 @@ namespace d3dgfx
         m_timer(std::make_unique<Time>())
 	{
 	}
-
 	EngineCore::~EngineCore()
 	{
 	}
-
 	void EngineCore::InitEngineCreateWindow(HINSTANCE hInstance, int nShowCmd)
 	{
 		const auto windowClassName = L"DX9Window_Class";
@@ -36,7 +35,6 @@ namespace d3dgfx
 			nullptr);
 		m_window->ShowD3DWindow(nShowCmd);
 	}
-
 	void EngineCore::PollMessage()
 	{
 		MSG msg;
@@ -56,7 +54,7 @@ namespace d3dgfx
 				break;
 			
 			renderer.RenderFrame();
-			
+            std::this_thread::sleep_for(std::chrono::microseconds(2));
             m_timer->EndTimer();
 		}
 	}

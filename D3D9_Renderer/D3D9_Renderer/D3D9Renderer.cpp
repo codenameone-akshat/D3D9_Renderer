@@ -95,7 +95,7 @@ namespace d3dgfx
 		params.AutoDepthStencilFormat = D3DFMT_D24S8;
 		params.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		params.Flags = NULL;
-		params.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+		params.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 		m_device->SetDeviceCharateristics(params);
 
