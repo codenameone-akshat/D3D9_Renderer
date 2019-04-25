@@ -1,5 +1,7 @@
-#include "D3D9Device.h"
 #include <cassert>
+
+#include "D3D9Device.h"
+
 namespace d3dgfx
 {
 	D3D9Device::D3D9Device()
@@ -16,5 +18,19 @@ namespace d3dgfx
 	{
 		assert(m_d3dDevice);
 		return m_d3dDevice->TestCooperativeLevel();
+	}
+
+	HRESULT D3D9Device::CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9>* vertexBuffer, HANDLE* pSharedHandle)
+	{
+		assert(m_d3dDevice);
+		HRESULT result = m_d3dDevice->CreateVertexBuffer(length, usage, FVF, pool, vertexBuffer->GetPtrToRawBuffer(), pSharedHandle);
+		return result;
+	}
+
+	HRESULT D3D9Device::CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9>* indexBuffer, HANDLE* pSharedHandle)
+	{
+		assert(m_d3dDevice);
+		HRESULT result = m_d3dDevice->CreateIndexBuffer(length, usage, format, pool, indexBuffer->GetPtrToRawBuffer(), pSharedHandle);
+		return result;
 	}
 }

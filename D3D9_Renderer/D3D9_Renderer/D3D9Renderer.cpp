@@ -1,13 +1,17 @@
 #include "D3D9Renderer.h"
 #include <cassert>
-#include <windows.h>
+
+#include "safewindows.h"
 
 namespace d3dgfx
 {
 	D3D9Renderer::D3D9Renderer()
 		:m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
-		m_device(std::make_unique<D3D9Device>()),
-		m_hWindow()
+		m_device(std::make_shared<D3D9Device>()),
+		//m_modelList(),
+		m_hWindow(),
+		m_vBuffer(new StaticBuffer<IDirect3DVertexBuffer9>()),
+		m_iBuffer(new StaticBuffer<IDirect3DIndexBuffer9>())
 	{
 	}
 	D3D9Renderer::~D3D9Renderer()
@@ -33,7 +37,7 @@ namespace d3dgfx
         if (result != S_OK)
             return;
 
-        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(120, 120, 120), 1.0f, 0);
+        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(50, 0, 200), 1.0f, 0);
         m_device->BeginScene();
         m_device->EndScene();
         m_device->Present(nullptr, nullptr, nullptr, nullptr);
@@ -145,7 +149,7 @@ namespace d3dgfx
 	HRESULT D3D9Renderer::CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp)
 	{
 		assert(m_hWindow != nullptr);
-		
+		auto dev = m_device->GetDeviceObject();
 		HRESULT result = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT,
 			D3DDEVTYPE_HAL,
 			m_hWindow,

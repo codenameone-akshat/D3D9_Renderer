@@ -1,16 +1,20 @@
 #pragma once
-#include "GfxRendererBase.h"
-#include "D3D9Device.h"
 #include <d3d9.h>
 #include <memory>
-#pragma comment (lib, "d3d9.lib")
+#include <vector>
 
-#define SCREEN_HEIGHT 720
-#define SCREEN_WIDTH 1280
+#pragma comment (lib, "d3d9.lib")
+#include "GfxRendererBase.h"
+#include "D3D9Device.h"
+#include "StaticBuffer.hpp"
+#include "Model.h"
+
+constexpr auto SCREEN_HEIGHT = 720;
+constexpr auto SCREEN_WIDTH = 1280;
 
 namespace d3dgfx
 {
-    //>Singleton Class
+	//>Singleton Class
 	class D3D9Renderer :
 		public GfxRendererBase
 	{
@@ -39,7 +43,7 @@ namespace d3dgfx
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
 		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
 
-        inline static D3D9Renderer& GetInstance() //>Meyers' Singleton | @GD: Should I use std::unique_ptr<> instead??
+        inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
             static D3D9Renderer instance;
             return instance;
@@ -49,8 +53,13 @@ namespace d3dgfx
 		void SetupDeviceConfiguration();
 
 		IDirect3D9* m_d3d9;
-        IDirect3DVertexBuffer9* m_vBuffer;
-		std::unique_ptr<D3D9Device> m_device;
+
+		StaticBuffer<IDirect3DVertexBuffer9>* m_vBuffer;
+		StaticBuffer<IDirect3DIndexBuffer9>* m_iBuffer;
+		
+		//std::vector<Model*> m_modelList; //entire model list to render in the world
+
+		std::shared_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
 	};
 }

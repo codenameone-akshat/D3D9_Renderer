@@ -1,5 +1,7 @@
 #pragma once
-#include <windows.h>
+
+#include "safewindows.h"
+
 namespace d3dgfx
 {
 	class GfxRendererBase

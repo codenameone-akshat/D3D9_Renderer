@@ -1,7 +1,8 @@
 #pragma once
 
-#include<windows.h>
-#include<windowsx.h>
+#include "safewindows.h"
+#include <windowsx.h>
+
 namespace d3dgfx
 {
 	class Window
