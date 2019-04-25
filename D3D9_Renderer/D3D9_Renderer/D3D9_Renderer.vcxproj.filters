@@ -55,6 +55,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="StaticBuffer.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -87,5 +90,6 @@
     <ClInclude Include="Model.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="StaticBuffer.h" />
   </ItemGroup>
 </Project>

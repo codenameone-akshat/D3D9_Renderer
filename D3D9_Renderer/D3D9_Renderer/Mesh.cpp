@@ -19,25 +19,25 @@ namespace d3dgfx
 	void Mesh::AppendVertices(float x, float y, float z) noexcept
 	{
 		assert(m_numVertices > 0);
-		m_vertices.push_back(x);
-		m_vertices.push_back(y);
-		m_vertices.push_back(z);
+		m_vertices.emplace_back(x);
+		m_vertices.emplace_back(y);
+		m_vertices.emplace_back(z);
 	}
 
 	void Mesh::AppendNormals(float x, float y, float z) noexcept
 	{
 		assert(m_numNormals > 0);
-		m_normals.push_back(x);
-		m_normals.push_back(y);
-		m_normals.push_back(z);
+		m_normals.emplace_back(x);
+		m_normals.emplace_back(y);
+		m_normals.emplace_back(z);
 	}
 
 	void Mesh::AppendIndices(const int vertexA, const int vertexB, const int vertexC) noexcept
 	{
 		assert(m_numIndices > 0);
-		m_indices.push_back(vertexA);
-		m_indices.push_back(vertexB);
-		m_indices.push_back(vertexC);
+		m_indices.emplace_back(vertexA);
+		m_indices.emplace_back(vertexB);
+		m_indices.emplace_back(vertexC);
 	}
 
 	void Mesh::SetNumVertices(int nVertices)

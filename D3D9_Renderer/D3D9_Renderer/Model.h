@@ -24,8 +24,12 @@ namespace d3dgfx
 
 		//>Getters
 		inline int GetNumMeshes() const { return m_numMeshes; }
-		inline std::vector<Mesh> GetMeshes() const { return m_meshes; }
-		inline Mesh GetMesheAtIndex(const unsigned int index) const { return m_meshes[index]; }
+        inline int GetNumTris() const { return m_numTris; }
+        inline int GetTotalVertices() const { return m_totalVertices; }
+        inline int GetTotalNormals() const { return m_totalNormals; }
+        inline int GetTotalIndices() const { return m_totalIndices; }
+		inline std::vector<Mesh*> GetMeshes() const { return m_meshes; }
+		inline Mesh* GetMesheAtIndex(const unsigned int index) const { return m_meshes[index]; }
 
 	private:
 		void ProcessModel();
@@ -33,9 +37,10 @@ namespace d3dgfx
 		const Scene* m_scene;
 
 		Importer m_importer;
-		std::vector<Mesh> m_meshes;
+		std::vector<Mesh*> m_meshes;
 
 		int m_numMeshes;
+        int m_numTris;
 		int m_totalVertices;
 		int m_totalNormals;
 		int m_totalIndices;

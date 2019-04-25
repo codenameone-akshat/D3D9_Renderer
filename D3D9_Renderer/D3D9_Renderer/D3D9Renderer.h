@@ -49,6 +49,7 @@ namespace d3dgfx
 		void SetupDeviceConfiguration();
 
 		IDirect3D9* m_d3d9;
+        IDirect3DVertexBuffer9* m_vBuffer;
 		std::unique_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
 	};
