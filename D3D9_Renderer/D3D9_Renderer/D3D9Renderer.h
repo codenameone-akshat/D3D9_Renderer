@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX //for windows include in d3d9.h
 #include <d3d9.h>
 #include <memory>
 #include <vector>
