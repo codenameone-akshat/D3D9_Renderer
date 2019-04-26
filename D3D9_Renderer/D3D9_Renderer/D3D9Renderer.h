@@ -55,8 +55,8 @@ namespace d3dgfx
 
 		IDirect3D9* m_d3d9;
 
-		StaticBuffer<IDirect3DVertexBuffer9>* m_vBuffer;
-		StaticBuffer<IDirect3DIndexBuffer9>* m_iBuffer;
+		StaticBuffer<IDirect3DVertexBuffer9> m_vBuffer;
+		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;
 		
 		//std::vector<Model*> m_modelList; //entire model list to render in the world
 

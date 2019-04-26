@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include <d3d9.h>
 #include <memory>
 
@@ -19,8 +20,8 @@ namespace d3dgfx
 
 		//>Getters
 		inline std::shared_ptr<D3D9Device> GetPtr() { return shared_from_this(); }
-		inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }
-		inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; }
+		inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }  //TODO: overload -> maybe?
+		inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; } //TODO: overload & maybe?
 		inline void SetDeviceObject(IDirect3DDevice9* device) { m_d3dDevice = device; }
 
 		inline void ResetDevice() { m_d3dDevice->Reset(&m_d3dPresentParams); }
@@ -31,8 +32,8 @@ namespace d3dgfx
 		inline void Present(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion) const { m_d3dDevice->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion); }
 
 		[[nodiscard]] HRESULT CheckCoorparativeLevel() const;
-		[[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9>* vertexBuffer, HANDLE* pSharedHandle);
-		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9>* indexBuffer, HANDLE* pSharedHandle);
+		[[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9> vertexBuffer, HANDLE* pSharedHandle);
+		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9> indexBuffer, HANDLE* pSharedHandle);
 
 	private:
 		IDirect3DDevice9* m_d3dDevice;

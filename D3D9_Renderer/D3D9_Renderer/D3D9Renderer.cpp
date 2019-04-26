@@ -10,8 +10,8 @@ namespace d3dgfx
 		m_device(std::make_shared<D3D9Device>()),
 		//m_modelList(),
 		m_hWindow(),
-		m_vBuffer(new StaticBuffer<IDirect3DVertexBuffer9>()),
-		m_iBuffer(new StaticBuffer<IDirect3DIndexBuffer9>())
+		m_vBuffer(),
+		m_iBuffer()
 	{
 	}
 	D3D9Renderer::~D3D9Renderer()
@@ -20,7 +20,7 @@ namespace d3dgfx
 	}
 	void D3D9Renderer::Init(HWND hWindow)
 	{
-		memcpy(&m_hWindow, &hWindow, sizeof(HWND)); //@GD is this fine?
+		memcpy(&m_hWindow, &hWindow, sizeof(HWND));
 		SetupDeviceConfiguration();
 	}
 	void D3D9Renderer::UnInit()
@@ -149,7 +149,6 @@ namespace d3dgfx
 	HRESULT D3D9Renderer::CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp)
 	{
 		assert(m_hWindow != nullptr);
-		auto dev = m_device->GetDeviceObject();
 		HRESULT result = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT,
 			D3DDEVTYPE_HAL,
 			m_hWindow,
