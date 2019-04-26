@@ -157,4 +157,7 @@ namespace d3dgfx
 			m_device->GetDeviceObjectRef());
 		return result;
 	}
+    void D3D9Renderer::SetupBuffers()
+    {
+    }
 }

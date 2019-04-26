@@ -43,7 +43,9 @@ namespace d3dgfx
         [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags() const;
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
 		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
-
+        
+        void SetupBuffers();
+        
         inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
             static D3D9Renderer instance;

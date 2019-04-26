@@ -35,6 +35,7 @@ namespace d3dgfx
 		}
 		~StaticBuffer() 
 		{
+            m_buffer->Release();
 			m_buffer = nullptr;
 		}
         
@@ -43,9 +44,12 @@ namespace d3dgfx
 
         inline constexpr auto GetBufferDesc() const { return m_bufferDesc.GetBufferDesc(); }
 
-		void AddDataToBuffer(void* data)
+		void AddDataToBuffer(void* data, DWORD lockFlags)
 		{
-            //stub
+            void* vBufferData;
+            Lock(FullBufferLock, FullBufferLock, &vBufferData, lockFlags);
+            memcpy(vBufferData, data, sizeof(data));
+            Unlock();
 		}
 
 	private:

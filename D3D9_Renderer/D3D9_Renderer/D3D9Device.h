@@ -32,8 +32,32 @@ namespace d3dgfx
 		inline void Present(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion) const { m_d3dDevice->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion); }
 
 		[[nodiscard]] HRESULT CheckCoorparativeLevel() const;
-		[[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9> vertexBuffer, HANDLE* pSharedHandle);
+		
+        //>Buffers
+        [[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9> vertexBuffer, HANDLE* pSharedHandle);
 		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9> indexBuffer, HANDLE* pSharedHandle);
+        inline HRESULT SetStreamSource(UINT streamNumber, StaticBuffer<IDirect3DVertexBuffer9> vBuffer, UINT offsetInBytes, UINT stride)
+        {
+            auto result = m_d3dDevice->SetStreamSource(streamNumber, vBuffer.GetRawPtr(), offsetInBytes, stride);
+            return result;
+        }
+        inline HRESULT SetIndices(StaticBuffer<IDirect3DIndexBuffer9> indexBuffer)
+        {
+            auto result = m_d3dDevice->SetIndices(indexBuffer.GetRawPtr());
+            return result;
+        }
+
+        //>Drawing
+        inline HRESULT DrawPrimitive(D3DPRIMITIVETYPE primitiveType, UINT startVertex, UINT primitiveCount) 
+        {
+            auto result = m_d3dDevice->DrawPrimitive(primitiveType, startVertex, primitiveCount);  
+            return result;
+        }
+        inline HRESULT DrawIndexedPrimitive(D3DPRIMITIVETYPE primitiveType, INT baseVertexIndex, UINT minIndex, UINT numVertices, UINT startIndex, UINT primitiveCount) 
+        {
+            auto result = m_d3dDevice->DrawIndexedPrimitive(primitiveType, baseVertexIndex, minIndex, numVertices, startIndex, primitiveCount);
+            return result;
+        }
 
 	private:
 		IDirect3DDevice9* m_d3dDevice;
