@@ -12,6 +12,8 @@ namespace d3dgfx
 
 	D3D9Device::~D3D9Device()
 	{
+		if(m_d3dDevice)
+			m_d3dDevice->Release();
 	}
 
 	HRESULT D3D9Device::CheckCoorparativeLevel() const

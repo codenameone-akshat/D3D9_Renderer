@@ -1,14 +1,12 @@
 #include "D3D9Renderer.h"
 #include <cassert>
 
-#include "safewindows.h"
-
 namespace d3dgfx
 {
 	D3D9Renderer::D3D9Renderer()
 		:m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
 		m_device(std::make_shared<D3D9Device>()),
-		//m_modelList(),
+		m_modelList(),
 		m_hWindow(),
 		m_vBuffer(),
 		m_iBuffer()
@@ -36,7 +34,6 @@ namespace d3dgfx
         HRESULT result = CheckDeviceStatus();
         if (result != S_OK)
             return;
-
         m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(50, 0, 200), 1.0f, 0);
         m_device->BeginScene();
         m_device->EndScene();
@@ -157,7 +154,8 @@ namespace d3dgfx
 			m_device->GetDeviceObjectRef());
 		return result;
 	}
-    void D3D9Renderer::SetupBuffers()
+    void D3D9Renderer::SetupStaticBuffers()
     {
+		
     }
 }

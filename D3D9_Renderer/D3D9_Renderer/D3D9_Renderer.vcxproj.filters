@@ -78,9 +78,6 @@
     <ClInclude Include="BaseObject.h">
       <Filter>EngineCore</Filter>
     </ClInclude>
-    <ClInclude Include="safewindows.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Renderer</Filter>
     </ClInclude>

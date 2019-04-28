@@ -1,5 +1,4 @@
 #pragma once
-#define NOMINMAX //for windows include in d3d9.h
 #include <d3d9.h>
 #include <memory>
 #include <vector>
@@ -44,7 +43,7 @@ namespace d3dgfx
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
 		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
-        void SetupBuffers();
+        void SetupStaticBuffers();
         
         inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
@@ -60,7 +59,7 @@ namespace d3dgfx
 		StaticBuffer<IDirect3DVertexBuffer9> m_vBuffer;
 		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;
 		
-		//std::vector<Model*> m_modelList; //entire model list to render in the world
+		std::vector<Model*> m_modelList; //entire model list to render in the world
 
 		std::shared_ptr<D3D9Device> m_device;
 		HWND m_hWindow;

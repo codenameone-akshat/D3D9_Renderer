@@ -1,6 +1,6 @@
 #pragma once
 
-#include "safewindows.h"
+#include <windows.h>
 
 namespace d3dgfx
 {

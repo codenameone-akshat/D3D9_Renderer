@@ -1,5 +1,4 @@
 #pragma once
-#define NOMINMAX
 #include <d3d9.h>
 #include <memory>
 
@@ -7,25 +6,7 @@ namespace d3dgfx
 {
 	constexpr int FullBufferLock = 0;
 
-    template<typename U>
-    class StaticBufferDesc
-    {
-        template<typename U, typename = typename std::enable_if_t<std::is_same<U, IDirect3DVertexBuffer9>::value>>
-        D3DVERTEXBUFFER_DESC GetBufferDesc()
-        {
-            D3DVERTEXBUFFER_DESC bufferDesc;
-            return bufferDesc;
-        }
-
-        template<typename U, typename = typename std::enable_if_t<std::is_same<U, IDirect3DIndexBuffer9>::value>>
-        D3DINDEXBUFFER_DESC GetBufferDesc() 
-        {
-            D3DINDEXBUFFER_DESC bufferDesc;
-            return bufferDesc;
-        }
-    };
-
-    template<typename T>
+    template<typename T, typename = typename std::enable_if_t<std::is_same<T, IDirect3DVertexBuffer9>::value || std::is_same<T, IDirect3DIndexBuffer9>::value>>
     class StaticBuffer
     {
     public:
@@ -35,8 +16,11 @@ namespace d3dgfx
 		}
 		~StaticBuffer() 
 		{
-            m_buffer->Release();
-			m_buffer = nullptr;
+			if (m_buffer)
+			{
+				m_buffer->Release();
+				m_buffer = nullptr;
+			}
 		}
         
         T* GetRawPtr() { return m_buffer; }
@@ -53,6 +37,25 @@ namespace d3dgfx
 		}
 
 	private:
+		
+		template<typename U>
+		struct StaticBufferDesc
+		{
+			template<typename U, typename = typename std::enable_if_t<std::is_same<U, IDirect3DVertexBuffer9>::value>>
+			D3DVERTEXBUFFER_DESC GetBufferDesc()
+			{
+				D3DVERTEXBUFFER_DESC bufferDesc;
+				return bufferDesc;
+			}
+
+			template<typename U, typename = typename std::enable_if_t<std::is_same<U, IDirect3DIndexBuffer9>::value>>
+			D3DINDEXBUFFER_DESC GetBufferDesc()
+			{
+				D3DINDEXBUFFER_DESC bufferDesc;
+				return bufferDesc;
+			}
+		};
+
         inline void Lock(UINT offsetToLock, UINT sizeToLock, BYTE** ppbufferData, DWORD flags) 
         {
             m_buffer->Lock(offsetToLock, sizeToLock, ppbufferData, flags);

@@ -2,7 +2,8 @@
 
 #include <sstream>
 #include <cmath>
-#include "safewindows.h"
+
+#include <windows.h>
 
 //TODO: wrap into a logger class
 #define LogInfo( s )            \
