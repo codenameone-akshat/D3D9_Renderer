@@ -4,10 +4,12 @@
 #include <vector>
 
 #pragma comment (lib, "d3d9.lib")
+
 #include "GfxRendererBase.h"
 #include "D3D9Device.h"
 #include "StaticBuffer.hpp"
 #include "Model.h"
+#include "VertexDefs.h"
 
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
@@ -43,6 +45,7 @@ namespace d3dgfx
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
 		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
+        void ParseModels();
         void SetupStaticBuffers();
         
         inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
@@ -53,14 +56,16 @@ namespace d3dgfx
 
 	private:
 		void SetupDeviceConfiguration();
+        void SetupVertexDeclaration();
 
 		IDirect3D9* m_d3d9;
 
 		StaticBuffer<IDirect3DVertexBuffer9> m_vBuffer;
 		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;
-		
-		std::vector<Model*> m_modelList; //entire model list to render in the world
 
+        VertexDeclContainer m_vertexDeclarations;
+
+		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager
 		std::shared_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
 	};

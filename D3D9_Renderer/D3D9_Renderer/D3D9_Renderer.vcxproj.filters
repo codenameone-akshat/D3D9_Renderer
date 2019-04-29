@@ -90,5 +90,11 @@
     <ClInclude Include="StaticBuffer.hpp">
       <Filter>Renderer\D3D9</Filter>
     </ClInclude>
+    <ClInclude Include="ComHelpers.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexDefs.h">
+      <Filter>Renderer\D3D9</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

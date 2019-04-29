@@ -20,7 +20,7 @@ namespace d3dgfx
 		Model();
 		~Model();
 
-		void LoadModel(std::string filepath);
+		void LoadModelAndParseData(std::string filepath);
 
 		//>Getters
 		inline int GetNumMeshes() const { return m_numMeshes; }

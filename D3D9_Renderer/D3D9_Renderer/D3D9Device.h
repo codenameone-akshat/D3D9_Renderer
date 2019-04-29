@@ -2,6 +2,7 @@
 #include <d3d9.h>
 #include <memory>
 
+#include "ComHelpers.h"
 #include "StaticBuffer.hpp"
 
 namespace d3dgfx
@@ -25,7 +26,7 @@ namespace d3dgfx
 
 		inline void ResetDevice() { m_d3dDevice->Reset(&m_d3dPresentParams); }
 		inline void Clear(const DWORD count, const D3DRECT* pRects, const DWORD flags, const D3DCOLOR color, const float z, const DWORD stencil) const { m_d3dDevice->Clear(count, pRects, flags, color, z, stencil); }
-		inline void Release() const { m_d3dDevice->Release(); }
+        inline void Release() { ComSafeRelease(m_d3dDevice); }
 		inline void BeginScene() const { m_d3dDevice->BeginScene(); }
 		inline void EndScene() const { m_d3dDevice->EndScene(); }
 		inline void Present(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion) const { m_d3dDevice->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion); }
@@ -35,6 +36,12 @@ namespace d3dgfx
         //>Buffers
         [[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9> vertexBuffer, HANDLE* pSharedHandle);
 		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9> indexBuffer, HANDLE* pSharedHandle);
+        [[nodiscard]] HRESULT CreateVertexDeclataion(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9** vDecl);
+        inline HRESULT SetVertexDeclaration(IDirect3DVertexDeclaration9* decl)
+        {
+            auto result = m_d3dDevice->SetVertexDeclaration(decl);
+            return result;
+        }
         inline HRESULT SetStreamSource(UINT streamNumber, StaticBuffer<IDirect3DVertexBuffer9> vBuffer, UINT offsetInBytes, UINT stride)
         {
             auto result = m_d3dDevice->SetStreamSource(streamNumber, vBuffer.GetRawPtr(), offsetInBytes, stride);

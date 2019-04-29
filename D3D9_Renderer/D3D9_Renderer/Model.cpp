@@ -23,7 +23,7 @@ namespace d3dgfx
 		m_meshes.clear();
 	}
 
-	void Model::LoadModel(std::string filepath)
+	void Model::LoadModelAndParseData(std::string filepath)
 	{
 		const auto flags = aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent | aiProcess_FlipUVs;
 

@@ -12,8 +12,7 @@ namespace d3dgfx
 
 	D3D9Device::~D3D9Device()
 	{
-		if(m_d3dDevice)
-			m_d3dDevice->Release();
+        ComSafeRelease(m_d3dDevice);
 	}
 
 	HRESULT D3D9Device::CheckCoorparativeLevel() const
@@ -35,4 +34,10 @@ namespace d3dgfx
 		HRESULT result = m_d3dDevice->CreateIndexBuffer(length, usage, format, pool, &indexBuffer, pSharedHandle);
 		return result;
 	}
+    HRESULT D3D9Device::CreateVertexDeclataion(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9 ** vDecl)
+    {
+        assert(m_d3dDevice);
+        HRESULT result = m_d3dDevice->CreateVertexDeclaration(vElement, vDecl);
+        return result;
+    }
 }

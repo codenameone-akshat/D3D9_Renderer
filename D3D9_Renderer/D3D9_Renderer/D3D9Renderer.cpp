@@ -1,5 +1,7 @@
-#include "D3D9Renderer.h"
 #include <cassert>
+
+#include "D3D9Renderer.h"
+#include "ComHelpers.h"
 
 namespace d3dgfx
 {
@@ -9,12 +11,13 @@ namespace d3dgfx
 		m_modelList(),
 		m_hWindow(),
 		m_vBuffer(),
-		m_iBuffer()
+		m_iBuffer(),
+        m_vertexDeclarations()
 	{
 	}
 	D3D9Renderer::~D3D9Renderer()
 	{
-		m_d3d9 = nullptr;
+        ComSafeRelease(m_d3d9);
 	}
 	void D3D9Renderer::Init(HWND hWindow)
 	{
@@ -23,11 +26,8 @@ namespace d3dgfx
 	}
 	void D3D9Renderer::UnInit()
 	{
-		if (m_d3d9)
-		{
-			m_d3d9->Release();
-            m_device->Release();
-		}
+        ComSafeRelease(m_d3d9);
+        ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
 	}
 	void D3D9Renderer::RenderFrame()
 	{
@@ -103,6 +103,21 @@ namespace d3dgfx
 		auto result = CreateD3DDevice(&params);
 		assert(result == S_OK);
 	}
+    void D3D9Renderer::SetupVertexDeclaration()
+    {
+        constexpr int defaultVal = 0;
+        
+        D3DVERTEXELEMENT9 positionVertexElements[] = 
+        {
+            { defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0}
+        };
+
+        auto result = m_device->CreateVertexDeclataion(positionVertexElements, &m_vertexDeclarations.positionVertexDecl);
+        assert(result == S_OK);
+        assert(m_vertexDeclarations.positionVertexDecl);
+
+        m_device->SetVertexDeclaration(m_vertexDeclarations.positionVertexDecl);
+    }
 	void D3D9Renderer::OnDeviceLost()
 	{
         Sleep(200);
@@ -154,8 +169,15 @@ namespace d3dgfx
 			m_device->GetDeviceObjectRef());
 		return result;
 	}
+    void D3D9Renderer::ParseModels()
+    {
+        std::string filename = "../../D3D9_Renderer/data/Cube.FBX"; //get files to load from somewhere else
+        std::unique_ptr<Model> model = std::make_unique<Model>(); 
+        model->LoadModelAndParseData(filename);
+        m_modelList.push_back(model);
+    }
     void D3D9Renderer::SetupStaticBuffers()
     {
-		
+	    //m_device->CreateVertexBuffer()
     }
 }
