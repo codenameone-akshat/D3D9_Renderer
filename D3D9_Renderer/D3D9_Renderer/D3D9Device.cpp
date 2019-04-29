@@ -34,7 +34,7 @@ namespace d3dgfx
 		HRESULT result = m_d3dDevice->CreateIndexBuffer(length, usage, format, pool, &indexBuffer, pSharedHandle);
 		return result;
 	}
-    HRESULT D3D9Device::CreateVertexDeclataion(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9 ** vDecl)
+    HRESULT D3D9Device::CreateVertexDeclaration(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9 ** vDecl)
     {
         assert(m_d3dDevice);
         HRESULT result = m_d3dDevice->CreateVertexDeclaration(vElement, vDecl);

@@ -23,11 +23,22 @@ namespace d3dgfx
 	{
 		memcpy(&m_hWindow, &hWindow, sizeof(HWND));
 		SetupDeviceConfiguration();
+		PrepareForRendering();
 	}
 	void D3D9Renderer::UnInit()
 	{
         ComSafeRelease(m_d3d9);
         ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
+	}
+	void D3D9Renderer::PrepareForRendering()
+	{
+		ParseModels();
+		SetupVertexDeclaration();
+		SetupStaticBuffers();
+	}
+	void D3D9Renderer::PreRender()
+	{
+
 	}
 	void D3D9Renderer::RenderFrame()
 	{
@@ -38,6 +49,9 @@ namespace d3dgfx
         m_device->BeginScene();
         m_device->EndScene();
         m_device->Present(nullptr, nullptr, nullptr, nullptr);
+	}
+	void D3D9Renderer::PostRender()
+	{
 	}
 	HRESULT D3D9Renderer::CheckDeviceStatus()
 	{
@@ -51,7 +65,7 @@ namespace d3dgfx
         }
         else if (result == D3DERR_DRIVERINTERNALERROR)
         {
-            MessageBox(nullptr, L"Interal Driver Error... Quitting Program.", nullptr, NULL);
+            MessageBox(nullptr, L"Internal Driver Error... Quitting Program.", nullptr, NULL);
             return E_UNEXPECTED;
         }
         else if (result == D3DERR_DEVICENOTRESET)
@@ -109,10 +123,11 @@ namespace d3dgfx
         
         D3DVERTEXELEMENT9 positionVertexElements[] = 
         {
-            { defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0}
+            { defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+			D3DDECL_END()
         };
 
-        auto result = m_device->CreateVertexDeclataion(positionVertexElements, &m_vertexDeclarations.positionVertexDecl);
+        auto result = m_device->CreateVertexDeclaration(positionVertexElements, &m_vertexDeclarations.positionVertexDecl);
         assert(result == S_OK);
         assert(m_vertexDeclarations.positionVertexDecl);
 
@@ -171,13 +186,28 @@ namespace d3dgfx
 	}
     void D3D9Renderer::ParseModels()
     {
-        std::string filename = "../../D3D9_Renderer/data/Cube.FBX"; //get files to load from somewhere else
+        std::string filename = "Z:/Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/data/Cube.FBX"; //get files to load from somewhere else
         std::unique_ptr<Model> model = std::make_unique<Model>(); 
-        model->LoadModelAndParseData(filename);
-        m_modelList.push_back(model);
+        
+		model->LoadModelAndParseData(filename);
+        
+		m_modelList.push_back(std::move(model));
     }
     void D3D9Renderer::SetupStaticBuffers()
     {
-	    //m_device->CreateVertexBuffer()
-    }
+		int vBufferVertexCount = 0;
+		int iBufferVertexCount = 0;
+
+		for (auto& model : m_modelList)
+		{
+			vBufferVertexCount += model->GetTotalVertices();
+			iBufferVertexCount += model->GetTotalIndices();
+		}
+
+		auto result = m_device->CreateVertexBuffer(vBufferVertexCount * sizeof(PositionVertex), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr);
+		assert(result == S_OK);
+
+		result = m_device->CreateIndexBuffer(iBufferVertexCount, NULL, D3DFMT_INDEX16, D3DPOOL_DEFAULT, m_iBuffer, nullptr);
+		assert(result == S_OK);
+	}
 }

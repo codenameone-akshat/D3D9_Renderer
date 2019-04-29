@@ -33,8 +33,12 @@ namespace d3dgfx
 		//>Overrides
         void Init(HWND hWindow) override;
 		void UnInit() override;
+		void PrepareForRendering() override;
+		void PreRender() override;
 		void RenderFrame() override;
+		void PostRender() override;
   
+
 		//>Events
 		void OnDeviceLost() override;
         void OnDeviceAvailable() override;
@@ -64,10 +68,10 @@ namespace d3dgfx
 		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;
 
         VertexDeclContainer m_vertexDeclarations;
+		//declare vertex stream
 
-		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager
+		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager maybe? 
 		std::shared_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
 	};
 }
-

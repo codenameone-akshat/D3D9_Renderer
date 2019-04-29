@@ -36,7 +36,7 @@ namespace d3dgfx
         //>Buffers
         [[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9> vertexBuffer, HANDLE* pSharedHandle);
 		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9> indexBuffer, HANDLE* pSharedHandle);
-        [[nodiscard]] HRESULT CreateVertexDeclataion(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9** vDecl);
+        [[nodiscard]] HRESULT CreateVertexDeclaration(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9** vDecl);
         inline HRESULT SetVertexDeclaration(IDirect3DVertexDeclaration9* decl)
         {
             auto result = m_d3dDevice->SetVertexDeclaration(decl);

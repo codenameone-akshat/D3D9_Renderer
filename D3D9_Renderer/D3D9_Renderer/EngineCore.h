@@ -16,6 +16,8 @@ namespace d3dgfx
 		EngineCore& operator=(EngineCore engineCore) = delete;
 
 		void InitEngineCreateWindow(HINSTANCE hInstance, int nShowCmd);
+		void InitRenderer();
+		void RenderFrame();
 		void PollMessage();
 
 	private:

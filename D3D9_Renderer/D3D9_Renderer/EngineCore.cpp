@@ -34,17 +34,26 @@ namespace d3dgfx
 			hInstance,
 			nullptr);
 		m_window->ShowD3DWindow(nShowCmd);
+
+		InitRenderer();
+	}
+	void EngineCore::InitRenderer()
+	{
+		auto& renderer = D3D9Renderer::GetInstance();
+		renderer.Init(m_window->GetHandleToWindow());
+	}
+	void EngineCore::RenderFrame()
+	{
+		auto& renderer = D3D9Renderer::GetInstance();
+		renderer.RenderFrame();
 	}
 	void EngineCore::PollMessage()
 	{
 		MSG msg;
-
-		auto& renderer = D3D9Renderer::GetInstance();
-		renderer.Init(m_window->GetHandleToWindow());
-
 		while (TRUE) //Main Loop
 		{
             m_timer->BeginTimer();
+			
 			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) //0,0 here represents to take any input possible
 			{
 				TranslateMessage(&msg);
@@ -53,8 +62,9 @@ namespace d3dgfx
 			if (msg.message == WM_QUIT)
 				break;
 			
-			renderer.RenderFrame();
-            std::this_thread::sleep_for(std::chrono::microseconds(2));
+			this->RenderFrame();
+            
+			std::this_thread::sleep_for(std::chrono::microseconds(2));
             m_timer->EndTimer();
 		}
 	}

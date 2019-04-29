@@ -3,6 +3,7 @@
 #include <string>
 #include <assimp/Importer.hpp>
 #include <vector>
+#include <memory>
 
 #include "BaseObject.h"
 #include "Mesh.h"
@@ -28,8 +29,7 @@ namespace d3dgfx
         inline int GetTotalVertices() const { return m_totalVertices; }
         inline int GetTotalNormals() const { return m_totalNormals; }
         inline int GetTotalIndices() const { return m_totalIndices; }
-		inline std::vector<Mesh*> GetMeshes() const { return m_meshes; }
-		inline Mesh* GetMesheAtIndex(const unsigned int index) const { return m_meshes[index]; }
+		inline std::vector<std::shared_ptr<Mesh>> GetMeshes() const { return m_meshes; }
 
 	private:
 		void ProcessModel();
@@ -37,7 +37,7 @@ namespace d3dgfx
 		const Scene* m_scene;
 
 		Importer m_importer;
-		std::vector<Mesh*> m_meshes;
+		std::vector<std::shared_ptr<Mesh>> m_meshes;
 
 		int m_numMeshes;
         int m_numTris;

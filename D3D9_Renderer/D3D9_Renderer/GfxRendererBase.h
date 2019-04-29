@@ -16,8 +16,11 @@ namespace d3dgfx
 
 		virtual void Init(HWND hWindow) = 0;
 		virtual void UnInit() = 0;
+		virtual void PrepareForRendering() = 0;
+		virtual void PreRender() = 0;
 		virtual void RenderFrame() = 0;
-		
+		virtual void PostRender() = 0;
+
 		//>Events
 		virtual void OnDeviceLost() = 0;
 		virtual void OnDeviceAvailable() = 0;

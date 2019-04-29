@@ -2,6 +2,7 @@
 
 #include <assimp/postprocess.h>
 #include <assimp/mesh.h>
+#include <cassert>
 
 namespace d3dgfx
 {
@@ -19,7 +20,6 @@ namespace d3dgfx
 
 	Model::~Model()
 	{
-		delete m_scene;
 		m_meshes.clear();
 	}
 
@@ -28,6 +28,7 @@ namespace d3dgfx
 		const auto flags = aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent | aiProcess_FlipUVs;
 
 		m_scene = m_importer.ReadFile(filepath, flags);
+		assert(m_scene != nullptr);
 		m_numMeshes = m_scene->mNumMeshes;
 		
 		ProcessModel();
@@ -43,7 +44,7 @@ namespace d3dgfx
 
 		for (auto itr = 0; itr < m_numMeshes; ++itr)
 		{
-			Mesh* mesh = new Mesh();
+			std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 			
 			totalVertices += m_scene->mMeshes[itr]->mNumVertices;
 			totalIndices += m_scene->mMeshes[itr]->mNumFaces * 3;
@@ -82,8 +83,7 @@ namespace d3dgfx
             m_totalNormals = totalVertices;
             m_totalIndices = totalIndices;
 
-			m_meshes.emplace_back(mesh);
-            delete mesh;
+			m_meshes.emplace_back(std::move(mesh));
 		}
 	}
 }
