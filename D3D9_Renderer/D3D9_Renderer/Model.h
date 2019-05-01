@@ -8,7 +8,7 @@
 #include "BaseObject.h"
 #include "Mesh.h"
 
-namespace d3dgfx
+namespace renderer
 {
 	using Scene = aiScene;
 	using Importer = Assimp::Importer;

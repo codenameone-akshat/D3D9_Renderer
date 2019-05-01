@@ -1,12 +1,12 @@
 #pragma once
 #include <d3d9.h>
 
-namespace d3dgfx
+namespace renderer
 {
     class VertexDeclContainer
     {
     public:
-        IDirect3DVertexDeclaration9* positionVertexDecl = nullptr; //init static var
+        IDirect3DVertexDeclaration9* positionVertexDecl = nullptr;
     };
 
     struct PositionVertex

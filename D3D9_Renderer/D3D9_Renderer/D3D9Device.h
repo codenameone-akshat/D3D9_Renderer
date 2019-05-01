@@ -1,14 +1,14 @@
 #pragma once
 #include <d3d9.h>
+#include <DirectXMath.h>
 #include <memory>
 
 #include "ComHelpers.h"
 #include "StaticBuffer.hpp"
 
-namespace d3dgfx
+namespace renderer
 {
-	class D3D9Device : 
-		std::enable_shared_from_this<D3D9Device>
+	class D3D9Device
 	{
 	public:
 		D3D9Device();
@@ -19,7 +19,6 @@ namespace d3dgfx
 		inline void SetDeviceCharateristics(D3DPRESENT_PARAMETERS presentParams) { memcpy(&m_d3dPresentParams, &presentParams, sizeof(D3DPRESENT_PARAMETERS)); }
 
 		//>Getters
-		inline std::shared_ptr<D3D9Device> GetPtr() { return shared_from_this(); }
 		inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }  //TODO: overload -> maybe?
 		inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; } //TODO: overload & maybe?
 		inline void SetDeviceObject(IDirect3DDevice9* device) { m_d3dDevice = device; }
@@ -34,24 +33,27 @@ namespace d3dgfx
 		[[nodiscard]] HRESULT CheckCoorparativeLevel() const;
 		
         //>Buffers
-        [[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9> vertexBuffer, HANDLE* pSharedHandle);
-		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9> indexBuffer, HANDLE* pSharedHandle);
+        [[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9>& vertexBuffer, HANDLE* pSharedHandle);
+		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9>& indexBuffer, HANDLE* pSharedHandle);
         [[nodiscard]] HRESULT CreateVertexDeclaration(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9** vDecl);
         inline HRESULT SetVertexDeclaration(IDirect3DVertexDeclaration9* decl)
         {
+			m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
             auto result = m_d3dDevice->SetVertexDeclaration(decl);
             return result;
         }
-        inline HRESULT SetStreamSource(UINT streamNumber, StaticBuffer<IDirect3DVertexBuffer9> vBuffer, UINT offsetInBytes, UINT stride)
+        inline HRESULT SetStreamSource(UINT streamNumber, StaticBuffer<IDirect3DVertexBuffer9>& vBuffer, UINT offsetInBytes, UINT stride)
         {
             auto result = m_d3dDevice->SetStreamSource(streamNumber, vBuffer.GetRawPtr(), offsetInBytes, stride);
             return result;
         }
-        inline HRESULT SetIndices(StaticBuffer<IDirect3DIndexBuffer9> indexBuffer)
+        inline HRESULT SetIndices(StaticBuffer<IDirect3DIndexBuffer9>& indexBuffer)
         {
             auto result = m_d3dDevice->SetIndices(indexBuffer.GetRawPtr());
             return result;
         }
+		inline void SetFVF(int fvf) { m_d3dDevice->SetFVF(fvf); }
 
         //>Drawing
         inline HRESULT DrawPrimitive(D3DPRIMITIVETYPE primitiveType, UINT startVertex, UINT primitiveCount) 
@@ -64,6 +66,14 @@ namespace d3dgfx
             auto result = m_d3dDevice->DrawIndexedPrimitive(primitiveType, baseVertexIndex, minIndex, numVertices, startIndex, primitiveCount);
             return result;
         }
+		inline HRESULT SetTransform(D3DTRANSFORMSTATETYPE transStateType, DirectX::XMMATRIX transMatrix)
+		{
+			DirectX::XMFLOAT4X4 dxcast_matrix;
+			DirectX::XMStoreFloat4x4(&dxcast_matrix, transMatrix);
+
+			auto result = m_d3dDevice->SetTransform(transStateType, reinterpret_cast<D3DMATRIX*>(&dxcast_matrix));
+			return result;
+		}
 
 	private:
 		IDirect3DDevice9* m_d3dDevice;

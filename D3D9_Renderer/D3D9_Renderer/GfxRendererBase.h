@@ -2,7 +2,7 @@
 
 #include <windows.h>
 
-namespace d3dgfx
+namespace renderer
 {
 	class GfxRendererBase
 	{

@@ -1,5 +1,5 @@
 #pragma once
-namespace d3dgfx 
+namespace renderer 
 {
     constexpr void ComSafeRelease(IUnknown* comPtr)
     {

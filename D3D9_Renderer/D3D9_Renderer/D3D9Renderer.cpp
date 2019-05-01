@@ -2,22 +2,30 @@
 
 #include "D3D9Renderer.h"
 #include "ComHelpers.h"
+#include <iostream>
 
-namespace d3dgfx
+namespace renderer
 {
 	D3D9Renderer::D3D9Renderer()
 		:m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
-		m_device(std::make_shared<D3D9Device>()),
+		m_device(std::make_unique<D3D9Device>()),
 		m_modelList(),
 		m_hWindow(),
 		m_vBuffer(),
 		m_iBuffer(),
-        m_vertexDeclarations()
+		m_vertexDeclarations(),
+		m_camera(),
+		m_viewMat(DirectX::XMMatrixIdentity()),
+		m_projMat(DirectX::XMMatrixIdentity()),
+		m_worldMat(DirectX::XMMatrixIdentity()),
+		m_vBufferVertexCount(0),
+		m_iBufferIndexCount(0),
+		m_primitiveCount(0)
 	{
 	}
 	D3D9Renderer::~D3D9Renderer()
 	{
-        ComSafeRelease(m_d3d9);
+		ComSafeRelease(m_d3d9);
 	}
 	void D3D9Renderer::Init(HWND hWindow)
 	{
@@ -27,60 +35,66 @@ namespace d3dgfx
 	}
 	void D3D9Renderer::UnInit()
 	{
-        ComSafeRelease(m_d3d9);
-        ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
+		ComSafeRelease(m_d3d9);
+		ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
 	}
 	void D3D9Renderer::PrepareForRendering()
 	{
+		BuildMatrices();
 		ParseModels();
 		SetupVertexDeclaration();
 		SetupStaticBuffers();
 	}
 	void D3D9Renderer::PreRender()
 	{
+		UpdateMatrices();
 
+		m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+		HRESULT result = CheckDeviceStatus();
+		if (result != S_OK)
+			return;
+		m_device->BeginScene();
+		m_device->SetFVF(FVF);
 	}
 	void D3D9Renderer::RenderFrame()
 	{
-        HRESULT result = CheckDeviceStatus();
-        if (result != S_OK)
-            return;
-        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(50, 0, 200), 1.0f, 0);
-        m_device->BeginScene();
-        m_device->EndScene();
-        m_device->Present(nullptr, nullptr, nullptr, nullptr);
+		m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
+		m_device->SetIndices(m_iBuffer);
+		m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
 	}
 	void D3D9Renderer::PostRender()
 	{
+		m_device->EndScene();
+		m_device->Present(nullptr, nullptr, nullptr, nullptr);
 	}
 	HRESULT D3D9Renderer::CheckDeviceStatus()
 	{
 		//check every-frame for lost devices
-        HRESULT result = m_device->CheckCoorparativeLevel();
-        
-        if (result == D3DERR_DEVICELOST)
-        {
-            OnDeviceLost();
-            return E_FAIL;
-        }
-        else if (result == D3DERR_DRIVERINTERNALERROR)
-        {
-            MessageBox(nullptr, L"Internal Driver Error... Quitting Program.", nullptr, NULL);
-            return E_UNEXPECTED;
-        }
-        else if (result == D3DERR_DEVICENOTRESET)
-        {
-            OnDeviceAvailable();
-            return E_FAIL;
-        }
-        else
-            return S_OK;
+		HRESULT result = m_device->CheckCoorparativeLevel();
+
+		if (result == D3DERR_DEVICELOST)
+		{
+			OnDeviceLost();
+			return E_FAIL;
+		}
+		else if (result == D3DERR_DRIVERINTERNALERROR)
+		{
+			MessageBox(nullptr, L"Internal Driver Error... Quitting Program.", nullptr, NULL);
+			return E_UNEXPECTED;
+		}
+		else if (result == D3DERR_DEVICENOTRESET)
+		{
+			OnDeviceAvailable();
+			return E_FAIL;
+		}
+		else
+			return S_OK;
 
 		return E_NOTIMPL;
 	}
 	//>Present Params Setup
 	void D3D9Renderer::SetupDeviceConfiguration()
-{
+	{
 		D3DPRESENT_PARAMETERS params;
 		ZeroMemory(&params, sizeof(params));
 
@@ -106,7 +120,7 @@ namespace d3dgfx
 
 		params.hDeviceWindow = m_hWindow;
 		params.Windowed = true;
-		params.EnableAutoDepthStencil = true; //for now let's just dx9 take care of this
+		params.EnableAutoDepthStencil = true; //for now let's just renderer take care of this
 		params.AutoDepthStencilFormat = D3DFMT_D24S8;
 		params.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		params.Flags = NULL;
@@ -117,29 +131,57 @@ namespace d3dgfx
 		auto result = CreateD3DDevice(&params);
 		assert(result == S_OK);
 	}
-    void D3D9Renderer::SetupVertexDeclaration()
-    {
-        constexpr int defaultVal = 0;
-        
-        D3DVERTEXELEMENT9 positionVertexElements[] = 
-        {
-            { defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+	void D3D9Renderer::SetupVertexDeclaration()
+	{
+		constexpr int defaultVal = 0;
+
+		D3DVERTEXELEMENT9 positionVertexElements[] =
+		{
+			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
 			D3DDECL_END()
-        };
+		};
 
-        auto result = m_device->CreateVertexDeclaration(positionVertexElements, &m_vertexDeclarations.positionVertexDecl);
-        assert(result == S_OK);
-        assert(m_vertexDeclarations.positionVertexDecl);
+		auto result = m_device->CreateVertexDeclaration(positionVertexElements, &m_vertexDeclarations.positionVertexDecl);
+		assert(result == S_OK);
+		assert(m_vertexDeclarations.positionVertexDecl);
 
-        m_device->SetVertexDeclaration(m_vertexDeclarations.positionVertexDecl);
-    }
+		m_device->SetVertexDeclaration(m_vertexDeclarations.positionVertexDecl);
+	}
+	void D3D9Renderer::BuildMatrices()
+	{
+		//>View Matrix
+		DirectX::XMVECTOR eye(DirectX::XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f));
+		DirectX::XMVECTOR lookAt(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+		DirectX::XMVECTOR up(DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
+		
+		m_camera.SetViewMatrix(eye, lookAt, up);
+		m_viewMat = m_camera.GetViewMatrix();
+
+		//>Projection Matrices
+		m_projMat = DirectX::XMMatrixPerspectiveFovLH(
+			DirectX::XMConvertToRadians(45),
+			static_cast<float>(SCREEN_HEIGHT / SCREEN_HEIGHT),
+			1.0f, 1000.0f);
+
+		m_worldMat = DirectX::XMMatrixIdentity();
+
+		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
+		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
+		m_device->SetTransform(D3DTS_WORLD, m_worldMat);
+	}
+	void D3D9Renderer::UpdateMatrices()
+	{
+		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
+		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
+		//update camera if input
+	}
 	void D3D9Renderer::OnDeviceLost()
 	{
-        Sleep(200);
+		Sleep(200);
 	}
 	void D3D9Renderer::OnDeviceAvailable()
 	{
-        m_device->ResetDevice();
+		m_device->ResetDevice();
 	}
 	//>Handle this in the mainloop of the game, define "FULLSCREEN" for fullscreen support in the game
 	DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags() const
@@ -184,30 +226,62 @@ namespace d3dgfx
 			m_device->GetDeviceObjectRef());
 		return result;
 	}
-    void D3D9Renderer::ParseModels()
-    {
-        std::string filename = "Z:/Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/data/Cube.FBX"; //get files to load from somewhere else
-        std::unique_ptr<Model> model = std::make_unique<Model>(); 
-        
-		model->LoadModelAndParseData(filename);
-        
-		m_modelList.push_back(std::move(model));
-    }
-    void D3D9Renderer::SetupStaticBuffers()
-    {
-		int vBufferVertexCount = 0;
-		int iBufferVertexCount = 0;
+	void D3D9Renderer::ParseModels()
+	{
+		std::string filename = "Z:/Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/data/Cube.FBX"; //get files to load from somewhere else
+		std::unique_ptr<Model> model = std::make_unique<Model>();
 
+		model->LoadModelAndParseData(filename);
+
+		m_modelList.push_back(std::move(model));
+	}
+	void D3D9Renderer::SetupStaticBuffers()
+	{
+		int vBufferVertexCount = 0;
+		int iBufferIndexCount = 0;
+		int primitiveCount = 0;
+		
+		float* vertices = static_cast<float*>(calloc(0, sizeof(float)));
+		int* indices = static_cast<int*>(calloc(0, sizeof(int)));
+		
+		size_t vOffset = 0;
+		size_t iOffset = 0;
+		
 		for (auto& model : m_modelList)
 		{
 			vBufferVertexCount += model->GetTotalVertices();
-			iBufferVertexCount += model->GetTotalIndices();
-		}
+			iBufferIndexCount += model->GetTotalIndices();
+			primitiveCount += model->GetNumTris();
 
-		auto result = m_device->CreateVertexBuffer(vBufferVertexCount * sizeof(PositionVertex), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr);
+			auto meshList = model->GetMeshes();
+
+			for (auto& mesh : meshList)
+			{
+				auto meshVertices = mesh->GetVertices();
+				vertices = static_cast<float*>(realloc(vertices, sizeof(float) * mesh->GetNumVertices()));
+				memcpy(vertices + vOffset, meshVertices.data(), (sizeof(float) * mesh->GetNumVertices()));
+				vOffset += sizeof(meshVertices);
+				
+				auto meshIndices = mesh->GetIndices();
+				indices = static_cast<int*>(realloc(indices, sizeof(int) * mesh->GetNumIndices()));
+				memcpy(indices + iOffset, meshIndices.data(), (sizeof(int) * mesh->GetNumIndices()));
+				iOffset += sizeof(meshIndices);
+			}
+		}  
+		auto result = m_device->CreateVertexBuffer(vBufferVertexCount * sizeof(PositionVertex), NULL, FVF, D3DPOOL_MANAGED, m_vBuffer, nullptr);
 		assert(result == S_OK);
 
-		result = m_device->CreateIndexBuffer(iBufferVertexCount, NULL, D3DFMT_INDEX16, D3DPOOL_DEFAULT, m_iBuffer, nullptr);
+		result = m_device->CreateIndexBuffer(iBufferIndexCount, NULL, D3DFMT_INDEX32, D3DPOOL_DEFAULT, m_iBuffer, nullptr);
 		assert(result == S_OK);
+
+		m_vBuffer.AddDataToBuffer(vertices, NULL, vBufferVertexCount*sizeof(float));
+		m_iBuffer.AddDataToBuffer(indices, NULL, iBufferIndexCount*sizeof(int));
+		
+		m_vBufferVertexCount = 24;
+		m_iBufferIndexCount = 24;
+		m_primitiveCount = 12;
+
+		free(vertices);
+		free(indices);
 	}
 }

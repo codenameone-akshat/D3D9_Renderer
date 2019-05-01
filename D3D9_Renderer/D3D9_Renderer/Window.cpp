@@ -2,7 +2,7 @@
 #include <cassert>
 #include <stdio.h>
 
-namespace d3dgfx
+namespace renderer
 {
 	Window::Window()
 		:m_hWindow(nullptr),

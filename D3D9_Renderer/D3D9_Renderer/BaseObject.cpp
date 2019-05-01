@@ -1,6 +1,6 @@
 #include "BaseObject.h"
 
-namespace d3dgfx
+namespace renderer
 {
 	BaseObject::BaseObject()
 	{

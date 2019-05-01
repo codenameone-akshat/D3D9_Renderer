@@ -5,7 +5,7 @@
 #include <chrono>
 #include <thread>
 
-namespace d3dgfx
+namespace renderer
 {
 	EngineCore::EngineCore()
 		:m_window(std::make_unique<Window>()),
@@ -17,7 +17,7 @@ namespace d3dgfx
 	}
 	void EngineCore::InitEngineCreateWindow(HINSTANCE hInstance, int nShowCmd)
 	{
-		const auto windowClassName = L"DX9Window_Class";
+		const auto windowClassName = L"rendererWindow_Class";
 		const auto windowName = L"DirectX 9 Window";
 
 		m_window->SetUpAndRegesterWindow(hInstance, windowClassName);
@@ -39,13 +39,15 @@ namespace d3dgfx
 	}
 	void EngineCore::InitRenderer()
 	{
-		auto& renderer = D3D9Renderer::GetInstance();
-		renderer.Init(m_window->GetHandleToWindow());
+		auto& dx9renderer = D3D9Renderer::GetInstance();
+		dx9renderer.Init(m_window->GetHandleToWindow());
 	}
 	void EngineCore::RenderFrame()
 	{
-		auto& renderer = D3D9Renderer::GetInstance();
-		renderer.RenderFrame();
+		auto& dx9renderer = D3D9Renderer::GetInstance();
+		dx9renderer.PreRender();
+		dx9renderer.RenderFrame();
+		dx9renderer.PostRender();
 	}
 	void EngineCore::PollMessage()
 	{

@@ -4,7 +4,7 @@
 #include <assimp/mesh.h>
 #include <cassert>
 
-namespace d3dgfx
+namespace renderer
 {
 	Model::Model()
 		:m_importer(),

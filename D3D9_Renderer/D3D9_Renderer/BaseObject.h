@@ -1,8 +1,10 @@
 #pragma once
+#include<DirectXMath.h>
+#include <d3d9.h>
 
-namespace d3dgfx
+namespace renderer
 {
-	//Base class for everything in the engine. Handles transformations.
+	//Base class for all objects in the engine.
 	class BaseObject
 	{
 	public:

@@ -13,7 +13,7 @@
    OutputDebugString(os_.str().c_str());  \
 }
 
-namespace d3dgfx
+namespace renderer
 {
     Time::Time()
         :m_tStart(),

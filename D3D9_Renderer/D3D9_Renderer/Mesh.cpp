@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include <cassert>
-namespace d3dgfx
+namespace renderer
 {
 	Mesh::Mesh()
 		:m_numVertices(0),

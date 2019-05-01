@@ -2,7 +2,7 @@
 #include <d3d9.h>
 #include <memory>
 
-namespace d3dgfx
+namespace renderer
 {
 	constexpr int FullBufferLock = 0;
 
@@ -28,11 +28,11 @@ namespace d3dgfx
 
         inline constexpr auto GetBufferDesc() const { return m_bufferDesc.GetBufferDesc(); }
 
-		void AddDataToBuffer(void* data, DWORD lockFlags)
+		void AddDataToBuffer(void* data, DWORD lockFlags, size_t dataSize)
 		{
-            void* vBufferData;
-            Lock(FullBufferLock, FullBufferLock, &vBufferData, lockFlags);
-            memcpy(vBufferData, data, sizeof(data));
+            void* bufferData;
+            Lock(FullBufferLock, FullBufferLock, &bufferData, lockFlags);
+            memcpy(bufferData, data, dataSize);
             Unlock();
 		}
 
@@ -56,7 +56,7 @@ namespace d3dgfx
 			}
 		};
 
-        inline void Lock(UINT offsetToLock, UINT sizeToLock, BYTE** ppbufferData, DWORD flags) 
+        inline void Lock(UINT offsetToLock, UINT sizeToLock, void** ppbufferData, DWORD flags) 
         {
             m_buffer->Lock(offsetToLock, sizeToLock, ppbufferData, flags);
         }

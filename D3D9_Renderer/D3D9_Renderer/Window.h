@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-namespace d3dgfx
+namespace renderer
 {
 	class Window
 	{

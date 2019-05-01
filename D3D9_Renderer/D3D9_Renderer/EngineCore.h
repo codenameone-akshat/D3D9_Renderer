@@ -2,7 +2,7 @@
 #include <memory>
 #include "Window.h"
 
-namespace d3dgfx
+namespace renderer
 {
     class Time;
 

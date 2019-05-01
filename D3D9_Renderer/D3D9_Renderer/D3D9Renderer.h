@@ -10,11 +10,13 @@
 #include "StaticBuffer.hpp"
 #include "Model.h"
 #include "VertexDefs.h"
+#include "Camera.h"
 
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
+constexpr auto FVF = D3DFVF_XYZ;
 
-namespace d3dgfx
+namespace renderer
 {
 	//>Singleton Class
 	class D3D9Renderer :
@@ -61,6 +63,12 @@ namespace d3dgfx
 	private:
 		void SetupDeviceConfiguration();
         void SetupVertexDeclaration();
+		void BuildMatrices();
+		void UpdateMatrices();
+
+		int m_vBufferVertexCount;
+		int m_iBufferIndexCount;
+		int m_primitiveCount;
 
 		IDirect3D9* m_d3d9;
 
@@ -68,10 +76,15 @@ namespace d3dgfx
 		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;
 
         VertexDeclContainer m_vertexDeclarations;
-		//declare vertex stream
+		Camera m_camera;
+
+		DirectX::XMMATRIX m_viewMat;
+		DirectX::XMMATRIX m_projMat;
+		DirectX::XMMATRIX m_worldMat;
 
 		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager maybe? 
-		std::shared_ptr<D3D9Device> m_device;
+		
+		std::unique_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
 	};
 }

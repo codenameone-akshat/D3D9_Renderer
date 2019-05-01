@@ -1,5 +1,5 @@
 #include "GfxRendererBase.h"
-namespace d3dgfx
+namespace renderer
 {
 	GfxRendererBase::GfxRendererBase()
 	{
