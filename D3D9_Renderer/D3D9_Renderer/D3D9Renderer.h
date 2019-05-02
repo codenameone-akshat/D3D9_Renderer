@@ -14,7 +14,7 @@
 
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
-constexpr auto FVF = D3DFVF_XYZ;
+constexpr auto FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
 
 namespace renderer
 {

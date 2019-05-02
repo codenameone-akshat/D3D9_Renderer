@@ -25,7 +25,7 @@ namespace renderer
 
 	void Model::LoadModelAndParseData(std::string filepath)
 	{
-		const auto flags = aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent | aiProcess_FlipUVs;
+		const auto flags = aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent;
 
 		m_scene = m_importer.ReadFile(filepath, flags);
 		assert(m_scene != nullptr);
@@ -46,35 +46,35 @@ namespace renderer
 		{
 			std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 			
-			totalVertices += m_scene->mMeshes[itr]->mNumVertices;
-			totalIndices += m_scene->mMeshes[itr]->mNumFaces * 3;
-            m_numTris += m_scene->mMeshes[itr]->mNumFaces;
+			totalVertices += meshes[itr]->mNumVertices;
+			totalIndices += meshes[itr]->mNumFaces * 3;
+            m_numTris += meshes[itr]->mNumFaces;
 
-			mesh->SetNumVertices(m_scene->mMeshes[itr]->mNumVertices);
-			mesh->SetNumNormals(m_scene->mMeshes[itr]->mNumVertices); //number of normals = number of vertices
-			mesh->SetNumIndices(m_scene->mMeshes[itr]->mNumFaces * 3);
-			const auto numVert = m_scene->mMeshes[itr]->mNumVertices;
+			mesh->SetNumVertices(meshes[itr]->mNumVertices);
+			mesh->SetNumNormals(meshes[itr]->mNumVertices); //number of normals = number of vertices
+			mesh->SetNumIndices(meshes[itr]->mNumFaces * 3);
+			const auto numVert = meshes[itr]->mNumVertices;
 
 			[[maybe_unused]] unsigned int iter = 0;
 			for (iter = 0; iter < numVert; ++iter)
 			{
-				float x = m_scene->mMeshes[itr]->mVertices[iter].x;
-				float y = m_scene->mMeshes[itr]->mVertices[iter].y;
-				float z = m_scene->mMeshes[itr]->mVertices[iter].z;
+				float x = meshes[itr]->mVertices[iter].x;
+				float y = meshes[itr]->mVertices[iter].y;
+				float z = meshes[itr]->mVertices[iter].z;
 				mesh->AppendVertices(x, y, z);
 
-				x = m_scene->mMeshes[itr]->mNormals[iter].x;
-				y = m_scene->mMeshes[itr]->mNormals[iter].y;
-				z = m_scene->mMeshes[itr]->mNormals[iter].z;
+				x = meshes[itr]->mNormals[iter].x;
+				y = meshes[itr]->mNormals[iter].y;
+				z = meshes[itr]->mNormals[iter].z;
 				mesh->AppendNormals(x, y, z);
 			}
 
-			const auto numFaces = m_scene->mMeshes[itr]->mNumFaces;
+			const auto numFaces = meshes[itr]->mNumFaces;
 			for (iter = 0; iter < numFaces; ++iter)
 			{
-				const int vertexA = m_scene->mMeshes[itr]->mFaces[iter].mIndices[0];
-				const int vertexB = m_scene->mMeshes[itr]->mFaces[iter].mIndices[1];
-				const int vertexC = m_scene->mMeshes[itr]->mFaces[iter].mIndices[2];
+				const int vertexA = meshes[itr]->mFaces[iter].mIndices[0];
+				const int vertexB = meshes[itr]->mFaces[iter].mIndices[1];
+				const int vertexC = meshes[itr]->mFaces[iter].mIndices[2];
 
 				mesh->AppendIndices(vertexA, vertexB, vertexC);
 			}

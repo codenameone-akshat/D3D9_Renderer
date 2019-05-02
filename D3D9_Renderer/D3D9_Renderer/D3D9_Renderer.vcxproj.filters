@@ -97,4 +97,7 @@
       <Filter>Renderer\D3D9</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

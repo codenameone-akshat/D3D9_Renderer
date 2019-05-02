@@ -13,15 +13,20 @@ namespace renderer
     struct PositionVertex
     {
         PositionVertex()
-            :_position({ 0.0f, 0.0f, 0.0f, 0.0f })
+			:m_position({ 0.0f, 0.0f, 0.0f, 0.0f }),
+			m_normal({ 0.0f, 0.0f, 0.0f, 0.0f })
         {}
-        PositionVertex(float x, float y, float z)
-            :_position({ x, y, z , 0.0f})
+        PositionVertex(float vx, float vy, float vz, float nx, float ny, float nz)
+            :m_position({ vx, vy, vz , 0.0f}),
+			m_normal({nx, ny, nz})
         {}
-        PositionVertex(const DirectX::XMVECTOR& position)
-            :_position(position)
-        {}
+        PositionVertex(const DirectX::XMVECTOR& position, const DirectX::XMVECTOR& normal)
+        {
+			m_position = position;
+			m_normal = normal;
+		}
 
-        DirectX::XMVECTOR _position;
+		DirectX::XMVECTOR m_position;
+		DirectX::XMVECTOR m_normal;
     };
 }

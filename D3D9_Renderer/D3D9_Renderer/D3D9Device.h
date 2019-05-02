@@ -77,17 +77,20 @@ namespace renderer
 
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		void SetLight()
+		void SetRenderStates()
 		{
 			m_d3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-			m_d3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(50, 50, 50));
-            m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+			m_d3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(80, 80, 80));
+			m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+			m_d3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+			m_d3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
+			
 			D3DLIGHT9 light;
 			D3DMATERIAL9 mat;
 
 			ZeroMemory(&light, sizeof(light));
 			light.Type = D3DLIGHT_DIRECTIONAL;
-			light.Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+			light.Diffuse = { 1.0f, 0.0f, 0.0f, 1.0f };
 			light.Direction = { -1.0f, -0.3f, 1.0f };
 			m_d3dDevice->SetLight(0, &light);
 			m_d3dDevice->LightEnable(0, TRUE);

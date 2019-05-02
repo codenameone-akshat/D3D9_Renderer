@@ -44,6 +44,6 @@ namespace renderer
         m_systemTimer = 0;
         m_numFrames = 0;
 
-        LogInfo(std::to_string(m_fps).c_str());
+        //LogInfo(std::to_string(m_fps).c_str());
     }
 }

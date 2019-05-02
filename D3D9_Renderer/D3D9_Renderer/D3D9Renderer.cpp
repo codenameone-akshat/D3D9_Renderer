@@ -4,17 +4,6 @@
 #include "ComHelpers.h"
 #include <iostream>
 
-
-#include<string>
-#include <sstream>
-#include <stdlib.h>
-#define LogInfo( s )            \
-{                             \
-   std::wostringstream os_;    \
-   os_ << s << std::endl;                   \
-   OutputDebugString(os_.str().c_str());  \
-}
-
 namespace renderer
 {
 	D3D9Renderer::D3D9Renderer()
@@ -60,7 +49,7 @@ namespace renderer
 	{
 		UpdateMatrices();
 
-		m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
+		m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 		HRESULT result = CheckDeviceStatus();
 		if (result != S_OK)
 			return;
@@ -69,7 +58,7 @@ namespace renderer
 	}
 	void D3D9Renderer::RenderFrame()
 	{
-        m_device->SetLight();
+        m_device->SetRenderStates();
 		m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
 		m_device->SetIndices(m_iBuffer);
 		m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
@@ -117,9 +106,9 @@ namespace renderer
 
 		DWORD quality;
 		//Multi-Sampling sanity check
-		if (CheckMultiSampleSupport(D3DMULTISAMPLE_4_SAMPLES, &quality, true) == S_OK)
+		if (CheckMultiSampleSupport(D3DMULTISAMPLE_8_SAMPLES, &quality, true) == S_OK)
 		{
-			params.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
+			params.MultiSampleType = D3DMULTISAMPLE_8_SAMPLES;
 			params.MultiSampleQuality = 0; //quality 1 not supported
 			params.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		}
@@ -133,7 +122,7 @@ namespace renderer
 		params.hDeviceWindow = m_hWindow;
 		params.Windowed = true;
 		params.EnableAutoDepthStencil = true; //for now let's just renderer take care of this
-		params.AutoDepthStencilFormat = D3DFMT_D16;
+		params.AutoDepthStencilFormat = D3DFMT_D24S8;
 		params.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		params.Flags = NULL;
 		params.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
@@ -150,6 +139,7 @@ namespace renderer
 		D3DVERTEXELEMENT9 positionVertexElements[] =
 		{
 			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
 			D3DDECL_END()
 		};
 
@@ -162,7 +152,7 @@ namespace renderer
 	void D3D9Renderer::BuildMatrices()
 	{
 		//>View Matrix
-		DirectX::XMVECTOR eye(DirectX::XMVectorSet(0.0f, 100.0f, -300.0f, 1.0f));
+		DirectX::XMVECTOR eye(DirectX::XMVectorSet(0.0f, 5.0f, -10.0f, 1.0f));
 		DirectX::XMVECTOR lookAt(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 		DirectX::XMVECTOR up(DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
 		
@@ -185,6 +175,15 @@ namespace renderer
 	{
 		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
+
+		static FLOAT rad = 0.0f;
+		DirectX::XMMATRIX matRotateY;
+		matRotateY = DirectX::XMMatrixIdentity();
+		matRotateY= DirectX::XMMatrixRotationY(rad);
+		rad += 0.02f; //increment rotating triangle
+
+		m_device->SetTransform(D3DTS_WORLD, (matRotateY));
+
 		//update camera if input
 	}
 	void D3D9Renderer::OnDeviceLost()
@@ -240,7 +239,7 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "E:/Personal Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/data/Cube.FBX"; //get files to load from somewhere else
+		std::string filename = "Z:/Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/data/cube2.FBX"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filename);
@@ -253,11 +252,8 @@ namespace renderer
 		int iBufferIndexCount = 0;
 		int primitiveCount = 0;
 		
-		float* vertices = static_cast<float*>(calloc(0, sizeof(float)));
-		int* indices = static_cast<int*>(calloc(0, sizeof(int)));
-		
-		size_t vOffset = 0;
-		size_t iOffset = 0;
+		std::vector<PositionVertex> positionVertices;
+		std::vector<int> positionIndices;
 		
 		for (auto& model : m_modelList)
 		{
@@ -270,85 +266,29 @@ namespace renderer
 			for (auto& mesh : meshList)
 			{
 				auto meshVertices = mesh->GetVertices();
-				vertices = static_cast<float*>(realloc(vertices, sizeof(float) * mesh->GetNumVertices()));
-				memcpy(vertices + vOffset, meshVertices.data(), (sizeof(float) * mesh->GetNumVertices()));
-				vOffset += sizeof(meshVertices);
-				
+				auto meshNormals = mesh->GetNormals();
+				for (auto vitr = meshVertices.begin(), nitr = meshNormals.begin(); vitr != meshVertices.end() && nitr != meshNormals.end(); vitr+=3, nitr += 3)
+				{
+					positionVertices.push_back({ *vitr, *(vitr + 1), *(vitr + 2), *nitr, *(nitr + 1), *(nitr + 2) });
+				}
+
 				auto meshIndices = mesh->GetIndices();
-				indices = static_cast<int*>(realloc(indices, sizeof(int) * mesh->GetNumIndices()));
-				memcpy(indices + iOffset, meshIndices.data(), (sizeof(int) * mesh->GetNumIndices()));
-				iOffset += sizeof(meshIndices);
+				for (auto index : meshIndices)
+					positionIndices.push_back(index);
 			}
 		}  
-		//user vertices
-		LogInfo(std::to_string(sizeof(float)).c_str());
-		LogInfo(std::to_string(sizeof(float*)).c_str());
-		for (int i = 0; i < vBufferVertexCount; ++i)
-		{
-			LogInfo(std::to_string(vertices[i]).c_str());
-		}
 
-		PositionVertex verticestemp[] =
-		{
-			{ -30.0f, -30.0f, 30.0f} ,    // side 1
-			{ 30.0f, -30.0f, 30.0f },
-			{ -30.0f, 30.0f, 30.0f},
-			{ 30.0f, 30.0f, 30.0f },
+		m_vBufferVertexCount = vBufferVertexCount;
+        m_iBufferIndexCount = iBufferIndexCount;
+        m_primitiveCount = primitiveCount;
 
-			{ -30.0f, -30.0f, -30.0f},    // side 2
-			{ -30.0f, 30.0f, -30.0f},
-			{ 30.0f, -30.0f, -30.0f},
-			{ 30.0f, 30.0f, -30.0f },
-
-			{ -30.0f, 30.0f, -30.0f},    // side 3
-			{ -30.0f, 30.0f, 30.0f},
-			{ 30.0f, 30.0f, -30.0f },
-			{ 30.0f, 30.0f, 30.0f},
-
-			{ -30.0f, -30.0f, -30.0f},    // side 4
-			{ 30.0f, -30.0f, -30.0f},
-			{ -30.0f, -30.0f, 30.0f},
-			{ 30.0f, -30.0f, 30.0f},
-
-			{ 30.0f, -30.0f, -30.0f },    // side 5
-			{ 30.0f, 30.0f, -30.0f},
-			{ 30.0f, -30.0f, 30.0f},
-			{ 30.0f, 30.0f, 30.0f},
-
-			{ -30.0f, -30.0f, -30.0f},    // side 6
-			{ -30.0f, -30.0f, 30.0f},
-			{ -30.0f, 30.0f, -30.0f},
-			{ -30.0f, 30.0f, 30.0f},
-		};
-		int indicestemp[] =
-		{
-			0, 1, 2,    // side 1
-			2, 1, 3,
-			4, 5, 6,    // side 2
-			6, 5, 7,
-			8, 9, 10,    // side 3
-			10, 9, 11,
-			12, 13, 14,    // side 4
-			14, 13, 15,
-			16, 17, 18,    // side 5
-			18, 17, 19,
-			20, 21, 22,    // side 6
-			22, 21, 23,
-		};
-        m_vBufferVertexCount = 24;
-        m_iBufferIndexCount = 36;
-        m_primitiveCount = 12;
-
-        auto result = m_device->CreateVertexBuffer(sizeof(verticestemp), NULL, FVF, D3DPOOL_MANAGED, m_vBuffer, nullptr);
+        auto result = m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, FVF, D3DPOOL_MANAGED, m_vBuffer, nullptr);
         assert(result == S_OK);
 
         result = m_device->CreateIndexBuffer(m_iBufferIndexCount, NULL, D3DFMT_INDEX32, D3DPOOL_DEFAULT, m_iBuffer, nullptr);
         assert(result == S_OK);
 
-		m_vBuffer.AddDataToBuffer(verticestemp, NULL, sizeof(verticestemp));
-		m_iBuffer.AddDataToBuffer(indicestemp, NULL, sizeof(indicestemp));
-
-		free(vertices);
-		free(indices);
+		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex)* vBufferVertexCount);
+		m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(float) * iBufferIndexCount);
 	}
 }
