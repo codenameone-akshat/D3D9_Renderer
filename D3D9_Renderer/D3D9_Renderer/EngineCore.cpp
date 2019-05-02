@@ -40,14 +40,16 @@ namespace renderer
 	void EngineCore::InitRenderer()
 	{
 		auto& dx9renderer = D3D9Renderer::GetInstance();
-		dx9renderer.Init(m_window->GetHandleToWindow());
+		//dx9renderer.Init(m_window->GetHandleToWindow());
+		dx9renderer.HackInit(m_window->GetHandleToWindow());
 	}
 	void EngineCore::RenderFrame()
 	{
 		auto& dx9renderer = D3D9Renderer::GetInstance();
-		dx9renderer.PreRender();
+		dx9renderer.HackRender();
+		/*dx9renderer.PreRender();
 		dx9renderer.RenderFrame();
-		dx9renderer.PostRender();
+		dx9renderer.PostRender();*/
 	}
 	void EngineCore::PollMessage()
 	{
@@ -66,7 +68,7 @@ namespace renderer
 			
 			this->RenderFrame();
             
-			std::this_thread::sleep_for(std::chrono::microseconds(2));
+			//std::this_thread::sleep_for(std::chrono::microseconds(2));
             m_timer->EndTimer();
 		}
 	}

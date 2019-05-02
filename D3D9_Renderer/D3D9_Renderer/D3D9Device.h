@@ -75,6 +75,30 @@ namespace renderer
 			return result;
 		}
 
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		void SetLight()
+		{
+			m_d3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+			m_d3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(50, 50, 50));
+
+			D3DLIGHT9 light;
+			D3DMATERIAL9 mat;
+
+			ZeroMemory(&light, sizeof(light));
+			light.Type = D3DLIGHT_DIRECTIONAL;
+			light.Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+			light.Direction = { -1.0f, -0.3f, 1.0f };
+			m_d3dDevice->SetLight(0, &light);
+			m_d3dDevice->LightEnable(0, TRUE);
+
+			ZeroMemory(&mat, sizeof(mat));
+			mat.Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+			mat.Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+			m_d3dDevice->SetMaterial(&mat);
+		}
+
 	private:
 		IDirect3DDevice9* m_d3dDevice;
 		D3DPRESENT_PARAMETERS m_d3dPresentParams;

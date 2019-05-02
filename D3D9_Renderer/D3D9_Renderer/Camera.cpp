@@ -15,6 +15,9 @@ namespace renderer
 	}
 	void Camera::SetViewMatrix(DirectX::XMVECTOR eye, DirectX::XMVECTOR lookAt, DirectX::XMVECTOR up)
 	{
+		m_eye = eye;
+		m_lookAt = lookAt;
+		m_up = up;
 		m_perspectiveCam = DirectX::XMMatrixLookAtLH(eye, lookAt, up);
 	}
 }
