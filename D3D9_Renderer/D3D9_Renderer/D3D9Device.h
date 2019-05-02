@@ -81,7 +81,7 @@ namespace renderer
 		{
 			m_d3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 			m_d3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(50, 50, 50));
-
+            m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 			D3DLIGHT9 light;
 			D3DMATERIAL9 mat;
 

@@ -14,7 +14,7 @@
 
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
-constexpr auto FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
+constexpr auto FVF = D3DFVF_XYZ;
 
 namespace renderer
 {
@@ -59,16 +59,6 @@ namespace renderer
             static D3D9Renderer instance;
             return instance;
         }
-
-
-		////////////////////////////////////////////////////////////////////////////////////////////////////////
-		void HackInit(HWND hWindow);
-		void HackRender();
-		IDirect3DDevice9* device;
-		LPDIRECT3DVERTEXBUFFER9 vBuffer;
-		LPDIRECT3DINDEXBUFFER9 iBuffer;
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 	private:
 		void SetupDeviceConfiguration();

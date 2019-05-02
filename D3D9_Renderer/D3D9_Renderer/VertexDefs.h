@@ -1,5 +1,6 @@
 #pragma once
 #include <d3d9.h>
+#include <DirectXMath.h>
 
 namespace renderer
 {
@@ -12,15 +13,15 @@ namespace renderer
     struct PositionVertex
     {
         PositionVertex()
-            :_position({ 0.0f, 0.0f, 0.0f })
+            :_position({ 0.0f, 0.0f, 0.0f, 0.0f })
         {}
         PositionVertex(float x, float y, float z)
-            :_position({ x, y, z })
+            :_position({ x, y, z , 0.0f})
         {}
-        PositionVertex(const D3DVECTOR& position)
+        PositionVertex(const DirectX::XMVECTOR& position)
             :_position(position)
         {}
 
-        D3DVECTOR _position;
+        DirectX::XMVECTOR _position;
     };
 }

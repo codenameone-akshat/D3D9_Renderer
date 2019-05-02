@@ -40,16 +40,14 @@ namespace renderer
 	void EngineCore::InitRenderer()
 	{
 		auto& dx9renderer = D3D9Renderer::GetInstance();
-		//dx9renderer.Init(m_window->GetHandleToWindow());
-		dx9renderer.HackInit(m_window->GetHandleToWindow());
+		dx9renderer.Init(m_window->GetHandleToWindow());
 	}
 	void EngineCore::RenderFrame()
 	{
 		auto& dx9renderer = D3D9Renderer::GetInstance();
-		dx9renderer.HackRender();
-		/*dx9renderer.PreRender();
+		dx9renderer.PreRender();
 		dx9renderer.RenderFrame();
-		dx9renderer.PostRender();*/
+		dx9renderer.PostRender();
 	}
 	void EngineCore::PollMessage()
 	{
