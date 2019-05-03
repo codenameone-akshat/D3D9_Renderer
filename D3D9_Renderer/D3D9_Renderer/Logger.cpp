@@ -27,7 +27,7 @@ namespace renderer
 	void Logger::LogError(bool condition, char* outputStr)
 	{
 		::MessageBoxA(m_window, "Error!!! Please check the output window!!!", "Error!", MB_OK);
-		assert(false);
+		assert(condition);
 		std::wostringstream os_;
 		os_ << outputStr << std::endl;
 		OutputDebugString(os_.str().c_str());
