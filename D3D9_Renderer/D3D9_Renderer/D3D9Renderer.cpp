@@ -138,8 +138,8 @@ namespace renderer
 
 		D3DVERTEXELEMENT9 positionVertexElements[] =
 		{
-			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+			{ defaultVal, 16, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
 			D3DDECL_END()
 		};
 
@@ -152,7 +152,7 @@ namespace renderer
 	void D3D9Renderer::BuildMatrices()
 	{
 		//>View Matrix
-		DirectX::XMVECTOR eye(DirectX::XMVectorSet(0.0f, 5.0f, -10.0f, 1.0f));
+		DirectX::XMVECTOR eye(DirectX::XMVectorSet(0.0f, 5.0f, -5.0f, 1.0f));
 		DirectX::XMVECTOR lookAt(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 		DirectX::XMVECTOR up(DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
 		
@@ -178,9 +178,9 @@ namespace renderer
 
 		static FLOAT rad = 0.0f;
 		DirectX::XMMATRIX matRotateY;
-		matRotateY = DirectX::XMMatrixIdentity();
-		matRotateY= DirectX::XMMatrixRotationY(rad);
-		rad += 0.0002f; //increment rotating triangle
+		matRotateY = m_worldMat;
+        matRotateY = DirectX::XMMatrixRotationZ(rad) * DirectX::XMMatrixRotationX(90);
+		rad += 0.02f; //increment rotating triangle
 
 		m_device->SetTransform(D3DTS_WORLD, (matRotateY));
 
@@ -239,7 +239,7 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "data/cube3.fbx"; //get files to load from somewhere else
+		std::string filename = "data/monkey.fbx"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filename);
@@ -254,7 +254,7 @@ namespace renderer
 		
 		std::vector<PositionVertex> positionVertices;
 		std::vector<int> positionIndices;
-		
+
 		for (auto& model : m_modelList)
 		{
 			vBufferVertexCount += model->GetTotalVertices();
@@ -269,7 +269,7 @@ namespace renderer
 				auto meshNormals = mesh->GetNormals();
 				for (auto vitr = meshVertices.begin(), nitr = meshNormals.begin(); vitr != meshVertices.end() && nitr != meshNormals.end(); vitr+=3, nitr += 3)
 				{
-					positionVertices.push_back({ *vitr, *(vitr + 1), *(vitr + 2), *nitr, *(nitr + 1), *(nitr + 2) });
+					positionVertices.push_back({ *vitr, *(vitr + 1), *(vitr + 2), *nitr, *(nitr + 1), *(nitr + 2)});
 				}
 
 				auto meshIndices = mesh->GetIndices();
@@ -285,10 +285,10 @@ namespace renderer
         auto result = m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, FVF, D3DPOOL_MANAGED, m_vBuffer, nullptr);
         assert(result == S_OK);
 
-        result = m_device->CreateIndexBuffer(m_iBufferIndexCount, NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr);
+        result = m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(int), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr);
         assert(result == S_OK);
 
-		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex)* vBufferVertexCount);
-		m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(int) * iBufferIndexCount);
+		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);
+        m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(int) * iBufferIndexCount);
 	}
 }
