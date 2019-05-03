@@ -55,6 +55,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="VertexDefs.h">
       <Filter>Renderer\D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

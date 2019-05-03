@@ -1,6 +1,7 @@
 #include "EngineCore.h"
 #include "D3D9Renderer.h"
 #include "Time.h"
+#include "Logger.h"
 
 #include <chrono>
 #include <thread>
@@ -34,6 +35,9 @@ namespace renderer
 			hInstance,
 			nullptr);
 		m_window->ShowD3DWindow(nShowCmd);
+		
+		auto& logger = Logger::GetInstance();
+		logger.SetupLogger(m_window->GetHandleToWindow());
 
 		InitRenderer();
 	}

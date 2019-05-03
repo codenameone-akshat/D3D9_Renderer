@@ -1,8 +1,8 @@
 #include <cassert>
+#include <iostream>
 
 #include "D3D9Renderer.h"
 #include "ComHelpers.h"
-#include <iostream>
 
 namespace renderer
 {
@@ -139,7 +139,7 @@ namespace renderer
 		D3DVERTEXELEMENT9 positionVertexElements[] =
 		{
 			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-			{ defaultVal, 16, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+			{ defaultVal, sizeof(float) * 3, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
 			D3DDECL_END()
 		};
 
