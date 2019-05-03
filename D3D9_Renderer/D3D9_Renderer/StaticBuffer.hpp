@@ -28,10 +28,10 @@ namespace renderer
 
         inline constexpr auto GetBufferDesc() const { return m_bufferDesc.GetBufferDesc(); }
 
-		void AddDataToBuffer(void* data, DWORD lockFlags, size_t dataSize)
+		void AddDataToBuffer(void* data, DWORD lockFlags, UINT dataSize)
 		{
             void* bufferData;
-            Lock(FullBufferLock, FullBufferLock, &bufferData, lockFlags);
+            Lock(FullBufferLock, dataSize, &bufferData, lockFlags);
             memcpy(bufferData, data, dataSize);
             Unlock();
 		}

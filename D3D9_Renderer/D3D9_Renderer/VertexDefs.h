@@ -18,7 +18,7 @@ namespace renderer
         {}
         PositionVertex(float vx, float vy, float vz, float nx, float ny, float nz)
             :m_position({ vx, vy, vz , 0.0f}),
-			m_normal({nx, ny, nz})
+			m_normal({nx, ny, nz, 0.0f})
         {}
         PositionVertex(const DirectX::XMVECTOR& position, const DirectX::XMVECTOR& normal)
         {

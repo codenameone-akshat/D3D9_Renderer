@@ -25,12 +25,12 @@ namespace renderer
 
 		//>Getters
 		inline int GetNumMeshes() const { return m_numMeshes; }
-        inline int GetNumTris() const { return m_numTris; }
+        inline int GetTotalTriangles() const { return m_numTris; }
         inline int GetTotalVertices() const { return m_totalVertices; }
         inline int GetTotalNormals() const { return m_totalNormals; }
         inline int GetTotalIndices() const { return m_totalIndices; }
 		inline std::vector<std::shared_ptr<Mesh>> GetMeshes() const { return m_meshes; }
-
+        
 	private:
 		void ProcessModel();
 

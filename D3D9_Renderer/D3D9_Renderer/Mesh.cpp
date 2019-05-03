@@ -14,6 +14,9 @@ namespace renderer
 
 	Mesh::~Mesh()
 	{
+        m_vertices.clear();
+        m_normals.clear();
+        m_indices.clear();
 	}
 
 	void Mesh::AppendVertices(float x, float y, float z) noexcept

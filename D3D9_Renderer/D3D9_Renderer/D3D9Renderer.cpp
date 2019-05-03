@@ -180,7 +180,7 @@ namespace renderer
 		DirectX::XMMATRIX matRotateY;
 		matRotateY = DirectX::XMMatrixIdentity();
 		matRotateY= DirectX::XMMatrixRotationY(rad);
-		rad += 0.02f; //increment rotating triangle
+		rad += 0.0002f; //increment rotating triangle
 
 		m_device->SetTransform(D3DTS_WORLD, (matRotateY));
 
@@ -239,7 +239,7 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "Z:/Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/data/cube2.FBX"; //get files to load from somewhere else
+		std::string filename = "data/cube3.fbx"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filename);
@@ -259,11 +259,11 @@ namespace renderer
 		{
 			vBufferVertexCount += model->GetTotalVertices();
 			iBufferIndexCount += model->GetTotalIndices();
-			primitiveCount += model->GetNumTris();
+			primitiveCount += model->GetTotalTriangles();
 
 			auto meshList = model->GetMeshes();
 
-			for (auto& mesh : meshList)
+			for (auto mesh : meshList)
 			{
 				auto meshVertices = mesh->GetVertices();
 				auto meshNormals = mesh->GetNormals();
@@ -285,10 +285,10 @@ namespace renderer
         auto result = m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, FVF, D3DPOOL_MANAGED, m_vBuffer, nullptr);
         assert(result == S_OK);
 
-        result = m_device->CreateIndexBuffer(m_iBufferIndexCount, NULL, D3DFMT_INDEX32, D3DPOOL_DEFAULT, m_iBuffer, nullptr);
+        result = m_device->CreateIndexBuffer(m_iBufferIndexCount, NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr);
         assert(result == S_OK);
 
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex)* vBufferVertexCount);
-		m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(float) * iBufferIndexCount);
+		m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(int) * iBufferIndexCount);
 	}
 }
