@@ -2,6 +2,8 @@
 #include <d3d9.h>
 #include <memory>
 
+#include "ComHelpers.h"
+
 namespace renderer
 {
 	constexpr int FullBufferLock = 0;
@@ -16,11 +18,7 @@ namespace renderer
 		}
 		~StaticBuffer() 
 		{
-			if (m_buffer)
-			{
-				m_buffer->Release();
-				m_buffer = nullptr;
-			}
+			ComSafeRelease(m_buffer);
 		}
         
         T* GetRawPtr() { return m_buffer; }

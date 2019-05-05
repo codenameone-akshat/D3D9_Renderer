@@ -1,5 +1,4 @@
 #pragma once
-
 #include "BaseObject.h"
 namespace renderer
 {
@@ -11,16 +10,16 @@ namespace renderer
 		Camera();
 		~Camera();
 
-		void SetViewMatrix(DirectX::XMVECTOR eye, DirectX::XMVECTOR lookAt, DirectX::XMVECTOR up);
+		void SetViewMatrix(D3DXVECTOR3 eye, D3DXVECTOR3 lookAt, D3DXVECTOR3 up);
 		
-		inline DirectX::XMMATRIX GetViewMatrix() const
+		inline D3DXMATRIX GetViewMatrix() const
 		{
 			return m_perspectiveCam;
 		}
 	private:
-		DirectX::XMVECTOR m_eye;
-		DirectX::XMVECTOR m_lookAt;
-		DirectX::XMVECTOR m_up;
-		DirectX::XMMATRIX m_perspectiveCam;
+		D3DXVECTOR3 m_eye;
+		D3DXVECTOR3 m_lookAt;
+		D3DXVECTOR3 m_up;
+		D3DXMATRIX m_perspectiveCam;
 	};
 }

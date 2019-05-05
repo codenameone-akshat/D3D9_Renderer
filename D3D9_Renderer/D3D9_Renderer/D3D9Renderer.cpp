@@ -3,25 +3,27 @@
 
 #include "D3D9Renderer.h"
 #include "ComHelpers.h"
+#include "Logger.h"
 
 namespace renderer
 {
 	D3D9Renderer::D3D9Renderer()
 		:m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
 		m_device(std::make_unique<D3D9Device>()),
+		m_d3dCaps(),
 		m_modelList(),
 		m_hWindow(),
 		m_vBuffer(),
 		m_iBuffer(),
 		m_vertexDeclarations(),
 		m_camera(),
-		m_viewMat(DirectX::XMMatrixIdentity()),
-		m_projMat(DirectX::XMMatrixIdentity()),
-		m_worldMat(DirectX::XMMatrixIdentity()),
 		m_vBufferVertexCount(0),
 		m_iBufferIndexCount(0),
 		m_primitiveCount(0)
 	{
+		D3DXMatrixIdentity(&m_viewMat);
+		D3DXMatrixIdentity(&m_projMat);
+		D3DXMatrixIdentity(&m_worldMat);
 	}
 	D3D9Renderer::~D3D9Renderer()
 	{
@@ -30,6 +32,9 @@ namespace renderer
 	void D3D9Renderer::Init(HWND hWindow)
 	{
 		memcpy(&m_hWindow, &hWindow, sizeof(HWND));
+		
+		m_d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &m_d3dCaps);
+		
 		SetupDeviceConfiguration();
 		PrepareForRendering();
 	}
@@ -118,7 +123,7 @@ namespace renderer
 			params.MultiSampleQuality = 0;
 			params.SwapEffect = D3DSWAPEFFECT_DISCARD; //just in case we want something else when Multi-Sampling is off.
 		}
-
+		
 		params.hDeviceWindow = m_hWindow;
 		params.Windowed = true;
 		params.EnableAutoDepthStencil = true; //for now let's just renderer take care of this
@@ -152,20 +157,16 @@ namespace renderer
 	void D3D9Renderer::BuildMatrices()
 	{
 		//>View Matrix
-		DirectX::XMVECTOR eye(DirectX::XMVectorSet(0.0f, 5.0f, -5.0f, 1.0f));
-		DirectX::XMVECTOR lookAt(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
-		DirectX::XMVECTOR up(DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
+		D3DXVECTOR3 eye(0.0f, 3.0f, -5.0f);
+		D3DXVECTOR3 lookAt(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 		
 		m_camera.SetViewMatrix(eye, lookAt, up);
 		m_viewMat = m_camera.GetViewMatrix();
-
+		auto aspectRatio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
 		//>Projection Matrices
-		m_projMat = DirectX::XMMatrixPerspectiveFovLH(
-			DirectX::XMConvertToRadians(45),
-			static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT),
-			1.0f, 1000.0f);
-
-		m_worldMat = DirectX::XMMatrixIdentity();
+		D3DXMatrixPerspectiveFovLH(&m_projMat, D3DXToRadian(45), aspectRatio, 1.0f, 1000.0f);
+		D3DXMatrixIdentity(&m_worldMat);
 
 		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
@@ -177,12 +178,12 @@ namespace renderer
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
 
 		static FLOAT rad = 0.0f;
-		DirectX::XMMATRIX matRotateY;
+		D3DXMATRIX matRotateY;
 		matRotateY = m_worldMat;
-        matRotateY = DirectX::XMMatrixRotationZ(rad) * DirectX::XMMatrixRotationX(90);
-		rad += 0.02f; //increment rotating triangle
+		D3DXMatrixRotationYawPitchRoll(&matRotateY, D3DXToRadian(rad), D3DXToRadian(90.0f), 0.0f);
+		rad += 1.0f; //increment rotating triangle
 
-		m_device->SetTransform(D3DTS_WORLD, (matRotateY));
+		m_device->SetTransform(D3DTS_WORLD, matRotateY);
 
 		//update camera if input
 	}
@@ -211,11 +212,8 @@ namespace renderer
 		assert(HALResult == S_OK);
 
 		//Checking for HW Vertex Processing
-		D3DCAPS9 d3dCaps;
-		m_d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &d3dCaps);
-
 		DWORD flags = 0;
-		if (d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
+		if (m_d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 		{
 			flags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 		}
@@ -226,9 +224,17 @@ namespace renderer
 		HRESULT result = m_d3d9->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_D24S8, isWindowed, type, quality);
 		return result;
 	}
+	bool D3D9Renderer::CheckShaderVersionSupport(short version) const
+	{
+		if (m_d3dCaps.VertexShaderVersion < D3DVS_VERSION(version, 0) || m_d3dCaps.PixelShaderVersion < D3DPS_VERSION(version, 0))
+			return false;
+		
+		return true;
+	}
 	HRESULT D3D9Renderer::CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp)
 	{
 		assert(m_hWindow != nullptr);
+	
 		HRESULT result = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT,
 			D3DDEVTYPE_HAL,
 			m_hWindow,

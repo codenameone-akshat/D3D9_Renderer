@@ -1,6 +1,5 @@
 #include <cstdlib>
 #include <crtdbg.h>
-
 #include "EngineCore.h"
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
@@ -12,7 +11,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	engineCore->InitEngineCreateWindow(hInstance, nShowCmd);
 	engineCore->PollMessage();
-
+	
 	_CrtDumpMemoryLeaks();
+	
 	return 0;
 }

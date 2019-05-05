@@ -1,6 +1,6 @@
 #pragma once
-#include<DirectXMath.h>
 #include <d3d9.h>
+#include <d3dx9.h>
 
 namespace renderer
 {

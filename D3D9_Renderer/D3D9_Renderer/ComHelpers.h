@@ -3,8 +3,10 @@ namespace renderer
 {
     constexpr void ComSafeRelease(IUnknown* comPtr)
     {
-        if (comPtr)
-            comPtr->Release();
-        comPtr = nullptr;
+		if (comPtr)
+		{
+			comPtr->Release();
+			comPtr = nullptr;
+		}
     }
 }

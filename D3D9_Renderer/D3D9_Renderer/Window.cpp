@@ -12,6 +12,8 @@ namespace renderer
 
 	Window::~Window()
 	{
+		::DestroyWindow(m_hWindow);
+		::UnregisterClass(m_windowClass.lpszClassName, m_windowClass.hInstance);
 	}
 
 	void Window::CreateD3DWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)

@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d9.h>
-#include <DirectXMath.h>
+#include <d3dx9.h>
 #include <memory>
 
 #include "ComHelpers.h"
@@ -25,7 +25,6 @@ namespace renderer
 
 		inline void ResetDevice() { m_d3dDevice->Reset(&m_d3dPresentParams); }
 		inline void Clear(const DWORD count, const D3DRECT* pRects, const DWORD flags, const D3DCOLOR color, const float z, const DWORD stencil) const { m_d3dDevice->Clear(count, pRects, flags, color, z, stencil); }
-        inline void Release() { ComSafeRelease(m_d3dDevice); }
 		inline void BeginScene() const { m_d3dDevice->BeginScene(); }
 		inline void EndScene() const { m_d3dDevice->EndScene(); }
 		inline void Present(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion) const { m_d3dDevice->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion); }
@@ -66,12 +65,9 @@ namespace renderer
             auto result = m_d3dDevice->DrawIndexedPrimitive(primitiveType, baseVertexIndex, minIndex, numVertices, startIndex, primitiveCount);
             return result;
         }
-		inline HRESULT SetTransform(D3DTRANSFORMSTATETYPE transStateType, DirectX::XMMATRIX transMatrix)
+		inline HRESULT SetTransform(D3DTRANSFORMSTATETYPE transStateType, D3DXMATRIX transMatrix)
 		{
-			DirectX::XMFLOAT4X4 dxcast_matrix;
-			DirectX::XMStoreFloat4x4(&dxcast_matrix, transMatrix);
-
-			auto result = m_d3dDevice->SetTransform(transStateType, reinterpret_cast<D3DMATRIX*>(&dxcast_matrix));
+			auto result = m_d3dDevice->SetTransform(transStateType, &transMatrix);
 			return result;
 		}
 
@@ -80,7 +76,7 @@ namespace renderer
 		void SetRenderStates()
 		{
 			m_d3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-			m_d3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(80, 80, 80));
+			m_d3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(60, 40, 160));
 			m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 			m_d3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 			m_d3dDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
@@ -90,12 +86,12 @@ namespace renderer
 
 			ZeroMemory(&light, sizeof(light));
 			light.Type = D3DLIGHT_DIRECTIONAL;
-			light.Diffuse = { 1.0f, 0.0f, 0.0f, 1.0f };
+			light.Diffuse = { 0.2f, 0.4f, 0.8f, 1.0f };
 			light.Direction = { -1.0f, -0.3f, 1.0f };
 			m_d3dDevice->SetLight(0, &light);
 			m_d3dDevice->LightEnable(0, TRUE);
 
-			ZeroMemory(&mat, sizeof(mat));
+			ZeroMemory(&mat, sizeof(mat));  
 			mat.Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 			mat.Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
 

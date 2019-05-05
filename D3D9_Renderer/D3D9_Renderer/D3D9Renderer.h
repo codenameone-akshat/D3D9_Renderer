@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#pragma comment (lib, "d3dx9")
 #pragma comment (lib, "d3d9.lib")
 
 #include "GfxRendererBase.h"
@@ -12,6 +13,7 @@
 #include "VertexDefs.h"
 #include "Camera.h"
 
+constexpr short SHADER_VERSION = 3;
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
 constexpr auto FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
@@ -49,6 +51,7 @@ namespace renderer
         [[nodiscard]] HRESULT CheckDeviceStatus() override;
         [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags() const;
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
+		[[nodiscard]] bool CheckShaderVersionSupport(short version) const;
 		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
         void ParseModels();
@@ -70,6 +73,7 @@ namespace renderer
 		int m_iBufferIndexCount;
 		int m_primitiveCount;
 
+		D3DCAPS9 m_d3dCaps;
 		IDirect3D9* m_d3d9;
 
 		StaticBuffer<IDirect3DVertexBuffer9> m_vBuffer;
@@ -78,9 +82,9 @@ namespace renderer
         VertexDeclContainer m_vertexDeclarations;
 		Camera m_camera;
 
-		DirectX::XMMATRIX m_viewMat;
-		DirectX::XMMATRIX m_projMat;
-		DirectX::XMMATRIX m_worldMat;
+		D3DXMATRIX m_viewMat;
+		D3DXMATRIX m_projMat;
+		D3DXMATRIX m_worldMat;
 
 		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager maybe? 
 		

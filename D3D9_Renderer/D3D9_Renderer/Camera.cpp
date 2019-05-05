@@ -3,21 +3,21 @@
 namespace renderer
 {
 	Camera::Camera()
-		:m_eye(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)),
-		m_lookAt(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)),
-		m_up(DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)),
-		m_perspectiveCam(DirectX::XMMatrixIdentity())
+		:m_eye(0.0f, 0.0f, 0.0f),
+		m_lookAt(0.0f, 0.0f, 0.0f),
+		m_up(0.0f, 0.0f, 0.0f)
 	{
+		D3DXMatrixIdentity(&m_perspectiveCam);
 	}
 
 	Camera::~Camera()
 	{
 	}
-	void Camera::SetViewMatrix(DirectX::XMVECTOR eye, DirectX::XMVECTOR lookAt, DirectX::XMVECTOR up)
+	void Camera::SetViewMatrix(D3DXVECTOR3 eye, D3DXVECTOR3 lookAt, D3DXVECTOR3 up)
 	{
 		m_eye = eye;
 		m_lookAt = lookAt;
 		m_up = up;
-		m_perspectiveCam = DirectX::XMMatrixLookAtLH(eye, lookAt, up);
+		D3DXMatrixLookAtLH(&m_perspectiveCam, &eye, &lookAt, &up);
 	}
 }

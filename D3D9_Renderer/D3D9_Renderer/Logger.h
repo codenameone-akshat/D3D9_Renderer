@@ -6,15 +6,10 @@ namespace renderer
 {
 	class Logger
 	{
-		Logger()
-			:m_window(nullptr)
-		{
-		}
+		Logger();
 	public:
-		~Logger()
-		{
-			m_window = nullptr;
-		}
+		~Logger();
+		
 		inline static Logger& GetInstance()
 		{
 			static Logger instance;
@@ -22,9 +17,9 @@ namespace renderer
 		}
 
 		void SetupLogger(HWND window);
-		void LogInfo(char* outputStr);
-		void LogWarning(bool condition, char* outputStr);
-		void LogError(bool condition, char* outputStr);
+		void LogInfo(const char* outputStr);
+		void LogWarning(bool condition, const char* outputStr);
+		void LogError(bool condition, const char* outputStr);
 
 	private:
 		HWND m_window;
