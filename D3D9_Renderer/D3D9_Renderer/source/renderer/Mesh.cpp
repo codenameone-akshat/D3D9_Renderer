@@ -1,5 +1,7 @@
-#include "Mesh.h"
 #include <cassert>
+
+#include "Mesh.h"
+
 namespace renderer
 {
 	Mesh::Mesh()

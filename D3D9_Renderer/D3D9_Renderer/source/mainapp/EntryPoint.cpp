@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <crtdbg.h>
-#include "EngineCore.h"
+
+#include "../enginecore/EngineCore.h"
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {

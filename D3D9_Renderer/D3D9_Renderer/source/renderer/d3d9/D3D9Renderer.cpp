@@ -2,8 +2,8 @@
 #include <iostream>
 
 #include "D3D9Renderer.h"
-#include "ComHelpers.h"
-#include "Logger.h"
+#include "../../utils/ComHelpers.h"
+#include "../../utils/Logger.h"
 
 namespace renderer
 {

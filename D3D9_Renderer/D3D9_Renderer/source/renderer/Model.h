@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-#include "BaseObject.h"
+#include "../enginecore/BaseObject.h"
 #include "Mesh.h"
 
 namespace renderer

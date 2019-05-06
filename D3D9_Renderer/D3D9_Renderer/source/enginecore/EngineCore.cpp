@@ -1,11 +1,10 @@
-#include "EngineCore.h"
-#include "D3D9Renderer.h"
-#include "Time.h"
-#include "Logger.h"
-
 #include <chrono>
 #include <thread>
 
+#include "EngineCore.h"
+#include "../renderer/d3d9/D3D9Renderer.h"
+#include "../utils/Time.h"
+#include "../utils/Logger.h"
 namespace renderer
 {
 	EngineCore::EngineCore()

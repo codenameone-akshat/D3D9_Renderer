@@ -1,9 +1,10 @@
 #pragma once
+
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <memory>
 
-#include "ComHelpers.h"
+#include "../../utils/ComHelpers.h"
 #include "StaticBuffer.hpp"
 
 namespace renderer

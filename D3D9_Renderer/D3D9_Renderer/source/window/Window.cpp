@@ -1,6 +1,7 @@
-#include "Window.h"
 #include <cassert>
 #include <stdio.h>
+
+#include "Window.h"
 
 namespace renderer
 {

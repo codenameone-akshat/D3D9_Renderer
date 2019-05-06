@@ -1,17 +1,18 @@
 #pragma once
-#include <d3d9.h>
-#include <memory>
-#include <vector>
 
 #pragma comment (lib, "d3dx9")
 #pragma comment (lib, "d3d9.lib")
 
-#include "GfxRendererBase.h"
+#include <d3d9.h>
+#include <memory>
+#include <vector>
+
+#include "../GfxRendererBase.h"
 #include "D3D9Device.h"
 #include "StaticBuffer.hpp"
-#include "Model.h"
+#include "../Model.h"
 #include "VertexDefs.h"
-#include "Camera.h"
+#include "../Camera.h"
 
 constexpr short SHADER_VERSION = 3;
 constexpr auto SCREEN_HEIGHT = 720;

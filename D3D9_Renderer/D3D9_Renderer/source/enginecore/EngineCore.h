@@ -1,6 +1,8 @@
 #pragma once
+
 #include <memory>
-#include "Window.h"
+
+#include "../window/Window.h"
 
 namespace renderer
 {

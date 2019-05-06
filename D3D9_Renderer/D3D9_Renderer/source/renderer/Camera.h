@@ -1,5 +1,7 @@
 #pragma once
-#include "BaseObject.h"
+
+#include "../enginecore/BaseObject.h"
+
 namespace renderer
 {
 	class Camera

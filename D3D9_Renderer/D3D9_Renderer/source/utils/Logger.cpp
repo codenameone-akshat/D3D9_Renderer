@@ -1,9 +1,9 @@
-#include "Logger.h"
-
 #include <cassert>
 #include <windows.h>
 #include <string>
 #include <sstream>
+
+#include "Logger.h"
 
 namespace renderer
 {

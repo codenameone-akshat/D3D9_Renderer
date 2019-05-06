@@ -1,9 +1,9 @@
-#include "Time.h"
-#include "Logger.h"
-
 #include <sstream>
 #include <cmath>
 #include <windows.h>
+
+#include "Time.h"
+#include "Logger.h"
 
 namespace renderer
 {

@@ -1,8 +1,9 @@
 #pragma once
+
 #include <assimp/scene.h>
 #include <vector>
 
-#include "BaseObject.h"
+#include "../enginecore/BaseObject.h"
 
 namespace renderer
 {

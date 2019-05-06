@@ -1,8 +1,8 @@
-#include "Model.h"
-
 #include <assimp/postprocess.h>
 #include <assimp/mesh.h>
 #include <cassert>
+
+#include "Model.h"
 
 namespace renderer
 {

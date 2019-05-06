@@ -133,34 +133,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BaseObject.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="ComHelpers.h" />
-    <ClInclude Include="D3D9Device.h" />
-    <ClInclude Include="D3D9Renderer.h" />
-    <ClInclude Include="EngineCore.h" />
-    <ClInclude Include="GfxRendererBase.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="StaticBuffer.hpp" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="VertexDefs.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="source\enginecore\BaseObject.h" />
+    <ClInclude Include="source\enginecore\EngineCore.h" />
+    <ClInclude Include="source\renderer\Camera.h" />
+    <ClInclude Include="source\renderer\d3d9\D3D9Device.h" />
+    <ClInclude Include="source\renderer\d3d9\D3D9Renderer.h" />
+    <ClInclude Include="source\renderer\d3d9\StaticBuffer.hpp" />
+    <ClInclude Include="source\renderer\d3d9\VertexDefs.h" />
+    <ClInclude Include="source\renderer\GfxRendererBase.h" />
+    <ClInclude Include="source\renderer\Mesh.h" />
+    <ClInclude Include="source\renderer\Model.h" />
+    <ClInclude Include="source\utils\ComHelpers.h" />
+    <ClInclude Include="source\utils\Logger.h" />
+    <ClInclude Include="source\utils\Time.h" />
+    <ClInclude Include="source\window\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseObject.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="D3D9Device.cpp" />
-    <ClCompile Include="D3D9Renderer.cpp" />
-    <ClCompile Include="EngineCore.cpp" />
-    <ClCompile Include="EntryPoint.cpp" />
-    <ClCompile Include="GfxRendererBase.cpp" />
-    <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="source\enginecore\BaseObject.cpp" />
+    <ClCompile Include="source\enginecore\EngineCore.cpp" />
+    <ClCompile Include="source\mainapp\EntryPoint.cpp" />
+    <ClCompile Include="source\renderer\Camera.cpp" />
+    <ClCompile Include="source\renderer\d3d9\D3D9Device.cpp" />
+    <ClCompile Include="source\renderer\d3d9\D3D9Renderer.cpp" />
+    <ClCompile Include="source\renderer\GfxRendererBase.cpp" />
+    <ClCompile Include="source\renderer\Mesh.cpp" />
+    <ClCompile Include="source\renderer\Model.cpp" />
+    <ClCompile Include="source\utils\Logger.cpp" />
+    <ClCompile Include="source\utils\Time.cpp" />
+    <ClCompile Include="source\window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

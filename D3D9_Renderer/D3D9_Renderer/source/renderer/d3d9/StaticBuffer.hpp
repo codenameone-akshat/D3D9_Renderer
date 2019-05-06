@@ -1,8 +1,9 @@
 #pragma once
+
 #include <d3d9.h>
 #include <memory>
 
-#include "ComHelpers.h"
+#include "../../utils/ComHelpers.h"
 
 namespace renderer
 {

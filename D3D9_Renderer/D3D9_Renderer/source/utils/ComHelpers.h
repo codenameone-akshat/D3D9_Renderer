@@ -1,5 +1,6 @@
 #pragma once
-namespace renderer 
+
+namespace renderer
 {
     constexpr void ComSafeRelease(IUnknown* comPtr)
     {
