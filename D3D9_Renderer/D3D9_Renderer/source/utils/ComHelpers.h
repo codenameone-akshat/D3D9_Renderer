@@ -1,4 +1,5 @@
 #pragma once
+#include <DxErr.h>
 
 namespace renderer
 {
@@ -10,4 +11,12 @@ namespace renderer
 			comPtr = nullptr;
 		}
     }
+
+	constexpr void ComResult(HRESULT result)
+	{
+		if (result != S_OK)
+		{
+			DXTrace(__FILE__, __LINE__, result, L"Error", TRUE);
+		}
+	}
 }

@@ -2,6 +2,7 @@
 
 #pragma comment (lib, "d3dx9")
 #pragma comment (lib, "d3d9.lib")
+#pragma comment (lib, "dxerr.lib")
 
 #include <d3d9.h>
 #include <memory>
@@ -17,7 +18,6 @@
 constexpr short SHADER_VERSION = 3;
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
-constexpr auto FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
 
 namespace renderer
 {
@@ -57,7 +57,8 @@ namespace renderer
         
         void ParseModels();
         void SetupStaticBuffers();
-        
+		void SetupEffect(std::string fileName);
+
         inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
             static D3D9Renderer instance;
@@ -76,7 +77,8 @@ namespace renderer
 
 		D3DCAPS9 m_d3dCaps;
 		IDirect3D9* m_d3d9;
-
+		ID3DXEffect* m_effect;
+		
 		StaticBuffer<IDirect3DVertexBuffer9> m_vBuffer;
 		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;
 

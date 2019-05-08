@@ -10,6 +10,7 @@ namespace renderer
 	D3D9Renderer::D3D9Renderer()
 		:m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
 		m_device(std::make_unique<D3D9Device>()),
+		m_effect(nullptr),
 		m_d3dCaps(),
 		m_modelList(),
 		m_hWindow(),
@@ -28,11 +29,11 @@ namespace renderer
 	D3D9Renderer::~D3D9Renderer()
 	{
 		ComSafeRelease(m_d3d9);
+		ComSafeRelease(m_effect);
 	}
 	void D3D9Renderer::Init(HWND hWindow)
 	{
 		memcpy(&m_hWindow, &hWindow, sizeof(HWND));
-		
 		m_d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &m_d3dCaps);
 		
 		SetupDeviceConfiguration();
@@ -40,7 +41,6 @@ namespace renderer
 	}
 	void D3D9Renderer::UnInit()
 	{
-		ComSafeRelease(m_d3d9);
 		ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
 	}
 	void D3D9Renderer::PrepareForRendering()
@@ -49,6 +49,7 @@ namespace renderer
 		ParseModels();
 		SetupVertexDeclaration();
 		SetupStaticBuffers();
+		SetupEffect("Z:/Projects/D3D9_Renderer/D3D9_Renderer/D3D9_Renderer/source/renderer/d3d9/shaders/testFX.fx");
 	}
 	void D3D9Renderer::PreRender()
 	{
@@ -59,14 +60,27 @@ namespace renderer
 		if (result != S_OK)
 			return;
 		m_device->BeginScene();
-		m_device->SetFVF(FVF);
 	}
 	void D3D9Renderer::RenderFrame()
 	{
-        m_device->SetRenderStates();
 		m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
 		m_device->SetIndices(m_iBuffer);
-		m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
+		
+		auto worldViewProjectionMat = m_worldMat * m_viewMat * m_projMat;
+		
+		UINT numPasses(0);
+		ComResult(m_effect->SetTechnique("TestTech"));
+		ComResult(m_effect->Begin(&numPasses, NULL));
+		for (UINT passItr = 0; passItr < numPasses; ++passItr)
+		{
+			m_effect->BeginPass(passItr);
+			m_effect->SetFloat("g_randVal", ((float)rand() / (RAND_MAX)));
+			m_effect->SetMatrix("g_worldViewProjMatrix", &worldViewProjectionMat);
+			m_effect->CommitChanges();
+			m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
+			m_effect->EndPass();
+		}
+		m_effect->End();
 	}
 	void D3D9Renderer::PostRender()
 	{
@@ -134,8 +148,7 @@ namespace renderer
 
 		m_device->SetDeviceCharateristics(params);
 
-		auto result = CreateD3DDevice(&params);
-		assert(result == S_OK);
+		ComResult(CreateD3DDevice(&params));
 	}
 	void D3D9Renderer::SetupVertexDeclaration()
 	{
@@ -148,8 +161,7 @@ namespace renderer
 			D3DDECL_END()
 		};
 
-		auto result = m_device->CreateVertexDeclaration(positionVertexElements, &m_vertexDeclarations.positionVertexDecl);
-		assert(result == S_OK);
+		ComResult(m_device->CreateVertexDeclaration(positionVertexElements, &m_vertexDeclarations.positionVertexDecl));
 		assert(m_vertexDeclarations.positionVertexDecl);
 
 		m_device->SetVertexDeclaration(m_vertexDeclarations.positionVertexDecl);
@@ -184,7 +196,7 @@ namespace renderer
 		rad += 1.0f; //increment rotating triangle
 
 		m_device->SetTransform(D3DTS_WORLD, matRotateY);
-
+		m_worldMat = matRotateY;
 		//update camera if input
 	}
 	void D3D9Renderer::OnDeviceLost()
@@ -201,16 +213,12 @@ namespace renderer
 		D3DDISPLAYMODE displayMode;
 		m_d3d9->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
 
-		HRESULT HALResult = E_NOTIMPL;
-
 		//Checking HAL support
 #ifdef FULLSCREEN
-		HALResult = m_d3d9->CheckDeviceType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, false);
+		ComResult(m_d3d9->CheckDeviceType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, false));
 #else
-		HALResult = m_d3d9->CheckDeviceType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, displayMode.Format, displayMode.Format, true);
+		ComResult(m_d3d9->CheckDeviceType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, displayMode.Format, displayMode.Format, true));
 #endif
-		assert(HALResult == S_OK);
-
 		//Checking for HW Vertex Processing
 		DWORD flags = 0;
 		if (m_d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
@@ -288,13 +296,22 @@ namespace renderer
         m_iBufferIndexCount = iBufferIndexCount;
         m_primitiveCount = primitiveCount;
 
-        auto result = m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, FVF, D3DPOOL_MANAGED, m_vBuffer, nullptr);
-        assert(result == S_OK);
-
-        result = m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(int), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr);
-        assert(result == S_OK);
+        ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr));
+        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(int), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
 
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);
         m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(int) * iBufferIndexCount);
+	}
+	void D3D9Renderer::SetupEffect(std::string fileName)
+	{
+		ID3DXBuffer* errorBuffer = nullptr;
+
+		ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(), fileName.c_str(), nullptr, nullptr, D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
+		
+		if (errorBuffer)
+		{
+			MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
+			Logger::GetInstance().LogInfo((char*)errorBuffer->GetBufferPointer());
+		}
 	}
 }
