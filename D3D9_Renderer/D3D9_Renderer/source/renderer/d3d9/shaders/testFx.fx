@@ -12,6 +12,7 @@ VS_OUTPUT RenderVS(float3 pos : POSITION0,
 {
 	VS_OUTPUT vsoutput = (VS_OUTPUT)0;
 	vsoutput.position = mul(float4(pos, 1.0f), g_worldViewProjMatrix);
+	vsoutput.position.y = sin(vsoutput.position.y) * 3.5f;
 	return vsoutput;
 }
 
@@ -36,6 +37,6 @@ technique TestTech
 
 		ShadeMode = PHONG;
 		FillMode = WIREFRAME;
-		CullMode = CCW;
+		CullMode = NONE;
 	}
 };
