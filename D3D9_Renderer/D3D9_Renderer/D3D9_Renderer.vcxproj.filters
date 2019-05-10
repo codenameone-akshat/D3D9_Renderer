@@ -107,6 +107,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="source\renderer\d3d9\shaders\testFx.fx" />
+    <FxCompile Include="source\renderer\d3d9\shaders\Lambert.hlsl" />
   </ItemGroup>
 </Project>
