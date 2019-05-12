@@ -6,6 +6,9 @@ uniform extern float4x4 g_WorldMat;
 uniform extern float4 g_dirLightDir;
 uniform extern float4 g_dirLightColor;
 
+//Ambient Light
+uniform extern float g_ambientLightIntensity;
+
 struct VS_OUTPUT
 {
     float4 position : POSITION0;
@@ -29,8 +32,8 @@ struct PS_OUTPUT
 PS_OUTPUT RenderPS(in VS_OUTPUT IN)
 {
     PS_OUTPUT psoutput;
-    float Luminence = dot(normalize(IN.normal), normalize(g_dirLightDir));
-    psoutput.RGBAcolor = (g_dirLightColor * Luminence + 0.2f);
+    float luminence = saturate(dot(normalize(IN.normal), normalize(g_dirLightDir)));
+    psoutput.RGBAcolor = (g_dirLightColor * luminence) + g_ambientLightIntensity;
     return psoutput;
 }
 

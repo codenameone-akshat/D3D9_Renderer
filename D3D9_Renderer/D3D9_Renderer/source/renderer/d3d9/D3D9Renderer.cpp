@@ -77,7 +77,8 @@ namespace renderer
             m_effect->SetMatrix("g_WorldMat", &m_worldMat);
 			m_effect->SetMatrix("g_worldViewProjMatrix", &worldViewProjectionMat);
             m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
-            m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.8f, 0.7f, 0.0f, 1.0f));
+			m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.39f, 0.58f, 0.92f, 1.0f));
+			m_effect->SetFloat("g_ambientLightIntensity", 0.1f);
             m_effect->CommitChanges();
 			m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
 			m_effect->EndPass();
