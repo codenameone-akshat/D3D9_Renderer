@@ -14,10 +14,10 @@ namespace renderer
 
 		void SetViewMatrix(D3DXVECTOR3 eye, D3DXVECTOR3 lookAt, D3DXVECTOR3 up);
 		
-		inline D3DXMATRIX GetViewMatrix() const
-		{
-			return m_perspectiveCam;
-		}
+		inline D3DXMATRIX GetViewMatrix() const	{return m_perspectiveCam;}
+
+        inline D3DXVECTOR3 GetEye() const { return m_eye; }
+        inline D3DXVECTOR3 GetUpDir() const { return m_lookAt; }
 	private:
 		D3DXVECTOR3 m_eye;
 		D3DXVECTOR3 m_lookAt;

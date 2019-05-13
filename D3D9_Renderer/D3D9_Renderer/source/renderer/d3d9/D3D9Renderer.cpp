@@ -49,7 +49,7 @@ namespace renderer
 		ParseModels();
 		SetupVertexDeclaration();
 		SetupStaticBuffers();
-		SetupEffect("source/renderer/d3d9/shaders/Lambert.hlsl");
+		SetupEffect(LightingMode::Specular);
 	}
 	void D3D9Renderer::PreRender()
 	{
@@ -66,24 +66,8 @@ namespace renderer
 		m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
 		m_device->SetIndices(m_iBuffer);
 		
-		auto worldViewProjectionMat = m_worldMat * m_viewMat * m_projMat;
-		
-		UINT numPasses(0);
-		ComResult(m_effect->SetTechnique("LambertTech"));
-		ComResult(m_effect->Begin(&numPasses, NULL));
-		for (UINT passItr = 0; passItr < numPasses; ++passItr)
-		{
-			m_effect->BeginPass(passItr);
-            m_effect->SetMatrix("g_WorldMat", &m_worldMat);
-			m_effect->SetMatrix("g_worldViewProjMatrix", &worldViewProjectionMat);
-            m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
-			m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.39f, 0.58f, 0.92f, 1.0f));
-			m_effect->SetFloat("g_ambientLightIntensity", 0.1f);
-            m_effect->CommitChanges();
-			m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
-			m_effect->EndPass();
-		}
-		m_effect->End();
+        m_worldViewProjMat = m_worldMat * m_viewMat * m_projMat;
+		RenderEffect(LightingMode::Specular);
 	}
 	void D3D9Renderer::PostRender()
 	{
@@ -172,7 +156,7 @@ namespace renderer
 	void D3D9Renderer::BuildMatrices()
 	{
 		//>View Matrix
-		D3DXVECTOR3 eye(0.0f, 3.0f, -5.0f);
+		D3DXVECTOR3 eye(0.0f, 50.0f, -100.0f);
 		D3DXVECTOR3 lookAt(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 		
@@ -202,6 +186,60 @@ namespace renderer
 		m_worldMat = matRotateY;
 		//update camera if input
 	}
+    void D3D9Renderer::RenderEffect(LightingMode mode)
+    {
+        UINT numPasses(0);
+        switch (mode)
+        {
+        case LightingMode::Diffuse:
+        {
+            ComResult(m_effect->SetTechnique("LambertTech"));
+            ComResult(m_effect->Begin(&numPasses, NULL));
+            for (UINT passItr = 0; passItr < numPasses; ++passItr)
+            {
+                m_effect->BeginPass(passItr);
+
+                m_effect->SetMatrix("g_WorldMat", &m_worldMat);
+                m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
+                m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
+                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.39f, 0.58f, 0.92f, 1.0f));
+                m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+
+                m_effect->CommitChanges();
+                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
+                m_effect->EndPass();
+            }
+            m_effect->End();
+        }
+        break;
+        case LightingMode::Specular:
+        {
+            ComResult(m_effect->SetTechnique("PhongSpecTech"));
+            ComResult(m_effect->Begin(&numPasses, NULL));
+            for (UINT passItr = 0; passItr < numPasses; ++passItr)
+            {
+                m_effect->BeginPass(passItr);
+
+                m_effect->SetMatrix("g_WorldMat", &m_worldMat);
+                m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
+                m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
+                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.39f, 0.58f, 0.92f, 1.0f));
+                m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+                m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetEye(), 1.0f));
+                m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
+                m_effect->SetFloat("g_specIntensity", 10.0f);
+
+                m_effect->CommitChanges();
+                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
+                m_effect->EndPass();
+            }
+            m_effect->End();
+        }
+        break;
+        default:
+            break;
+        }
+    }
 	void D3D9Renderer::OnDeviceLost()
 	{
 		Sleep(200);
@@ -256,7 +294,7 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "data/monkey.fbx"; //get files to load from somewhere else
+		std::string filename = "data/teapotHighPoly.fbx"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filename);
@@ -305,11 +343,25 @@ namespace renderer
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);
         m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(int) * iBufferIndexCount);
 	}
-	void D3D9Renderer::SetupEffect(std::string fileName)
+	void D3D9Renderer::SetupEffect(LightingMode mode)
 	{
 		ID3DXBuffer* errorBuffer = nullptr;
-
-		ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(), fileName.c_str(), nullptr, nullptr, D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
+        
+        switch (mode)
+        {
+        case LightingMode::Diffuse:
+            ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(), 
+                "source/renderer/d3d9/shaders/Lambert.hlsl", nullptr, nullptr,
+                D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
+            break;
+        case LightingMode::Specular:
+            ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),
+                "source/renderer/d3d9/shaders/Phong.hlsl", nullptr, nullptr,
+                D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
+            break;
+        default:
+            break;
+        }
 		
 		if (errorBuffer)
 		{

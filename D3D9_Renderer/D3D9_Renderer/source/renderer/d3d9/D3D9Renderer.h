@@ -43,6 +43,12 @@ namespace renderer
 		void RenderFrame() override;
 		void PostRender() override;
   
+        //>Lighting Modes
+        enum class LightingMode
+        {
+            Diffuse,
+            Specular
+        };
 
 		//>Events
 		void OnDeviceLost() override;
@@ -57,7 +63,7 @@ namespace renderer
         
         void ParseModels();
         void SetupStaticBuffers();
-		void SetupEffect(std::string fileName);
+        void SetupEffect(LightingMode mode);
 
         inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
@@ -66,10 +72,11 @@ namespace renderer
         }
 
 	private:
-		void SetupDeviceConfiguration();
+        void SetupDeviceConfiguration();
         void SetupVertexDeclaration();
 		void BuildMatrices();
 		void UpdateMatrices();
+        void RenderEffect(LightingMode mode);
 
 		int m_vBufferVertexCount;
 		int m_iBufferIndexCount;
@@ -87,7 +94,8 @@ namespace renderer
 
 		D3DXMATRIX m_viewMat;
 		D3DXMATRIX m_projMat;
-		D3DXMATRIX m_worldMat;
+        D3DXMATRIX m_worldMat;
+        D3DXMATRIX m_worldViewProjMat;
 
 		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager maybe? 
 		
