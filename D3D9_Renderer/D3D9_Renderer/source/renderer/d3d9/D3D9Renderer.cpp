@@ -155,20 +155,14 @@ namespace renderer
 	}
 	void D3D9Renderer::BuildMatrices()
 	{
-		//>View Matrix
-		D3DXVECTOR3 eye(0.0f, 50.0f, -100.0f);
-		D3DXVECTOR3 lookAt(0.0f, 0.0f, 0.0f);
-		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-		
-		//m_camera.SetViewMatrix(eye, lookAt, up);
 		m_viewMat = m_camera.GetViewMatrix();
 		auto aspectRatio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
 		//>Projection Matrix
-		D3DXMatrixPerspectiveFovLH(&m_projMat, D3DXToRadian(45), aspectRatio, 1.0f, 1000.0f);
+		D3DXMatrixPerspectiveFovLH(&m_projMat, D3DXToRadian(45), aspectRatio, 1.0f, 100000.0f);
         //>World Matrix
         D3DXMatrixIdentity(&m_worldMat);
 
-		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
+		m_device->SetTransform(D3DTS_VIEW, m_viewMat* m_worldMat);
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
 		m_device->SetTransform(D3DTS_WORLD, m_worldMat);
 	}
@@ -178,16 +172,7 @@ namespace renderer
         m_viewMat = m_camera.GetViewMatrix();
 		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
-
-		static FLOAT rad = 0.0f;
-		D3DXMATRIX matRotateY;
-		matRotateY = m_worldMat;
-		//D3DXMatrixRotationYawPitchRoll(&matRotateY, D3DXToRadian(rad), D3DXToRadian(90.0f), 0.0f);
-	//	rad += 5.0f; //increment rotating triangle
-
-		m_device->SetTransform(D3DTS_WORLD, matRotateY);
-		m_worldMat = matRotateY;
-		//update camera if input
+		m_device->SetTransform(D3DTS_WORLD, m_worldMat);
 	}
     void D3D9Renderer::RenderEffect(LightingMode mode)
     {
@@ -226,9 +211,9 @@ namespace renderer
                 m_effect->SetMatrix("g_WorldMat", &m_worldMat);
                 m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
                 m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
-                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.2f, 0.2f, 0.1f, 1.0f));
+                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
-                m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetEye(), 1.0f));
+                m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosision(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
                 m_effect->SetFloat("g_specIntensity", 40.0f);
 
@@ -307,7 +292,7 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "data/Content/Sponza.fbx"; //get files to load from somewhere else
+		std::string filename = "data/sponza.fbx"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filename);
@@ -351,10 +336,10 @@ namespace renderer
         m_primitiveCount = primitiveCount;
 
         ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr));
-        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(int), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
+        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(uint32_t), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
 
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);
-        m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(int) * iBufferIndexCount);
+        m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(uint32_t) * iBufferIndexCount);
 	}
 	void D3D9Renderer::SetupEffect(LightingMode mode)
 	{

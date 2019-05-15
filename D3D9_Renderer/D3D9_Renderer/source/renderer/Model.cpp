@@ -89,7 +89,6 @@ namespace renderer
             m_totalIndices = totalIndices;
 
 			m_meshes.emplace_back(std::move(mesh));
-
 		}
 	}
 }

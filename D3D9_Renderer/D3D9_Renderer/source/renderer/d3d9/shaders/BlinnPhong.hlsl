@@ -28,7 +28,7 @@ VS_OUTPUT RenderVS(float3 pos : POSITION0,
     VS_OUTPUT vsoutput = (VS_OUTPUT)0;
     vsoutput.position = mul(float4(pos, 1.0f), g_worldViewProjMatrix);
     vsoutput.normal = mul(norm, (float3x3)g_WorldMat);
-    vsoutput.worldPos = mul(float4(pos, 1.0f), g_WorldMat).xyz; //get the light and vertex in the same matrix
+    vsoutput.worldPos = mul(pos, g_WorldMat); //get the light and vertex in the same matrix
     return vsoutput;
 }
 

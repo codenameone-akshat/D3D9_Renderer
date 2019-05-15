@@ -1,54 +1,69 @@
-#include "Camera.h"
 #include <windows.h>
+
+#include "Camera.h"
+#include "../utils/Logger.h"
+
 namespace renderer
 {
 	Camera::Camera()
-		:m_eye(0.0f, 0.0f, 0.0f),
-		m_lookAt(0.0f, 0.0f, 0.0f),
-		m_up(0.0f, 1.0f, 0.0f)
+		:m_camPos	(0.0f, 1.0f, 0.0f),
+		m_camRot	(0.0f, 0.0f),
+		m_forward	(0.0f, 0.0f, 1.0f),
+		m_up		(0.0f, 1.0f, 0.0f),
+		m_right		(1.0f, 0.0f, 0.0f)
 	{
-		D3DXMatrixIdentity(&m_perspectiveCam);
+		D3DXMatrixIdentity(&m_viewMatrix);
 	}
 
 	Camera::~Camera()
 	{
 	}
-	void Camera::SetViewMatrix(D3DXVECTOR3 eye, D3DXVECTOR3 lookAt, D3DXVECTOR3 up)
+
+	void Camera::HandleCameraInput()
 	{
-		m_eye = eye;
-		m_lookAt = lookAt;
-		m_up = up;
-		D3DXMatrixLookAtLH(&m_perspectiveCam, &eye, &lookAt, &up);
+		D3DXMATRIX rotationMat;
+		D3DXMatrixIdentity(&rotationMat);
+
+		POINT cursorPos;
+		GetCursorPos(&cursorPos);
+		auto dx = cursorPos.x - m_cursorPos.x;
+		auto dy = cursorPos.y - m_cursorPos.y;
+		if (GetKeyState(VK_RBUTTON) & (1 << 15))
+		{
+			m_camRot.x += dx;
+			m_camRot.y += dy;
+		}
+		m_cursorPos = cursorPos;
+		D3DXMatrixRotationYawPitchRoll(&rotationMat, D3DXToRadian(m_camRot.x / 10.0f), D3DXToRadian(m_camRot.y / 15.0f), 0.0f);
+		
+		/*D3DXVec3TransformNormal(&m_forward, &m_forward, &rotationMat);
+		D3DXVec3TransformNormal(&m_right, &m_right, &rotationMat);
+		D3DXVec3Normalize(&m_forward, &m_forward);
+		D3DXVec3Normalize(&m_right, &m_right);*/
+
+		float multiplier(1.0f);
+		if (GetKeyState(VK_SHIFT) & (1 << 15))
+			multiplier = 10.0f;
+		if (GetKeyState('W') & (1 << 15))
+			m_camPos += (m_forward * multiplier);
+		if (GetKeyState('S') & (1 << 15))
+			m_camPos -= (m_forward * multiplier);
+		if (GetKeyState('A') & (1 << 15))
+			m_camPos -= (m_right * multiplier);
+		if (GetKeyState('D') & (1 << 15))
+			m_camPos += (m_right * multiplier);
+		if (GetKeyState('Q') & (1 << 15))
+			m_camPos -= (m_up * multiplier);
+		if (GetKeyState('E') & (1 << 15))
+			m_camPos += (m_up * multiplier);
+
+		D3DXMATRIX translationMat;
+		D3DXMatrixIdentity(&translationMat);
+		D3DXMatrixTranslation(&translationMat, m_camPos.x, m_camPos.y, m_camPos.z);
+
+
+		m_viewMatrix = (rotationMat * translationMat);
+		float viewDeterminent = D3DXMatrixDeterminant(&m_viewMatrix);
+		D3DXMatrixInverse(&m_viewMatrix, &viewDeterminent, &m_viewMatrix);
 	}
-
-    void Camera::HandleCameraInput()
-    {
-        float x(0.0f);
-        float y(0.0f);
-        float z(0.0f);
-        float multiplier(1.0f);
-        
-        if (GetKeyState(VK_SHIFT) & (1 << 15))
-            multiplier = 5.0f;
-        if (GetKeyState('W') & (1 << 15))
-            z -= 0.5f*multiplier;
-        if (GetKeyState('S') & (1 << 15))
-            z += 0.5f*multiplier;
-        if (GetKeyState('A') & (1 << 15))
-            x += 0.5f*multiplier;
-        if (GetKeyState('D') & (1 << 15))
-            x -= 0.5f*multiplier;
-        if (GetKeyState('Q') & (1 << 15))
-            y -= 0.5f*multiplier;
-        if (GetKeyState('E') & (1 << 15))
-            y += 0.5f*multiplier;
-
-        m_perspectiveCam(3, 0) += x;
-        m_perspectiveCam(3, 1) += y;
-        m_perspectiveCam(3, 2) += z;
-
-
-        GetCursorPos(&m_cursorPos);
-
-    }
 }

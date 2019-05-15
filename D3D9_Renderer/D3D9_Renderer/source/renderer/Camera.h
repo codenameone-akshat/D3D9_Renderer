@@ -12,19 +12,20 @@ namespace renderer
 		Camera();
 		~Camera();
 
-		void SetViewMatrix(D3DXVECTOR3 eye, D3DXVECTOR3 lookAt, D3DXVECTOR3 up);
-		
-		inline D3DXMATRIX GetViewMatrix() const	{return m_perspectiveCam;}
-        
-        inline D3DXVECTOR3 GetEye() const { return m_eye; }
-        inline D3DXVECTOR3 GetUpDir() const { return m_lookAt; }
+		inline D3DXMATRIX GetViewMatrix() const	{return m_viewMatrix;}
+		inline D3DXVECTOR3 GetCamPosision() const { return m_camPos; }
+		inline D3DXVECTOR2 GetCamRotation() const { return m_camRot; }
 
         void HandleCameraInput();
 	private:
-		D3DXVECTOR3 m_eye;
-		D3DXVECTOR3 m_lookAt;
+		
+		D3DXVECTOR3 m_camPos;
+		D3DXVECTOR2 m_camRot;
+		D3DXVECTOR3 m_forward;
+		D3DXVECTOR3 m_right;
 		D3DXVECTOR3 m_up;
-		D3DXMATRIX m_perspectiveCam;
+
+		D3DXMATRIX m_viewMatrix;
 
         POINT m_cursorPos;
 	};
