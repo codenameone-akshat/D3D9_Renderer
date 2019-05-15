@@ -37,7 +37,7 @@ namespace renderer
 		m_normals.emplace_back(z);
 	}
 
-	void Mesh::AppendIndices(const int vertexA, const int vertexB, const int vertexC) noexcept
+	void Mesh::AppendIndices(const uint32_t vertexA, const uint32_t vertexB, const uint32_t vertexC) noexcept
 	{
 		assert(m_numIndices > 0);
 		m_indices.emplace_back(vertexA);

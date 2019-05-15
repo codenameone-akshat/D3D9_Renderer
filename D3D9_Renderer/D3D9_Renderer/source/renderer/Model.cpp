@@ -25,7 +25,12 @@ namespace renderer
 
 	void Model::LoadModelAndParseData(std::string filepath)
 	{
-		const auto flags = aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent;
+        const auto flags = aiProcess_CalcTangentSpace |
+            aiProcess_Triangulate |
+            aiProcess_ConvertToLeftHanded |
+            aiProcess_JoinIdenticalVertices |
+            aiProcess_RemoveRedundantMaterials |
+            aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
 
 		m_scene = m_importer.ReadFile(filepath, flags);
 		assert(m_scene != nullptr);
@@ -72,9 +77,9 @@ namespace renderer
 			const auto numFaces = meshes[itr]->mNumFaces;
 			for (iter = 0; iter < numFaces; ++iter)
 			{
-				const int vertexA = meshes[itr]->mFaces[iter].mIndices[0];
-				const int vertexB = meshes[itr]->mFaces[iter].mIndices[1];
-				const int vertexC = meshes[itr]->mFaces[iter].mIndices[2];
+				const uint32_t vertexA = meshes[itr]->mFaces[iter].mIndices[0];
+				const uint32_t vertexB = meshes[itr]->mFaces[iter].mIndices[1];
+				const uint32_t vertexC = meshes[itr]->mFaces[iter].mIndices[2];
 
 				mesh->AppendIndices(vertexA, vertexB, vertexC);
 			}
@@ -84,6 +89,7 @@ namespace renderer
             m_totalIndices = totalIndices;
 
 			m_meshes.emplace_back(std::move(mesh));
+
 		}
 	}
 }

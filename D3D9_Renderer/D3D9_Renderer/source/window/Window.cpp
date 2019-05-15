@@ -57,6 +57,7 @@ namespace renderer
 			exit(0);
 			return 0;
 			break;
+
 		default:
 			break;
 		}

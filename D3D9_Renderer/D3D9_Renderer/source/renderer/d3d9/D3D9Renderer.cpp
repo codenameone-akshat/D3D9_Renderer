@@ -160,12 +160,13 @@ namespace renderer
 		D3DXVECTOR3 lookAt(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 		
-		m_camera.SetViewMatrix(eye, lookAt, up);
+		//m_camera.SetViewMatrix(eye, lookAt, up);
 		m_viewMat = m_camera.GetViewMatrix();
 		auto aspectRatio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
-		//>Projection Matrices
+		//>Projection Matrix
 		D3DXMatrixPerspectiveFovLH(&m_projMat, D3DXToRadian(45), aspectRatio, 1.0f, 1000.0f);
-		D3DXMatrixIdentity(&m_worldMat);
+        //>World Matrix
+        D3DXMatrixIdentity(&m_worldMat);
 
 		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
@@ -173,14 +174,16 @@ namespace renderer
 	}
 	void D3D9Renderer::UpdateMatrices()
 	{
+        m_camera.HandleCameraInput();
+        m_viewMat = m_camera.GetViewMatrix();
 		m_device->SetTransform(D3DTS_VIEW, m_viewMat);
 		m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
 
 		static FLOAT rad = 0.0f;
 		D3DXMATRIX matRotateY;
 		matRotateY = m_worldMat;
-		D3DXMatrixRotationYawPitchRoll(&matRotateY, D3DXToRadian(rad), D3DXToRadian(90.0f), 0.0f);
-		rad += 1.0f; //increment rotating triangle
+		//D3DXMatrixRotationYawPitchRoll(&matRotateY, D3DXToRadian(rad), D3DXToRadian(90.0f), 0.0f);
+	//	rad += 5.0f; //increment rotating triangle
 
 		m_device->SetTransform(D3DTS_WORLD, matRotateY);
 		m_worldMat = matRotateY;
@@ -223,11 +226,11 @@ namespace renderer
                 m_effect->SetMatrix("g_WorldMat", &m_worldMat);
                 m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
                 m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
-                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.39f, 0.58f, 0.92f, 1.0f));
+                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.2f, 0.2f, 0.1f, 1.0f));
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetEye(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
-                m_effect->SetFloat("g_specIntensity", 10.0f);
+                m_effect->SetFloat("g_specIntensity", 40.0f);
 
                 m_effect->CommitChanges();
                 m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
@@ -248,6 +251,16 @@ namespace renderer
 	{
 		m_device->ResetDevice();
 	}
+    void D3D9Renderer::ProcessInput(WPARAM wParam)
+    {
+        ////below is temp code. Essentially myInputClass.HandleInput(); should be called
+        //switch (wParam)
+        //{
+        //case GetKeyState()
+        //default:
+        //    break;
+        //}
+    }
 	//>Handle this in the mainloop of the game, define "FULLSCREEN" for fullscreen support in the game
 	DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags() const
 	{
@@ -294,7 +307,7 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "data/teapotHighPoly.fbx"; //get files to load from somewhere else
+		std::string filename = "data/Content/Sponza.fbx"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filename);
@@ -308,7 +321,7 @@ namespace renderer
 		int primitiveCount = 0;
 		
 		std::vector<PositionVertex> positionVertices;
-		std::vector<int> positionIndices;
+		std::vector<uint32_t> positionIndices;
 
 		for (auto& model : m_modelList)
 		{
@@ -356,7 +369,7 @@ namespace renderer
             break;
         case LightingMode::Specular:
             ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),
-                "source/renderer/d3d9/shaders/Phong.hlsl", nullptr, nullptr,
+                "source/renderer/d3d9/shaders/BlinnPhong.hlsl", nullptr, nullptr,
                 D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
             break;
         default:

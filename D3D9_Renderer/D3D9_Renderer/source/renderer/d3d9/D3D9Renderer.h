@@ -53,13 +53,15 @@ namespace renderer
 		//>Events
 		void OnDeviceLost() override;
         void OnDeviceAvailable() override;
-        
-		//>Checks for Sanity and Support
+        void ProcessInput(WPARAM wParam);
+		
+        //>Checks for Sanity and Support
         [[nodiscard]] HRESULT CheckDeviceStatus() override;
         [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags() const;
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
 		[[nodiscard]] bool CheckShaderVersionSupport(short version) const;
-		[[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
+		
+        [[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
         void ParseModels();
         void SetupStaticBuffers();

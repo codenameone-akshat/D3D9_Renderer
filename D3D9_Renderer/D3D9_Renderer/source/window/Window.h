@@ -27,10 +27,12 @@ namespace renderer
 		}
 
 	private:
-		//Procedure for Microsoft Window callbacks
+		//>Procedure for Microsoft Window callbacks
 		static LRESULT CALLBACK WindowMessageProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 		HWND m_hWindow;
 		WNDCLASSEX m_windowClass;
+
+
 	};
 }
