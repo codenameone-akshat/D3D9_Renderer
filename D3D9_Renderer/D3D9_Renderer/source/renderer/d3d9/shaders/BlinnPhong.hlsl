@@ -66,7 +66,7 @@ technique PhongSpecTech
         PixelShader = compile ps_3_0 RenderPS();
 
         ShadeMode = PHONG;
-        FillMode = SOLID;
+        FillMode = WIREFRAME;
         CullMode = CCW;
     }
 };

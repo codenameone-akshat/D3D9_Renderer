@@ -29,7 +29,7 @@ namespace renderer
             aiProcess_Triangulate |
             aiProcess_ConvertToLeftHanded |
             aiProcess_JoinIdenticalVertices |
-            aiProcess_RemoveRedundantMaterials |
+            aiProcess_RemoveRedundantMaterials | aiProcess_ValidateDataStructure|
             aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
 
 		m_scene = m_importer.ReadFile(filepath, flags);
@@ -60,7 +60,7 @@ namespace renderer
 			mesh->SetNumIndices(meshes[itr]->mNumFaces * 3);
 			const auto numVert = meshes[itr]->mNumVertices;
 
-			[[maybe_unused]] unsigned int iter = 0;
+			unsigned int iter = 0;
 			for (iter = 0; iter < numVert; ++iter)
 			{
 				float x = meshes[itr]->mVertices[iter].x;

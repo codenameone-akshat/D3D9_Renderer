@@ -307,6 +307,8 @@ namespace renderer
 		
 		std::vector<PositionVertex> positionVertices;
 		std::vector<uint32_t> positionIndices;
+        
+        uint32_t indexOffset(0);
 
 		for (auto& model : m_modelList)
 		{
@@ -324,12 +326,15 @@ namespace renderer
 				{
 					positionVertices.push_back({ *vitr, *(vitr + 1), *(vitr + 2), *nitr, *(nitr + 1), *(nitr + 2)});
 				}
-
 				auto meshIndices = mesh->GetIndices();
 				for (auto index : meshIndices)
-					positionIndices.push_back(index);
-			}
-		}  
+					positionIndices.push_back(index + indexOffset);
+
+                indexOffset += static_cast<uint32_t>(meshVertices.size());
+            }
+		}
+        positionVertices.shrink_to_fit();
+        positionIndices.shrink_to_fit();
 
 		m_vBufferVertexCount = vBufferVertexCount;
         m_iBufferIndexCount = iBufferIndexCount;

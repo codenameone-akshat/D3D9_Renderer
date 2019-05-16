@@ -21,9 +21,6 @@ namespace renderer
 		
 		D3DXVECTOR3 m_camPos;
 		D3DXVECTOR2 m_camRot;
-		D3DXVECTOR3 m_forward;
-		D3DXVECTOR3 m_right;
-		D3DXVECTOR3 m_up;
 
 		D3DXMATRIX m_viewMatrix;
 
