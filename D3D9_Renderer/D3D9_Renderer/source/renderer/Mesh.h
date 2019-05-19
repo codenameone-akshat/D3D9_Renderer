@@ -19,9 +19,9 @@ namespace renderer
 		void AppendNormals(float x, float y, float z) noexcept;
 		void AppendIndices(const uint32_t vertexA, const uint32_t vertexB, const uint32_t vertexC) noexcept;
 
-		inline int GetNumVertices() { return m_numVertices; }
-		inline int GetNumNormals() { return m_numNormals; }
-		inline int GetNumIndices() { return m_numIndices; }
+		[[maybe_unused]] inline int GetNumVertices() { return m_numVertices; }
+		[[maybe_unused]] inline int GetNumNormals() { return m_numNormals; }
+		[[maybe_unused]] inline int GetNumIndices() { return m_numIndices; }
 
 		void SetNumVertices(int nVertices);
 		void SetNumNormals(int nNormals);

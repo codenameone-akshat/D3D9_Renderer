@@ -58,6 +58,9 @@
     <ClCompile Include="source\window\Window.cpp">
       <Filter>Window</Filter>
     </ClCompile>
+    <ClCompile Include="source\enginecore\ModelManager.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\enginecore\BaseObject.h">
@@ -102,6 +105,7 @@
     <ClInclude Include="source\window\Window.h">
       <Filter>Window</Filter>
     </ClInclude>
+    <ClInclude Include="source\enginecore\ModelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

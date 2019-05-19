@@ -20,8 +20,8 @@ namespace renderer
 		inline void SetDeviceCharateristics(D3DPRESENT_PARAMETERS presentParams) { memcpy(&m_d3dPresentParams, &presentParams, sizeof(D3DPRESENT_PARAMETERS)); }
 
 		//>Getters
-		inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }  //TODO: overload -> maybe?
-		inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; } //TODO: overload & maybe?
+		[[maybe_unused]] inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }  //TODO: overload -> maybe?
+		[[maybe_unused]] inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; } //TODO: overload & maybe?
 		inline void SetDeviceObject(IDirect3DDevice9* device) { m_d3dDevice = device; }
 
 		inline void ResetDevice() { m_d3dDevice->Reset(&m_d3dPresentParams); }
@@ -36,19 +36,19 @@ namespace renderer
         [[nodiscard]] HRESULT CreateVertexBuffer(UINT length, DWORD usage, DWORD FVF, D3DPOOL pool, StaticBuffer<IDirect3DVertexBuffer9>& vertexBuffer, HANDLE* pSharedHandle);
 		[[nodiscard]] HRESULT CreateIndexBuffer(UINT length, DWORD usage, D3DFORMAT format, D3DPOOL pool, StaticBuffer<IDirect3DIndexBuffer9>& indexBuffer, HANDLE* pSharedHandle);
         [[nodiscard]] HRESULT CreateVertexDeclaration(const D3DVERTEXELEMENT9* vElement, IDirect3DVertexDeclaration9** vDecl);
-        inline HRESULT SetVertexDeclaration(IDirect3DVertexDeclaration9* decl)
+		[[maybe_unused]] inline HRESULT SetVertexDeclaration(IDirect3DVertexDeclaration9* decl)
         {
 			m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
             auto result = m_d3dDevice->SetVertexDeclaration(decl);
             return result;
         }
-        inline HRESULT SetStreamSource(UINT streamNumber, StaticBuffer<IDirect3DVertexBuffer9>& vBuffer, UINT offsetInBytes, UINT stride)
+		[[maybe_unused]] inline HRESULT SetStreamSource(UINT streamNumber, StaticBuffer<IDirect3DVertexBuffer9>& vBuffer, UINT offsetInBytes, UINT stride)
         {
             auto result = m_d3dDevice->SetStreamSource(streamNumber, vBuffer.GetRawPtr(), offsetInBytes, stride);
             return result;
         }
-        inline HRESULT SetIndices(StaticBuffer<IDirect3DIndexBuffer9>& indexBuffer)
+		[[maybe_unused]] inline HRESULT SetIndices(StaticBuffer<IDirect3DIndexBuffer9>& indexBuffer)
         {
             auto result = m_d3dDevice->SetIndices(indexBuffer.GetRawPtr());
             return result;
@@ -56,17 +56,17 @@ namespace renderer
 		inline void SetFVF(int fvf) { m_d3dDevice->SetFVF(fvf); }
 
         //>Drawing
-        inline HRESULT DrawPrimitive(D3DPRIMITIVETYPE primitiveType, UINT startVertex, UINT primitiveCount) 
+		[[maybe_unused]] inline HRESULT DrawPrimitive(D3DPRIMITIVETYPE primitiveType, UINT startVertex, UINT primitiveCount)
         {
             auto result = m_d3dDevice->DrawPrimitive(primitiveType, startVertex, primitiveCount);  
             return result;
         }
-        inline HRESULT DrawIndexedPrimitive(D3DPRIMITIVETYPE primitiveType, INT baseVertexIndex, UINT minIndex, UINT numVertices, UINT startIndex, UINT primitiveCount) 
+		[[maybe_unused]] inline HRESULT DrawIndexedPrimitive(D3DPRIMITIVETYPE primitiveType, INT baseVertexIndex, UINT minIndex, UINT numVertices, UINT startIndex, UINT primitiveCount)
         {
             auto result = m_d3dDevice->DrawIndexedPrimitive(primitiveType, baseVertexIndex, minIndex, numVertices, startIndex, primitiveCount);
             return result;
         }
-		inline HRESULT SetTransform(D3DTRANSFORMSTATETYPE transStateType, D3DXMATRIX transMatrix)
+		[[maybe_unused]] inline HRESULT SetTransform(D3DTRANSFORMSTATETYPE transStateType, D3DXMATRIX transMatrix)
 		{
 			auto result = m_d3dDevice->SetTransform(transStateType, &transMatrix);
 			return result;

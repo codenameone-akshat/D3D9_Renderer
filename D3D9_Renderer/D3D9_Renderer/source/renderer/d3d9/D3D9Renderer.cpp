@@ -215,10 +215,10 @@ namespace renderer
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosision(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
-                m_effect->SetFloat("g_specIntensity", 40.0f);
+                m_effect->SetFloat("g_specIntensity", 20.0f);
 
                 m_effect->CommitChanges();
-                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount, 0, m_primitiveCount);
+                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vBufferVertexCount*(sizeof(PositionVertex)), 0, m_primitiveCount);
                 m_effect->EndPass();
             }
             m_effect->End();
@@ -330,7 +330,7 @@ namespace renderer
 				for (auto index : meshIndices)
 					positionIndices.push_back(index + indexOffset);
 
-                indexOffset += static_cast<uint32_t>(meshVertices.size());
+                indexOffset += static_cast<uint32_t>(mesh->GetNumVertices());
             }
 		}
         positionVertices.shrink_to_fit();
@@ -340,7 +340,7 @@ namespace renderer
         m_iBufferIndexCount = iBufferIndexCount;
         m_primitiveCount = primitiveCount;
 
-        ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr));
+        ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, NULL, D3DPOOL_DEFAULT, m_vBuffer, nullptr));
         ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(uint32_t), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
 
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);

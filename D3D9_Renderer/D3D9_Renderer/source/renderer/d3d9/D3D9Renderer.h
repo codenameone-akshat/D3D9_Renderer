@@ -67,7 +67,7 @@ namespace renderer
         void SetupStaticBuffers();
         void SetupEffect(LightingMode mode);
 
-        inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
+		[[maybe_unused]] inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
             static D3D9Renderer instance;
             return instance;
@@ -99,9 +99,8 @@ namespace renderer
         D3DXMATRIX m_worldMat;
         D3DXMATRIX m_worldViewProjMat;
 
-		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world | later wrap in a modelManager maybe? 
-		
 		std::unique_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
+		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world 
 	};
 }

@@ -42,9 +42,9 @@ namespace renderer
 		D3DXVec3Normalize(&right, &right);
 
 
-        float multiplier(1.0f);
+        float multiplier(5.0f);
 		if (GetKeyState(VK_SHIFT) & (1 << 15))
-			multiplier = 10.0f;
+			multiplier = 20.0f;
 		if (GetKeyState('W') & (1 << 15))
 			m_camPos += (forward * multiplier);
 		if (GetKeyState('S') & (1 << 15))

@@ -12,9 +12,9 @@ namespace renderer
 		Camera();
 		~Camera();
 
-		inline D3DXMATRIX GetViewMatrix() const	{return m_viewMatrix;}
-		inline D3DXVECTOR3 GetCamPosision() const { return m_camPos; }
-		inline D3DXVECTOR2 GetCamRotation() const { return m_camRot; }
+		[[maybe_unused]] inline D3DXMATRIX GetViewMatrix() const {return m_viewMatrix;}
+		[[maybe_unused]] inline D3DXVECTOR3 GetCamPosision() const { return m_camPos; }
+		[[maybe_unused]] inline D3DXVECTOR2 GetCamRotation() const { return m_camRot; }
 
         void HandleCameraInput();
 	private:
