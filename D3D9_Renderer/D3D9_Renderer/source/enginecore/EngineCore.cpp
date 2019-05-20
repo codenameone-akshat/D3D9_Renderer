@@ -52,10 +52,6 @@ namespace renderer
         dx9renderer.RenderFrame();
         dx9renderer.PostRender();
     }
-    void EngineCore::ProcessInput(WPARAM wParam)
-    {
-        D3D9Renderer::GetInstance().ProcessInput(wParam);
-    }
     void EngineCore::PollMessage()
     {
         MSG msg;
@@ -71,8 +67,6 @@ namespace renderer
             if (msg.message == WM_QUIT)
                 break;
 
-            /*if (msg.message == WM_KEYDOWN || msg.message == WM_MOUSEMOVE)
-                this->ProcessInput(msg.wParam);*/
             this->RenderFrame();
 
             //std::this_thread::sleep_for(std::chrono::microseconds(2));

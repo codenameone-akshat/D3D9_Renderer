@@ -20,7 +20,6 @@ namespace renderer
 		void InitEngineCreateWindow(HINSTANCE hInstance, int nShowCmd);
 		void InitRenderer();
 		void RenderFrame();
-        void ProcessInput(WPARAM wParam);
 		void PollMessage();
 
 	private:

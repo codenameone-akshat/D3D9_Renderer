@@ -53,7 +53,6 @@ namespace renderer
 		//>Events
 		void OnDeviceLost() override;
         void OnDeviceAvailable() override;
-        void ProcessInput(WPARAM wParam);
 		
         //>Checks for Sanity and Support
         [[nodiscard]] HRESULT CheckDeviceStatus() override;

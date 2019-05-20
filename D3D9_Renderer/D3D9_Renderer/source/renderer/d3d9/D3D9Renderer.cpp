@@ -145,6 +145,7 @@ namespace renderer
 		{
 			{ defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
 			{ defaultVal, sizeof(float) * 3, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+			{ defaultVal, sizeof(float) * 2, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
 			D3DDECL_END()
 		};
 
@@ -236,16 +237,6 @@ namespace renderer
 	{
 		m_device->ResetDevice();
 	}
-    void D3D9Renderer::ProcessInput(WPARAM wParam)
-    {
-        ////below is temp code. Essentially myInputClass.HandleInput(); should be called
-        //switch (wParam)
-        //{
-        //case GetKeyState()
-        //default:
-        //    break;
-        //}
-    }
 	//>Handle this in the mainloop of the game, define "FULLSCREEN" for fullscreen support in the game
 	DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags() const
 	{
@@ -322,10 +313,13 @@ namespace renderer
 			{
 				auto meshVertices = mesh->GetVertices();
 				auto meshNormals = mesh->GetNormals();
-				for (auto vitr = meshVertices.begin(), nitr = meshNormals.begin(); vitr != meshVertices.end() && nitr != meshNormals.end(); vitr+=3, nitr += 3)
+				for (auto vitr = meshVertices.begin(), nitr = meshNormals.begin(); 
+                    vitr != meshVertices.end() && nitr != meshNormals.end(); 
+                    vitr+=3, nitr += 3)
 				{
 					positionVertices.push_back({ *vitr, *(vitr + 1), *(vitr + 2), *nitr, *(nitr + 1), *(nitr + 2)});
 				}
+
 				auto meshIndices = mesh->GetIndices();
 				for (auto index : meshIndices)
 					positionIndices.push_back(index + indexOffset);
@@ -341,7 +335,7 @@ namespace renderer
         m_primitiveCount = primitiveCount;
 
         ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, NULL, D3DPOOL_DEFAULT, m_vBuffer, nullptr));
-        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(uint32_t), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
+        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(uint32_t), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFMT_INDEX32, D3DPOOL_DEFAULT, m_iBuffer, nullptr));
 
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);
         m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(uint32_t) * iBufferIndexCount);

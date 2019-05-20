@@ -12,6 +12,7 @@ namespace renderer
 		m_numMeshes(0),
 		m_totalVertices(0),
 		m_totalNormals(0),
+        m_totalTexCoords(0),
 		m_totalIndices(0),
         m_numTris(0),
 		m_meshes()
@@ -57,7 +58,9 @@ namespace renderer
 
 			mesh->SetNumVertices(meshes[itr]->mNumVertices);
 			mesh->SetNumNormals(meshes[itr]->mNumVertices); //number of normals = number of vertices
+            mesh->SetNumTexCoords(meshes[itr]->mNumVertices); //number of texcoord = number of vertices
 			mesh->SetNumIndices(meshes[itr]->mNumFaces * 3);
+
 			const auto numVert = meshes[itr]->mNumVertices;
 
 			unsigned int iter = 0;
@@ -72,6 +75,10 @@ namespace renderer
 				y = meshes[itr]->mNormals[iter].y;
 				z = meshes[itr]->mNormals[iter].z;
 				mesh->AppendNormals(x, y, z);
+
+                x = meshes[itr]->mTextureCoords[0][itr].x;
+                y = meshes[itr]->mTextureCoords[0][itr].y;
+                mesh->AppendTexCoords(x, y);
 			}
 
 			const auto numFaces = meshes[itr]->mNumFaces;
@@ -83,7 +90,8 @@ namespace renderer
 
 				mesh->AppendIndices(vertexA, vertexB, vertexC);
 			}
-
+            mesh->SetName(meshes[itr]->mName.C_Str());
+            
             m_totalVertices = totalVertices;
             m_totalNormals = totalVertices;
             m_totalIndices = totalIndices;

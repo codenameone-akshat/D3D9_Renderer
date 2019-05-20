@@ -3,7 +3,6 @@
 namespace renderer
 {
 	ModelManager::ModelManager()
-		:m_modelList()
 	{
 	}
 	ModelManager::~ModelManager()
@@ -15,6 +14,6 @@ namespace renderer
 
 		model->LoadModelAndParseData(filePath);
 
-		m_modelList.push_back(std::move(model));
+		//m_modelList.push_back(std::move(model));
 	}
 }

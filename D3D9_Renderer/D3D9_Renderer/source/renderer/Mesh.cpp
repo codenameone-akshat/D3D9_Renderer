@@ -7,10 +7,13 @@ namespace renderer
 	Mesh::Mesh()
 		:m_numVertices(0),
 		m_numNormals(0),
+        m_numTexcoords(0),
 		m_numIndices(0),
 		m_vertices(),
 		m_normals(),
-		m_indices()
+        m_texcoords(),
+        m_indices(),
+        m_name()
 	{
 	}
 
@@ -19,6 +22,9 @@ namespace renderer
         m_vertices.clear();
         m_normals.clear();
         m_indices.clear();
+        m_texcoords.clear();
+
+        m_numVertices = m_numNormals = m_numTexcoords = m_numIndices = 0;
 	}
 
 	void Mesh::AppendVertices(float x, float y, float z) noexcept
@@ -36,6 +42,13 @@ namespace renderer
 		m_normals.emplace_back(y);
 		m_normals.emplace_back(z);
 	}
+
+    void Mesh::AppendTexCoords(float x, float y) noexcept
+    {
+        assert(m_numTexcoords > 0);
+        m_texcoords.emplace_back(x);
+        m_texcoords.emplace_back(y);
+    }
 
 	void Mesh::AppendIndices(const uint32_t vertexA, const uint32_t vertexB, const uint32_t vertexC) noexcept
 	{
@@ -56,6 +69,12 @@ namespace renderer
 		m_numNormals = nNormals;
 		m_normals.reserve(nNormals * 3);
 	}
+
+    void Mesh::SetNumTexCoords(int nTexCoords)
+    {
+        m_numTexcoords = nTexCoords;
+        m_texcoords.reserve(nTexCoords * 2);
+    }
 
 	void Mesh::SetNumIndices(int nIndices)
 	{
