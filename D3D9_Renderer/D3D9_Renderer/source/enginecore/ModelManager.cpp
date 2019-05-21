@@ -13,7 +13,5 @@ namespace renderer
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
 		model->LoadModelAndParseData(filePath);
-
-		//m_modelList.push_back(std::move(model));
 	}
 }

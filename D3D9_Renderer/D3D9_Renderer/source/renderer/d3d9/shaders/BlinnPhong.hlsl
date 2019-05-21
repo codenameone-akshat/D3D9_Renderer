@@ -58,7 +58,7 @@ PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
     return psoutput;
 }
 
-technique PhongSpecTech
+technique BlinnPhongTech
 {
     pass P0
     {

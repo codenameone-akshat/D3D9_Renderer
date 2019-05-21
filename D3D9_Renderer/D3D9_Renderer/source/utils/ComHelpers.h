@@ -1,5 +1,6 @@
 #pragma once
 #include <DxErr.h>
+#include<d3d9.h>
 
 namespace renderer
 {

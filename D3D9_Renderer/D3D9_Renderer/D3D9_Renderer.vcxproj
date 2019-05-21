@@ -175,6 +175,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="source\renderer\d3d9\Shader.h" />
+    <ClInclude Include="source\renderer\Material.h" />
     <ClInclude Include="source\enginecore\BaseObject.h" />
     <ClInclude Include="source\enginecore\EngineCore.h" />
     <ClInclude Include="source\enginecore\ModelManager.h" />
@@ -192,6 +194,8 @@
     <ClInclude Include="source\window\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\renderer\d3d9\Shader.cpp" />
+    <ClCompile Include="source\renderer\Material.cpp" />
     <ClCompile Include="source\enginecore\BaseObject.cpp" />
     <ClCompile Include="source\enginecore\EngineCore.cpp" />
     <ClCompile Include="source\enginecore\ModelManager.cpp" />

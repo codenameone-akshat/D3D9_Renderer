@@ -203,18 +203,18 @@ namespace renderer
         break;
         case LightingMode::Specular:
         {
-            ComResult(m_effect->SetTechnique("PhongSpecTech"));
+            ComResult(m_effect->SetTechnique("BlinnPhongTech"));
             ComResult(m_effect->Begin(&numPasses, NULL));
             for (UINT passItr = 0; passItr < numPasses; ++passItr)
             {
                 m_effect->BeginPass(passItr);
-
+                
                 m_effect->SetMatrix("g_WorldMat", &m_worldMat);
                 m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
                 m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
                 m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
-                m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosision(), 1.0f));
+                m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
                 m_effect->SetFloat("g_specIntensity", 20.0f);
 

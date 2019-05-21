@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../enginecore/BaseObject.h"
+#include "Material.h"
 
 namespace renderer
 {
@@ -49,5 +50,6 @@ namespace renderer
 		std::vector<uint32_t> m_indices;
 
         std::string m_name;
+        Material m_material;
 	};
 }

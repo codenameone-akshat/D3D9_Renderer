@@ -61,6 +61,12 @@
     <ClCompile Include="source\enginecore\ModelManager.cpp">
       <Filter>MainApp</Filter>
     </ClCompile>
+    <ClCompile Include="source\renderer\Material.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="source\renderer\d3d9\Shader.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\enginecore\BaseObject.h">
@@ -106,6 +112,8 @@
       <Filter>Window</Filter>
     </ClInclude>
     <ClInclude Include="source\enginecore\ModelManager.h" />
+    <ClInclude Include="source\renderer\Material.h" />
+    <ClInclude Include="source\renderer\d3d9\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
