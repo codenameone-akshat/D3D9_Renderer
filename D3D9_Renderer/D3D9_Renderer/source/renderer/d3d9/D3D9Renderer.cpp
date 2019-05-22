@@ -30,7 +30,8 @@ namespace renderer
 	{
 		ComSafeRelease(m_d3d9);
 		ComSafeRelease(m_effect);
-	}
+        ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
+    }
 	void D3D9Renderer::Init(HWND hWindow)
 	{
 		memcpy(&m_hWindow, &hWindow, sizeof(HWND));
@@ -41,7 +42,6 @@ namespace renderer
 	}
 	void D3D9Renderer::UnInit()
 	{
-		ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
 	}
 	void D3D9Renderer::PrepareForRendering()
 	{
@@ -283,10 +283,10 @@ namespace renderer
 	}
 	void D3D9Renderer::ParseModels()
 	{
-		std::string filename = "data/sponza.fbx"; //get files to load from somewhere else
+		std::string filename = "data/Content/Sponza.fbx"; //get files to load from somewhere else
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 
-		model->LoadModelAndParseData(filename);
+		model->LoadModelAndParseData(m_device->GetDeviceObject(), filename);
 
 		m_modelList.push_back(std::move(model));
 	}
@@ -334,8 +334,8 @@ namespace renderer
         m_iBufferIndexCount = iBufferIndexCount;
         m_primitiveCount = primitiveCount;
 
-        ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, NULL, D3DPOOL_DEFAULT, m_vBuffer, nullptr));
-        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(uint32_t), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFMT_INDEX32, D3DPOOL_DEFAULT, m_iBuffer, nullptr));
+        ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * vBufferVertexCount), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr));
+        ComResult(m_device->CreateIndexBuffer(m_iBufferIndexCount * sizeof(uint32_t), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
 
 		m_vBuffer.AddDataToBuffer(positionVertices.data(), NULL, sizeof(PositionVertex) * vBufferVertexCount);
         m_iBuffer.AddDataToBuffer(positionIndices.data(), NULL, sizeof(uint32_t) * iBufferIndexCount);
@@ -366,4 +366,16 @@ namespace renderer
 			Logger::GetInstance().LogInfo((char*)errorBuffer->GetBufferPointer());
 		}
 	}
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //temp function test
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void MakeBatches(std::vector<PositionVertex>& positionVertices, std::vector<uint32_t>& positionIndicess)
+    {
+
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }

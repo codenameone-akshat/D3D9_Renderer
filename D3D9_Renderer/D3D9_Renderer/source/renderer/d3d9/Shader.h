@@ -12,7 +12,7 @@ namespace renderer
         Shader();
         ~Shader();
         
-        void CreateShader(IDirect3DDevice9* device);
+        void CreateShader(IDirect3DDevice9* device, std::string shaderPath);
         
     private:
         ID3DXEffect* m_shader;

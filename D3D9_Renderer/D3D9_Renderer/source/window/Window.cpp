@@ -42,8 +42,8 @@ namespace renderer
 		m_windowClass.lpszClassName = windowClassName;
 		m_windowClass.cbSize = sizeof(WNDCLASSEX);
 		m_windowClass.style = CS_HREDRAW | CS_VREDRAW;
-		m_windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		m_windowClass.lpfnWndProc = WindowMessageProc;
+		m_windowClass.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
+		m_windowClass.lpfnWndProc = this->WindowMessageProc;
 
 		RegisterClassEx(&m_windowClass);
 	}
@@ -53,8 +53,8 @@ namespace renderer
 		switch (message)
 		{
 		case WM_DESTROY:
-			PostQuitMessage(0);
-			exit(0);
+			::PostQuitMessage(0);
+			::exit(0);
 			return 0;
 			break;
 
@@ -62,6 +62,6 @@ namespace renderer
 			break;
 		}
 
-		return DefWindowProc(hWnd, message, wParam, lParam);
+		return ::DefWindowProc(hWnd, message, wParam, lParam);
 	}
 }

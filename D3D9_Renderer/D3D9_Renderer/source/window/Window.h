@@ -23,7 +23,7 @@ namespace renderer
 		inline void ShowD3DWindow(const int nShowCmd) const
 		{
 			if (m_hWindow)
-				ShowWindow(m_hWindow, nShowCmd);
+				::ShowWindow(m_hWindow, nShowCmd);
 		}
 
 	private:
@@ -32,7 +32,5 @@ namespace renderer
 
 		HWND m_hWindow;
 		WNDCLASSEX m_windowClass;
-
-
 	};
 }

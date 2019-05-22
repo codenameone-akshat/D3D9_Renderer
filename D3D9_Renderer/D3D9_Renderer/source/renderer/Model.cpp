@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "Model.h"
+#include "../utils/ComHelpers.h"
 
 namespace renderer
 {
@@ -15,7 +16,8 @@ namespace renderer
         m_totalTexCoords(0),
         m_totalIndices(0),
         m_numTris(0),
-        m_meshes()
+        m_meshes(),
+        m_fileDir()
     {
     }
 
@@ -24,8 +26,11 @@ namespace renderer
         m_meshes.clear();
     }
 
-    void Model::LoadModelAndParseData(std::string filepath)
+    void Model::LoadModelAndParseData(IDirect3DDevice9* device, std::string filepath)
     {
+        m_fileDir = filepath.substr(0, filepath.find_last_of("/") + 1);
+        m_deviceRef = device;
+
         const auto flags = aiProcess_CalcTangentSpace |
             aiProcess_Triangulate |
             aiProcess_ConvertToLeftHanded |
@@ -37,29 +42,24 @@ namespace renderer
         assert(m_scene != nullptr);
         m_numMeshes = m_scene->mNumMeshes;
 
-        ProcessModel();
+        ProcessModelVertexIndex();
     }
 
-    void Model::ProcessModel()
+    void Model::ProcessModelVertexIndex()
     {
         m_meshes.reserve(m_numMeshes);
         auto const meshes = m_scene->mMeshes;
-        auto const materials = m_scene->mMaterials;
-        auto const numMaterials = m_scene->mNumMaterials;
+        aiMaterial** materials = m_scene->mMaterials;
+        uint32_t numMaterials = m_scene->mNumMaterials;
 
         int totalVertices = 0;
         int totalIndices = 0;
 
-        for (uint32_t itr = 0; itr < numMaterials; ++itr)
-        {
-            aiString path;
-            materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-            materials[itr]->GetTexture(aiTextureType_NORMALS, 0, &path);
-        }
+        this->ProcessModelMaterials(materials, numMaterials);
 
         for (auto itr = 0; itr < m_numMeshes; ++itr)
         {
-            std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+            std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>();
 
             totalVertices += meshes[itr]->mNumVertices;
             totalIndices += meshes[itr]->mNumFaces * 3;
@@ -100,12 +100,33 @@ namespace renderer
                 mesh->AppendIndices(vertexA, vertexB, vertexC);
             }
             mesh->SetName(meshes[itr]->mName.C_Str());
-            auto id = meshes[itr]->mMaterialIndex;
+            mesh->SetMaterialIndex(meshes[itr]->mMaterialIndex);
+
             m_meshes.emplace_back(std::move(mesh));
         }
 
         m_totalVertices = totalVertices;
         m_totalNormals = totalVertices;
         m_totalIndices = totalIndices;
+    }
+    void Model::ProcessModelMaterials(aiMaterial** materials, uint32_t materialCount)
+    {
+        m_materials.reserve(materialCount);
+        
+        for (uint32_t itr = 0; itr < materialCount; ++itr)
+        {
+            Material material;
+            aiString path;
+           
+            materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+            std::string fullTexturePath = m_fileDir + path.C_Str();
+            ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Diffuse)));
+            
+            materials[itr]->GetTexture(aiTextureType_HEIGHT, 0, &path);
+            fullTexturePath = m_fileDir + path.C_Str();
+            ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Normal)));
+
+            m_materials.emplace_back(material);
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace renderer
 		void SetNumNormals(int nNormals);
         void SetNumTexCoords(int nTexCoords);
         void SetNumIndices(int nIndices);
+        void SetMaterialIndex(short index);
         inline void SetName(std::string textureFile) noexcept { m_name = textureFile; }
 
 		[[nodiscard]] inline std::vector<float> GetVertices() const { return m_vertices; }
@@ -43,13 +44,13 @@ namespace renderer
 		int m_numNormals;
 		int m_numIndices;
         int m_numTexcoords;
+        uint16_t m_materialIndex;
 
 		std::vector<float> m_vertices;
         std::vector<float> m_normals;
         std::vector<float> m_texcoords;
 		std::vector<uint32_t> m_indices;
-
+        
         std::string m_name;
-        Material m_material;
 	};
 }

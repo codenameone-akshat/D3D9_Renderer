@@ -13,6 +13,13 @@ namespace renderer
 	using Scene = aiScene;
 	using Importer = Assimp::Importer;
 
+    struct MaterialDesc
+    {
+        uint32_t textureCount;
+        std::vector<std::string> diffuseTexture;
+        std::vector<std::string> normalTexture;
+    };
+
 	class Model :
 		public BaseObject
 	{
@@ -21,7 +28,7 @@ namespace renderer
 		Model();
 		~Model();
 
-		void LoadModelAndParseData(std::string filepath);
+		void LoadModelAndParseData(IDirect3DDevice9* device, std::string filepath);
 
 		//>Getters
 		inline int GetNumMeshes() const { return m_numMeshes; }
@@ -34,12 +41,18 @@ namespace renderer
         inline std::vector<std::shared_ptr<Mesh>> GetMeshes() const { return m_meshes; }
         
 	private:
-		void ProcessModel();
+		void ProcessModelVertexIndex();
+        void ProcessModelMaterials(aiMaterial** materials, uint32_t materialCount);
+
+        std::string m_fileDir;
+        IDirect3DDevice9* m_deviceRef;
 
 		const Scene* m_scene;
 
 		Importer m_importer;
-		std::vector<std::shared_ptr<Mesh>> m_meshes;
+		
+        std::vector<std::shared_ptr<Mesh>> m_meshes;
+        std::vector<Material> m_materials;
 
 		int m_numMeshes;
         int m_numTris;

@@ -13,7 +13,8 @@ namespace renderer
 		m_normals(),
         m_texcoords(),
         m_indices(),
-        m_name()
+        m_name(),
+        m_materialIndex(0)
 	{
 	}
 
@@ -81,4 +82,8 @@ namespace renderer
 		m_numIndices = nIndices;
 		m_indices.reserve(nIndices);
 	}
+    void Mesh::SetMaterialIndex(short index)
+    {
+        m_materialIndex = index;
+    }
 }

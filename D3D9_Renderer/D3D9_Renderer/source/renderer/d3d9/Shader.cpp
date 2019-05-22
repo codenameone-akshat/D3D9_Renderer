@@ -18,8 +18,10 @@ namespace renderer
         m_techniques.clear();
     }
 
-    void Shader::CreateShader(IDirect3DDevice9* device)
+    void Shader::CreateShader(IDirect3DDevice9* device, std::string shaderPath)
     {
+        m_shaderPath = shaderPath;
+
         ID3DXBuffer* errorBuffer = nullptr;
         ComResult(D3DXCreateEffectFromFileA(device,
             m_shaderPath.c_str(), nullptr, nullptr,

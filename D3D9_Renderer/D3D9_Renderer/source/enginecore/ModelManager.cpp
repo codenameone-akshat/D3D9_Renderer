@@ -10,8 +10,8 @@ namespace renderer
 	}
 	void ModelManager::AddModelToWorld(std::string filePath)
 	{
-		std::unique_ptr<Model> model = std::make_unique<Model>();
+		/*std::unique_ptr<Model> model = std::make_unique<Model>();
 
-		model->LoadModelAndParseData(filePath);
+		model->LoadModelAndParseData(filePath);*/
 	}
 }
