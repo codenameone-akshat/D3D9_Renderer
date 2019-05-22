@@ -7,7 +7,7 @@
 
 namespace renderer
 {
-	constexpr int FullBufferLock = 0;
+	constexpr int32_t FullBufferLock = 0;
 
     template<typename T, typename = typename std::enable_if_t<std::is_same<T, IDirect3DVertexBuffer9>::value || std::is_same<T, IDirect3DIndexBuffer9>::value>>
     class StaticBuffer

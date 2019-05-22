@@ -59,30 +59,30 @@ namespace renderer
 		m_indices.emplace_back(vertexC);
 	}
 
-	void Mesh::SetNumVertices(int nVertices)
+	void Mesh::SetNumVertices(int32_t nVertices)
 	{
 		m_numVertices = nVertices;
 		m_vertices.reserve(nVertices * 3);
 	}
 
-	void Mesh::SetNumNormals(int nNormals)
+	void Mesh::SetNumNormals(int32_t nNormals)
 	{
 		m_numNormals = nNormals;
 		m_normals.reserve(nNormals * 3);
 	}
 
-    void Mesh::SetNumTexCoords(int nTexCoords)
+    void Mesh::SetNumTexCoords(int32_t nTexCoords)
     {
         m_numTexcoords = nTexCoords;
         m_texcoords.reserve(nTexCoords * 2);
     }
 
-	void Mesh::SetNumIndices(int nIndices)
+	void Mesh::SetNumIndices(int32_t nIndices)
 	{
 		m_numIndices = nIndices;
 		m_indices.reserve(nIndices);
 	}
-    void Mesh::SetMaterialIndex(short index)
+    void Mesh::SetMaterialIndex(int16_t index)
     {
         m_materialIndex = index;
     }

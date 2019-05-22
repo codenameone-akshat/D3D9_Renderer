@@ -31,12 +31,12 @@ namespace renderer
 		void LoadModelAndParseData(IDirect3DDevice9* device, std::string filepath);
 
 		//>Getters
-		inline int GetNumMeshes() const { return m_numMeshes; }
-        inline int GetTotalTriangles() const { return m_numTris; }
-        inline int GetTotalVertices() const { return m_totalVertices; }
-        inline int GetTotalNormals() const { return m_totalNormals; }
-        inline int GetTotalTexCoord() const { return m_totalTexCoords; }
-        inline int GetTotalIndices() const { return m_totalIndices; }
+		inline int32_t GetNumMeshes() const { return m_numMeshes; }
+        inline int32_t GetTotalTriangles() const { return m_numTris; }
+        inline int32_t GetTotalVertices() const { return m_totalVertices; }
+        inline int32_t GetTotalNormals() const { return m_totalNormals; }
+        inline int32_t GetTotalTexCoord() const { return m_totalTexCoords; }
+        inline int32_t GetTotalIndices() const { return m_totalIndices; }
 		
         inline std::vector<std::shared_ptr<Mesh>> GetMeshes() const { return m_meshes; }
         
@@ -54,11 +54,11 @@ namespace renderer
         std::vector<std::shared_ptr<Mesh>> m_meshes;
         std::vector<Material> m_materials;
 
-		int m_numMeshes;
-        int m_numTris;
-		int m_totalVertices;
-        int m_totalNormals;
-        int m_totalTexCoords;
-		int m_totalIndices;
+		int32_t m_numMeshes;
+        int32_t m_numTris;
+		int32_t m_totalVertices;
+        int32_t m_totalNormals;
+        int32_t m_totalTexCoords;
+		int32_t m_totalIndices;
 	};
 }

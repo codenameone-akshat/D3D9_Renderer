@@ -53,7 +53,7 @@ namespace renderer
             auto result = m_d3dDevice->SetIndices(indexBuffer.GetRawPtr());
             return result;
         }
-		inline void SetFVF(int fvf) { m_d3dDevice->SetFVF(fvf); }
+		inline void SetFVF(int32_t fvf) { m_d3dDevice->SetFVF(fvf); }
 
         //>Drawing
 		[[maybe_unused]] inline HRESULT DrawPrimitive(D3DPRIMITIVETYPE primitiveType, UINT startVertex, UINT primitiveCount)
@@ -61,7 +61,7 @@ namespace renderer
             auto result = m_d3dDevice->DrawPrimitive(primitiveType, startVertex, primitiveCount);  
             return result;
         }
-		[[maybe_unused]] inline HRESULT DrawIndexedPrimitive(D3DPRIMITIVETYPE primitiveType, INT baseVertexIndex, UINT minIndex, UINT numVertices, UINT startIndex, UINT primitiveCount)
+		[[maybe_unused]] inline HRESULT DrawIndexedPrimitive(D3DPRIMITIVETYPE primitiveType, int32_t baseVertexIndex, UINT minIndex, UINT numVertices, UINT startIndex, UINT primitiveCount)
         {
             auto result = m_d3dDevice->DrawIndexedPrimitive(primitiveType, baseVertexIndex, minIndex, numVertices, startIndex, primitiveCount);
             return result;

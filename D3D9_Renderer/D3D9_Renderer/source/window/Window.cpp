@@ -17,7 +17,7 @@ namespace renderer
 		::UnregisterClass(m_windowClass.lpszClassName, m_windowClass.hInstance);
 	}
 
-	void Window::CreateD3DWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
+	void Window::CreateD3DWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, DWORD dwStyle, int32_t X, int32_t Y, int32_t nWidth, int32_t nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
 	{
 		m_hWindow = CreateWindowEx(NULL,
 			lpClassName,

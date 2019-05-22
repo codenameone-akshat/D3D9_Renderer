@@ -17,7 +17,7 @@ namespace renderer
 		EngineCore(EngineCore& engineCore) = delete;
 		EngineCore& operator=(EngineCore engineCore) = delete;
 
-		void InitEngineCreateWindow(HINSTANCE hInstance, int nShowCmd);
+		void InitEngineCreateWindow(HINSTANCE hInstance, int32_t nShowCmd);
 		void InitRenderer();
 		void RenderFrame();
 		void PollMessage();

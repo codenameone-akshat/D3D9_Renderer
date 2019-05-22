@@ -139,7 +139,7 @@ namespace renderer
 	}
 	void D3D9Renderer::SetupVertexDeclaration()
 	{
-		constexpr int defaultVal = 0;
+		constexpr int32_t defaultVal = 0;
 
 		D3DVERTEXELEMENT9 positionVertexElements[] =
 		{
@@ -262,7 +262,7 @@ namespace renderer
 		HRESULT result = m_d3d9->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_D24S8, isWindowed, type, quality);
 		return result;
 	}
-	bool D3D9Renderer::CheckShaderVersionSupport(short version) const
+	bool D3D9Renderer::CheckShaderVersionSupport(int16_t version) const
 	{
 		if (m_d3dCaps.VertexShaderVersion < D3DVS_VERSION(version, 0) || m_d3dCaps.PixelShaderVersion < D3DPS_VERSION(version, 0))
 			return false;
@@ -292,9 +292,9 @@ namespace renderer
 	}
 	void D3D9Renderer::SetupStaticBuffers()
 	{
-		int vBufferVertexCount = 0;
-		int iBufferIndexCount = 0;
-		int primitiveCount = 0;
+		int32_t vBufferVertexCount = 0;
+		int32_t iBufferIndexCount = 0;
+		int32_t primitiveCount = 0;
 		
 		std::vector<PositionVertex> positionVertices;
 		std::vector<uint32_t> positionIndices;

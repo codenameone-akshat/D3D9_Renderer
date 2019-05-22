@@ -15,7 +15,7 @@ namespace renderer
     EngineCore::~EngineCore()
     {
     }
-    void EngineCore::InitEngineCreateWindow(HINSTANCE hInstance, int nShowCmd)
+    void EngineCore::InitEngineCreateWindow(HINSTANCE hInstance, int32_t nShowCmd)
     {
         const auto windowClassName = L"rendererWindow_Class";
         const auto windowName = L"DirectX 9 Window";

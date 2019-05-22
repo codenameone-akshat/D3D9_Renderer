@@ -15,7 +15,7 @@
 #include "VertexDefs.h"
 #include "../Camera.h"
 
-constexpr short SHADER_VERSION = 3;
+constexpr int16_t SHADER_VERSION = 3;
 constexpr auto SCREEN_HEIGHT = 720;
 constexpr auto SCREEN_WIDTH = 1280;
 
@@ -58,7 +58,7 @@ namespace renderer
         [[nodiscard]] HRESULT CheckDeviceStatus() override;
         [[nodiscard]] DWORD GetSupportedFeaturesBehavioralFlags() const;
 		[[nodiscard]] HRESULT CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD* quality, const bool isWindowed) const;
-		[[nodiscard]] bool CheckShaderVersionSupport(short version) const;
+		[[nodiscard]] bool CheckShaderVersionSupport(int16_t version) const;
 		
         [[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
@@ -79,9 +79,9 @@ namespace renderer
 		void UpdateMatrices();
         void RenderEffect(LightingMode mode);
 
-		int m_vBufferVertexCount;
-		int m_iBufferIndexCount;
-		int m_primitiveCount;
+		int32_t m_vBufferVertexCount;
+		int32_t m_iBufferIndexCount;
+		int32_t m_primitiveCount;
 
 		D3DCAPS9 m_d3dCaps;
 		IDirect3D9* m_d3d9;

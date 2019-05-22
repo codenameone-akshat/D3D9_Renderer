@@ -1,7 +1,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/mesh.h>
 #include <cassert>
-
 #include "Model.h"
 #include "../utils/ComHelpers.h"
 
@@ -52,8 +51,8 @@ namespace renderer
         aiMaterial** materials = m_scene->mMaterials;
         uint32_t numMaterials = m_scene->mNumMaterials;
 
-        int totalVertices = 0;
-        int totalIndices = 0;
+        int32_t totalVertices = 0;
+        int32_t totalIndices = 0;
 
         this->ProcessModelMaterials(materials, numMaterials);
 
@@ -72,7 +71,7 @@ namespace renderer
 
             const auto numVert = meshes[itr]->mNumVertices;
 
-            unsigned int iter = 0;
+            uint32_t iter = 0;
             for (iter = 0; iter < numVert; ++iter)
             {
                 float x = meshes[itr]->mVertices[iter].x;
