@@ -6,6 +6,16 @@
 
 namespace renderer
 {
+
+	struct BatchDesc
+	{
+		BatchDesc()
+			:vBufferOffsetBytes(0)
+		{}
+
+		size_t vBufferOffsetBytes;
+	};
+
 	class ModelManager
 	{
 	public:
@@ -13,9 +23,9 @@ namespace renderer
 		~ModelManager();
 
 		void AddModelToWorld(std::string filePath);
-
+		void ModelManager::tempFunc();
 	private:
-        std::vector<float> m_batchVertexTable;
-        std::vector<float> m_batchIndexTable;
+		std::unique_ptr<Model> m_model;
+		std::vector<BatchDesc> m_batchDesc;
 	};
 }

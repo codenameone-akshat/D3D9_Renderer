@@ -1,6 +1,8 @@
 #include <assimp/postprocess.h>
 #include <assimp/mesh.h>
 #include <cassert>
+#include <algorithm>
+
 #include "Model.h"
 #include "../utils/ComHelpers.h"
 
@@ -54,7 +56,7 @@ namespace renderer
         int32_t totalVertices = 0;
         int32_t totalIndices = 0;
 
-        this->ProcessModelMaterials(materials, numMaterials);
+        this->ProcessModelMaterials(materials, numMaterials); //get the material list ready for ref-counting
 
         for (auto itr = 0; itr < m_numMeshes; ++itr)
         {
@@ -100,9 +102,18 @@ namespace renderer
             }
             mesh->SetName(meshes[itr]->mName.C_Str());
             mesh->SetMaterialIndex(meshes[itr]->mMaterialIndex);
+			
+			m_materials[meshes[itr]->mMaterialIndex].AddBytesToBufferOffset(meshes[itr]->mNumVertices); //increment usage refcount for render Vbuffer offset
 
             m_meshes.emplace_back(std::move(mesh));
         }
+
+
+		//sort Meshlist
+		std::sort(m_meshes.begin(), m_meshes.end(), [](std::shared_ptr<Mesh> a, std::shared_ptr<Mesh> b)
+			{
+				return a->GetMaterialIndex() < b->GetMaterialIndex();
+			});
 
         m_totalVertices = totalVertices;
         m_totalNormals = totalVertices;
@@ -117,13 +128,18 @@ namespace renderer
             Material material;
             aiString path;
            
-            materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-            std::string fullTexturePath = m_fileDir + path.C_Str();
-            ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Diffuse)));
-            
-            materials[itr]->GetTexture(aiTextureType_HEIGHT, 0, &path);
-            fullTexturePath = m_fileDir + path.C_Str();
-            ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Normal)));
+			if (materials[itr]->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+			{
+				materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+				std::string fullTexturePath = m_fileDir + path.C_Str();
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Diffuse)));
+			}
+			if (materials[itr]->GetTextureCount(aiTextureType_HEIGHT) > 0)
+			{
+				materials[itr]->GetTexture(aiTextureType_HEIGHT, 0, &path);
+				std::string fullTexturePath = m_fileDir + path.C_Str();
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Normal)));
+			}
 
             m_materials.emplace_back(material);
         }

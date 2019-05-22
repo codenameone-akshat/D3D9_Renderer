@@ -4,7 +4,8 @@ namespace renderer
 {
     Material::Material()
         :m_diffuseTexture(),
-        m_normalTexture()
+        m_normalTexture(),
+		m_vBufferBatchOffset(0)
     {
     }
 
@@ -42,7 +43,7 @@ namespace renderer
             break;
         }
     }
-    IDirect3DTexture9 ** Material::GetPtrToTextureOfType(TextureType texType)
+    IDirect3DTexture9** Material::GetPtrToTextureOfType(TextureType texType)
     {
         switch (texType)
         {
