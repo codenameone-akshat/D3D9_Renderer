@@ -70,6 +70,7 @@ namespace renderer
             mesh->SetNumNormals(meshes[itr]->mNumVertices); //number of normals = number of vertices
             mesh->SetNumTexCoords(meshes[itr]->mNumVertices); //number of texcoord = number of vertices
             mesh->SetNumIndices(meshes[itr]->mNumFaces * 3);
+            mesh->SetNumTris(meshes[itr]->mNumFaces);
 
             const auto numVert = meshes[itr]->mNumVertices;
 
@@ -108,8 +109,7 @@ namespace renderer
             m_meshes.emplace_back(std::move(mesh));
         }
 
-
-		//sort Meshlist
+        //sort Meshlist
 		std::sort(m_meshes.begin(), m_meshes.end(), [](std::shared_ptr<Mesh> a, std::shared_ptr<Mesh> b)
 			{
 				return a->GetMaterialIndex() < b->GetMaterialIndex();
@@ -134,13 +134,20 @@ namespace renderer
 				std::string fullTexturePath = m_fileDir + path.C_Str();
 				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Diffuse)));
 			}
+            else
+            {
+                material.SetTexture(Material::TextureType::Diffuse, nullptr);
+            }
 			if (materials[itr]->GetTextureCount(aiTextureType_HEIGHT) > 0)
 			{
 				materials[itr]->GetTexture(aiTextureType_HEIGHT, 0, &path);
 				std::string fullTexturePath = m_fileDir + path.C_Str();
 				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Normal)));
 			}
-
+            else
+            {
+                material.SetTexture(Material::TextureType::Normal, nullptr);
+            }
             m_materials.emplace_back(material);
         }
     }

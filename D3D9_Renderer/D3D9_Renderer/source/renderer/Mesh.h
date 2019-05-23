@@ -25,13 +25,16 @@ namespace renderer
 		inline int32_t GetNumVertices() { return m_numVertices; }
 		inline int32_t GetNumNormals() { return m_numNormals; }
         inline int32_t GetNumTexCoords() { return m_numTexcoords; }
-		inline int32_t GetNumIndices() { return m_numIndices; }
+        inline int32_t GetNumIndices() { return m_numIndices; }
+        inline int32_t GetNumTris() { return m_numTris; }
 
 		void SetNumVertices(int32_t nVertices);
 		void SetNumNormals(int32_t nNormals);
         void SetNumTexCoords(int32_t nTexCoords);
         void SetNumIndices(int32_t nIndices);
-        void SetMaterialIndex(int16_t index);
+
+        inline void SetNumTris(int32_t nTris) { m_numTris = nTris; }
+        inline void SetMaterialIndex(int16_t index) { m_materialIndex = index; }
         inline void SetName(std::string textureFile) noexcept { m_name = textureFile; }
 
 		[[nodiscard]] inline std::vector<float> GetVertices() const { return m_vertices; }
@@ -46,6 +49,7 @@ namespace renderer
 		int32_t m_numNormals;
 		int32_t m_numIndices;
         int32_t m_numTexcoords;
+        int32_t m_numTris;
 
 		std::vector<float> m_vertices;
         std::vector<float> m_normals;

@@ -32,7 +32,7 @@ namespace renderer
 
 		//>Getters
 		inline int32_t GetTotalMeshes() const { return m_numMeshes; }
-		inline int32_t GetTotalMaterials() const { return m_materials.size(); }
+		inline size_t GetTotalMaterials() const { return m_materials.size(); }
         inline int32_t GetTotalTriangles() const { return m_numTris; }
         inline int32_t GetTotalVertices() const { return m_totalVertices; }
         inline int32_t GetTotalNormals() const { return m_totalNormals; }

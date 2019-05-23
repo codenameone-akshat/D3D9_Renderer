@@ -14,6 +14,8 @@
 #include "../Model.h"
 #include "VertexDefs.h"
 #include "../Camera.h"
+#include "../../enginecore/ModelManager.h"
+#include"../../enginecore/Batch.h"
 
 constexpr int16_t SHADER_VERSION = 3;
 constexpr auto SCREEN_HEIGHT = 720;
@@ -77,7 +79,7 @@ namespace renderer
         void SetupVertexDeclaration();
 		void BuildMatrices();
 		void UpdateMatrices();
-        void RenderEffect(LightingMode mode);
+        void RenderEffect(LightingMode mode, UINT numVertices, UINT startIndex, UINT primitiveCount);
 
 		int32_t m_vBufferVertexCount;
 		int32_t m_iBufferIndexCount;
@@ -100,6 +102,6 @@ namespace renderer
 
 		std::unique_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
-		std::vector<std::unique_ptr<Model>> m_modelList; //entire model list to render in the world 
+        ModelManager m_modelManager;
 	};
 }

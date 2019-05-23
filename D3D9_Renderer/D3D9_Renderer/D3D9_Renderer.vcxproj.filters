@@ -114,6 +114,7 @@
     <ClInclude Include="source\enginecore\ModelManager.h" />
     <ClInclude Include="source\renderer\Material.h" />
     <ClInclude Include="source\renderer\d3d9\Shader.h" />
+    <ClInclude Include="source\enginecore\Batch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

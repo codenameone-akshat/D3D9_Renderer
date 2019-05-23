@@ -9,6 +9,7 @@ namespace renderer
 		m_numNormals(0),
         m_numTexcoords(0),
 		m_numIndices(0),
+        m_numTris(0),
 		m_vertices(),
 		m_normals(),
         m_texcoords(),
@@ -82,8 +83,4 @@ namespace renderer
 		m_numIndices = nIndices;
 		m_indices.reserve(nIndices);
 	}
-    void Mesh::SetMaterialIndex(int16_t index)
-    {
-        m_materialIndex = index;
-    }
 }

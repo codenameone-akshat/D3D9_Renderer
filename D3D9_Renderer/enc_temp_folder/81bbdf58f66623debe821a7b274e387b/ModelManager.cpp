@@ -34,7 +34,6 @@ namespace renderer
 
         uint32_t indexOffset(0);
         uint32_t batchIBufferOffset(0);
-        uint32_t batchVBufferOffset(0);
 
 		vBufferVertexCount = m_model->GetTotalVertices();
 		iBufferIndexCount = m_model->GetTotalIndices();
@@ -66,11 +65,10 @@ namespace renderer
 
             //update batch list for offsets
             auto matIndex = mesh->GetMaterialIndex();
-            batchIBufferOffset += static_cast<uint32_t>(mesh->GetNumIndices() + 1);
-            batchVBufferOffset += static_cast<uint32_t>(mesh->GetNumIndices() + 1);
+            batchIBufferOffset += static_cast<uint32_t>(mesh->GetNumIndices()+1);
             if (matIndex < (numMaterials - 1))
             {
-                batchDescs[matIndex + 1].vBufferOffsetCount += mesh->GetNumVertices(); //FIXME: vertex offset is wrong.
+                batchDescs[matIndex + 1].vBufferOffsetCount += mesh->GetNumVertices();
                 batchDescs[matIndex + 1].indexStart += batchIBufferOffset;
             }
             batchDescs[matIndex].primitiveCount += mesh->GetNumTris();
