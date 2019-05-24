@@ -33,8 +33,6 @@ namespace renderer
 		std::vector<uint32_t> positionIndices;
 
         uint32_t indexOffset(0);
-        uint32_t batchIBufferOffset(0);
-        uint32_t batchVBufferOffset(0);
 
 		vBufferVertexCount = m_model->GetTotalVertices();
 		iBufferIndexCount = m_model->GetTotalIndices();
@@ -66,16 +64,23 @@ namespace renderer
 
             //update batch list for offsets
             auto matIndex = mesh->GetMaterialIndex();
-            batchIBufferOffset += static_cast<uint32_t>(mesh->GetNumIndices() + 1);
-            batchVBufferOffset += static_cast<uint32_t>(mesh->GetNumIndices() + 1);
             if (matIndex < (numMaterials - 1))
             {
-                batchDescs[matIndex + 1].vBufferOffsetCount += mesh->GetNumVertices(); //FIXME: vertex offset is wrong.
-                batchDescs[matIndex + 1].indexStart += batchIBufferOffset;
+                batchDescs[matIndex + 1].vBufferOffsetCount += mesh->GetNumVertices();
+                batchDescs[matIndex + 1].indexStart += static_cast<uint32_t>(mesh->GetNumIndices());
             }
             batchDescs[matIndex].primitiveCount += mesh->GetNumTris();
             batchDescs[matIndex].vertexCount += mesh->GetNumVertices();
 		}
+
+        for (uint16_t itr = 0; itr < batchDescs.size(); ++itr)
+        {
+            if (itr > 0)
+            {
+                batchDescs[itr].vBufferOffsetCount += batchDescs[itr - 1].vBufferOffsetCount;
+                batchDescs[itr].indexStart += batchDescs[itr - 1].indexStart;
+            }
+        }
 
 		m_batchDesc.insert(m_batchDesc.end(), batchDescs.begin(), batchDescs.end()); //useful when multiple models
 
