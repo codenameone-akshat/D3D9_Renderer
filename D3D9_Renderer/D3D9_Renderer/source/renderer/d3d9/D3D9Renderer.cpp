@@ -46,7 +46,7 @@ namespace renderer
     void D3D9Renderer::PrepareForRendering()
     {
         BuildMatrices();
-        //ParseModels();
+        ParseModels();
         SetupVertexDeclaration();
         SetupStaticBuffers();
         SetupEffect(LightingMode::Specular);
@@ -67,8 +67,7 @@ namespace renderer
         auto batchList = m_modelManager.GetBatchList();
         for (auto& batch : batchList)
         {
-            m_device->SetStreamSource(0, m_vBuffer, sizeof(PositionVertex) * batch.vBufferOffsetCount, sizeof(PositionVertex));
-
+            m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
             m_worldViewProjMat = m_worldMat * m_viewMat * m_projMat;
             RenderEffect(LightingMode::Specular, batch.vertexCount, batch.indexStart, batch.primitiveCount);
         }
@@ -223,7 +222,7 @@ namespace renderer
                 m_effect->SetFloat("g_specIntensity", 20.0f);
 
                 m_effect->CommitChanges();
-                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices*(sizeof(PositionVertex)), startIndex, primitiveCount);
+                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices, startIndex, primitiveCount);
                 m_effect->EndPass();
             }
             m_effect->End();
@@ -287,54 +286,11 @@ namespace renderer
     }
     void D3D9Renderer::ParseModels()
     {
-        //std::string filename = "data/Content/Sponza.fbx"; //get files to load from somewhere else
-        //std::unique_ptr<Model> model = std::make_unique<Model>();
-
-        //model->LoadModelAndParseData(m_device->GetDeviceObject(), filename);
-
-        //m_modelList.push_back(std::move(model));
+		std::string filename = "data/Content/Sponza.fbx";
+		m_modelManager.AddModelToWorld(m_device->GetDeviceObject(), filename);
     }
     void D3D9Renderer::SetupStaticBuffers()
     {
-        std::string filename = "data/Content/Sponza.fbx";
-        m_modelManager.AddModelToWorld(m_device->GetDeviceObject(), filename);
-        auto model = m_modelManager.GetModel();
-
-        #pragma region blah
-
-
-        //vBufferVertexCount += model->GetTotalVertices();
-        //iBufferIndexCount += model->GetTotalIndices();
-        //primitiveCount += model->GetTotalTriangles();
-
-        //auto meshList = model->GetMeshes(); //sorted list
-
-        //for (auto mesh : meshList)
-        //{
-        //    auto meshVertices = mesh->GetVertices();
-        //    auto meshNormals = mesh->GetNormals();
-        //    auto meshTexCoords = mesh->GetTexCoords();
-        //    for (auto vitr = meshVertices.begin(), nitr = meshNormals.begin(), titr = meshTexCoords.begin();
-        //        vitr != meshVertices.end() && nitr != meshNormals.end() && titr != meshTexCoords.end();
-        //        vitr += 3, nitr += 3, titr += 2)
-        //    {
-        //        positionVertices.push_back({ *vitr, *(vitr + 1), *(vitr + 2), *nitr, *(nitr + 1), *(nitr + 2), *(titr), *(titr + 1) });
-        //    }
-
-        //    auto meshIndices = mesh->GetIndices();
-        //    for (auto index : meshIndices)
-        //        positionIndices.push_back(index + indexOffset);
-
-        //    indexOffset += static_cast<uint32_t>(mesh->GetNumVertices());
-        //}
-        //positionVertices.shrink_to_fit();
-        //positionIndices.shrink_to_fit();
-
-        //m_vBufferVertexCount = vBufferVertexCount;
-        //m_iBufferIndexCount = iBufferIndexCount;
-        //m_primitiveCount = primitiveCount;
-#pragma endregion old code | now in model manager
-
         ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * m_modelManager.GetVBufferCount()), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr));
         ComResult(m_device->CreateIndexBuffer(m_modelManager.GetIBufferCount() * sizeof(uint32_t), NULL, D3DFMT_INDEX32, D3DPOOL_MANAGED, m_iBuffer, nullptr));
 
@@ -345,7 +301,7 @@ namespace renderer
     {
         ID3DXBuffer* errorBuffer = nullptr;
 
-        switch (mode)
+        switch (mode) 
         {
         case LightingMode::Diffuse:
             ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),

@@ -24,7 +24,7 @@ namespace renderer
 
     Model::~Model()
     {
-        m_meshes.clear();
+        //m_meshes.clear();
     }
 
     void Model::LoadModelAndParseData(IDirect3DDevice9* device, std::string filepath)
@@ -87,8 +87,8 @@ namespace renderer
                 z = meshes[itr]->mNormals[iter].z;
                 mesh->AppendNormals(x, y, z);
 
-                x = meshes[itr]->mTextureCoords[0][iter].x;
-                y = meshes[itr]->mTextureCoords[0][iter].y;
+				x = meshes[itr]->HasTextureCoords(0) ? meshes[itr]->mTextureCoords[0][iter].x : 0.0f;
+                y = meshes[itr]->HasTextureCoords(0) ? meshes[itr]->mTextureCoords[0][iter].y : 0.0f;
                 mesh->AppendTexCoords(x, y);
             }
 

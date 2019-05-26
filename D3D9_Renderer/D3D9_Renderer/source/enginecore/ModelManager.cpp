@@ -1,4 +1,5 @@
 #include "ModelManager.h"
+#include "../utils/Logger.h"
 
 namespace renderer
 {
@@ -13,18 +14,12 @@ namespace renderer
 	void ModelManager::AddModelToWorld(IDirect3DDevice9* deviceRef, std::string filePath)
 	{
         m_deviceRef = deviceRef;
-		/*std::unique_ptr<Model> model = std::make_unique<Model>();
-
-		model->LoadModelAndParseData(filePath);*/
-        LoadModel();
+		m_model->LoadModelAndParseData(deviceRef, filePath);
+		LoadModel();
 	}
 
 	void ModelManager::LoadModel()
 	{
-		std::string filename = "data/Content/Sponza.fbx"; //get files to load from somewhere else
-
-		m_model->LoadModelAndParseData(m_deviceRef, filename);
-
 		int32_t vBufferVertexCount = 0;
 		int32_t iBufferIndexCount = 0;
 		int32_t primitiveCount = 0;
@@ -44,9 +39,10 @@ namespace renderer
 
 		for (auto mesh : meshList)
 		{
-			auto meshVertices = mesh->GetVertices();
-			auto meshNormals = mesh->GetNormals();
-            auto meshTexCoords = mesh->GetTexCoords();
+			auto const meshVertices = mesh->GetVertices();
+			auto const meshNormals = mesh->GetNormals();
+            auto const meshTexCoords = mesh->GetTexCoords();
+
             for (auto vitr = meshVertices.begin(), nitr = meshNormals.begin(), titr = meshTexCoords.begin();
                 vitr != meshVertices.end() && nitr != meshNormals.end() && titr != meshTexCoords.end();
                 vitr += 3, nitr += 3, titr += 2)
@@ -64,11 +60,12 @@ namespace renderer
 
             //update batch list for offsets
             auto matIndex = mesh->GetMaterialIndex();
-            if (matIndex < (numMaterials - 1))
+            
+			if (matIndex < (numMaterials - 1))
             {
-                batchDescs[matIndex + 1].vBufferOffsetCount += mesh->GetNumVertices();
                 batchDescs[matIndex + 1].indexStart += static_cast<uint32_t>(mesh->GetNumIndices());
             }
+
             batchDescs[matIndex].primitiveCount += mesh->GetNumTris();
             batchDescs[matIndex].vertexCount += mesh->GetNumVertices();
 		}
@@ -77,7 +74,6 @@ namespace renderer
         {
             if (itr > 0)
             {
-                batchDescs[itr].vBufferOffsetCount += batchDescs[itr - 1].vBufferOffsetCount;
                 batchDescs[itr].indexStart += batchDescs[itr - 1].indexStart;
             }
         }
