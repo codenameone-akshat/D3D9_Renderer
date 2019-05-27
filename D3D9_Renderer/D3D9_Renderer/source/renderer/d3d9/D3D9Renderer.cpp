@@ -189,7 +189,7 @@ namespace renderer
             ComResult(m_effect->Begin(&numPasses, NULL));
             
             auto material = m_modelManager.GetModel()->GetMaterialAtIndex(matIndex);
-            auto tex = material.GetTextureOfType(Material::TextureType::Diffuse);
+            auto tex = material->GetTextureOfType(Material::TextureType::Diffuse);
 
             for (UINT passItr = 0; passItr < numPasses; ++passItr)
             {
@@ -198,7 +198,7 @@ namespace renderer
                 m_effect->SetMatrix("g_WorldMat", &m_worldMat);
                 m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
                 m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
-                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));

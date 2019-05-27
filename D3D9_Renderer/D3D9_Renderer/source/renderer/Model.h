@@ -41,7 +41,7 @@ namespace renderer
         inline int32_t GetTotalIndices() const { return m_totalIndices; }
 		
         inline std::vector<std::shared_ptr<Mesh>> GetMeshes() const { return m_meshes; }
-        inline Material GetMaterialAtIndex(uint32_t matIndex) const { assert(matIndex < m_materials.size()); return m_materials[matIndex]; }
+        inline Material* GetMaterialAtIndex(uint32_t matIndex) const { assert(matIndex < m_materials.size()); return m_materials[matIndex]; }
         
 	private:
 		void ProcessModelVertexIndex();
@@ -55,7 +55,7 @@ namespace renderer
 		Importer m_importer;
 		
         std::vector<std::shared_ptr<Mesh>> m_meshes;
-        std::vector<Material> m_materials;
+        std::vector<Material*> m_materials;
 
 		int32_t m_numMeshes;
         int32_t m_numTris;

@@ -23,6 +23,7 @@ sampler TexD = sampler_state
     Texture = <g_DiffuseTex>;
     MinFilter = Anisotropic;
     MagFilter = Linear;
+	MipFilter = Linear;
     MaxAnisotropy = 4;
 };
 
@@ -32,15 +33,18 @@ struct VS_OUTPUT
     float4 position : POSITION0;
     float3 normal : NORMAL0;
     float3 worldPos : TEXCOORD0;
+	float2 diffTex : TEXCOORD1;
 };
 
 VS_OUTPUT RenderVS(float3 pos : POSITION0,
-    float3 norm : NORMAL0)
+    float3 norm : NORMAL0,
+	float2 diffTex : TEXCOORD0)
 {
     VS_OUTPUT vsoutput = (VS_OUTPUT)0;
     vsoutput.position = mul(float4(pos, 1.0f), g_worldViewProjMatrix);
     vsoutput.normal = mul(norm, (float3x3)g_WorldMat);
     vsoutput.worldPos = mul(pos, g_WorldMat); //get the light and vertex in the same matrix
+	vsoutput.diffTex = diffTex;
     return vsoutput;
 }
 
@@ -55,9 +59,11 @@ PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
 
     float3 vWorldNormal = normalize(psInput.normal);
     float3 lightDir = normalize(g_dirLightDir.xyz);
+	
+	float4 texColorDiff = tex2D(TexD, psInput.diffTex);
 
-    float4 diffuse = g_dirLightColor * saturate(dot(normalize(vWorldNormal), lightDir));
-
+    float4 diffuse = texColorDiff * g_dirLightColor * saturate(dot(normalize(vWorldNormal), lightDir));
+	
     float3 viewDir = normalize(g_viewDirection.xyz - psInput.worldPos); //get vector from vertex to light
     float3 halfVec = normalize(float3(viewDir + lightDir));
     

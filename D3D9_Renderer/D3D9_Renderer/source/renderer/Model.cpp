@@ -26,6 +26,11 @@ namespace renderer
     Model::~Model()
     {
         m_meshes.clear();
+
+		for (auto mat : m_materials)
+		{
+			delete mat;
+		}
     }
 
     void Model::LoadModelAndParseData(IDirect3DDevice9* device, std::string filepath)
@@ -105,8 +110,6 @@ namespace renderer
             mesh->SetName(meshes[itr]->mName.C_Str());
             mesh->SetMaterialIndex(meshes[itr]->mMaterialIndex);
 			
-			m_materials[meshes[itr]->mMaterialIndex].AddBytesToBufferOffset(meshes[itr]->mNumVertices); //increment usage refcount for render Vbuffer offset
-
             m_meshes.emplace_back(std::move(mesh));
         }
 
@@ -126,7 +129,7 @@ namespace renderer
         
         for (uint32_t itr = 0; itr < materialCount; ++itr)
         {
-            std::shared_ptr<Material> material = std::make_shared<Material>();
+            Material* material = new Material();
             aiString path;
            
 			if (materials[itr]->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -151,7 +154,7 @@ namespace renderer
                 std::string fullTexturePath = m_fileDir + "default_normal.png";
                 ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Normal)));
             }
-           m_materials.emplace_back(std::move(material));
+           m_materials.emplace_back(material);
         }
     }
 }
