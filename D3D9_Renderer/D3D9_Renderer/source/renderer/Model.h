@@ -4,6 +4,7 @@
 #include <assimp/Importer.hpp>
 #include <vector>
 #include <memory>
+#include <cassert>
 
 #include "../enginecore/BaseObject.h"
 #include "Mesh.h"
@@ -40,6 +41,7 @@ namespace renderer
         inline int32_t GetTotalIndices() const { return m_totalIndices; }
 		
         inline std::vector<std::shared_ptr<Mesh>> GetMeshes() const { return m_meshes; }
+        inline Material GetMaterialAtIndex(uint32_t matIndex) const { assert(matIndex < m_materials.size()); return m_materials[matIndex]; }
         
 	private:
 		void ProcessModelVertexIndex();

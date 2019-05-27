@@ -3,8 +3,8 @@
 namespace renderer
 {
     Material::Material()
-        :m_diffuseTexture(),
-        m_normalTexture(),
+        :m_diffuseTexture(nullptr),
+        m_normalTexture(nullptr),
 		m_vBufferBatchOffset(0)
     {
     }

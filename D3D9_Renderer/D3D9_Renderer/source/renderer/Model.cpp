@@ -18,13 +18,14 @@ namespace renderer
         m_totalIndices(0),
         m_numTris(0),
         m_meshes(),
-        m_fileDir()
+        m_fileDir(),
+        m_deviceRef(nullptr)
     {
     }
 
     Model::~Model()
     {
-        //m_meshes.clear();
+        m_meshes.clear();
     }
 
     void Model::LoadModelAndParseData(IDirect3DDevice9* device, std::string filepath)
@@ -125,30 +126,32 @@ namespace renderer
         
         for (uint32_t itr = 0; itr < materialCount; ++itr)
         {
-            Material material;
+            std::shared_ptr<Material> material = std::make_shared<Material>();
             aiString path;
            
 			if (materials[itr]->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 				std::string fullTexturePath = m_fileDir + path.C_Str();
-				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Diffuse)));
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Diffuse)));
 			}
             else
             {
-                material.SetTexture(Material::TextureType::Diffuse, nullptr);
+                std::string fullTexturePath = m_fileDir + "default_diffuse.png";
+                ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Diffuse)));
             }
 			if (materials[itr]->GetTextureCount(aiTextureType_HEIGHT) > 0)
 			{
 				materials[itr]->GetTexture(aiTextureType_HEIGHT, 0, &path);
 				std::string fullTexturePath = m_fileDir + path.C_Str();
-				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material.GetPtrToTextureOfType(Material::TextureType::Normal)));
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Normal)));
 			}
             else
             {
-                material.SetTexture(Material::TextureType::Normal, nullptr);
+                std::string fullTexturePath = m_fileDir + "default_normal.png";
+                ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Normal)));
             }
-            m_materials.emplace_back(material);
+           m_materials.emplace_back(std::move(material));
         }
     }
 }

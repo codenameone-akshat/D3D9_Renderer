@@ -79,7 +79,7 @@ namespace renderer
         void SetupVertexDeclaration();
 		void BuildMatrices();
 		void UpdateMatrices();
-        void RenderEffect(LightingMode mode, UINT numVertices, UINT startIndex, UINT primitiveCount);
+        void RenderEffect(LightingMode mode, UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex);
 
 		int32_t m_vBufferVertexCount;
 		int32_t m_iBufferIndexCount;

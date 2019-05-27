@@ -14,6 +14,18 @@ uniform extern float g_specIntensity;
 uniform extern float4 g_viewDirection;
 uniform extern float4 g_specularLightColor;
 
+//Textures
+uniform extern texture g_DiffuseTex;
+uniform extern texture g_NormalTex;
+
+sampler TexD = sampler_state
+{
+    Texture = <g_DiffuseTex>;
+    MinFilter = Anisotropic;
+    MagFilter = Linear;
+    MaxAnisotropy = 4;
+};
+
 
 struct VS_OUTPUT
 {
