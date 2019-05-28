@@ -137,10 +137,11 @@ namespace renderer
 				materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 				std::string fullTexturePath = m_fileDir + path.C_Str();
 				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Diffuse)));
+                material->SetPath(fullTexturePath);
 			}
             else
             {
-                std::string fullTexturePath = m_fileDir + "default_diffuse.png";
+                std::string fullTexturePath = "data/DefaultTex/default_diffuse.png";
                 ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Diffuse)));
             }
 			if (materials[itr]->GetTextureCount(aiTextureType_HEIGHT) > 0)
@@ -151,7 +152,7 @@ namespace renderer
 			}
             else
             {
-                std::string fullTexturePath = m_fileDir + "default_normal.png";
+                std::string fullTexturePath = "data/DefaultTex/default_normal.png";
                 ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Normal)));
             }
            m_materials.emplace_back(material);

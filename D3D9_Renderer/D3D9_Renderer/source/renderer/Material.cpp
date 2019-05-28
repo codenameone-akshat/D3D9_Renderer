@@ -4,7 +4,8 @@ namespace renderer
 {
     Material::Material()
         :m_diffuseTexture(nullptr),
-        m_normalTexture(nullptr)
+        m_normalTexture(nullptr),
+        m_difftexturePath("")
     {
     }
 

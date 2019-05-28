@@ -148,7 +148,7 @@ namespace renderer
         {
             { defaultVal, defaultVal, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
             { defaultVal, sizeof(float) * 3, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
-            { defaultVal, sizeof(float) * 2, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+            { defaultVal, sizeof(float) * 6, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
             D3DDECL_END()
         };
 
@@ -189,16 +189,18 @@ namespace renderer
             ComResult(m_effect->Begin(&numPasses, NULL));
             
             auto material = m_modelManager.GetModel()->GetMaterialAtIndex(matIndex);
-            auto tex = material->GetTextureOfType(Material::TextureType::Diffuse);
+            auto diffuseTex = material->GetTextureOfType(Material::TextureType::Diffuse);
+            auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
 
             for (UINT passItr = 0; passItr < numPasses; ++passItr)
             {
                 m_effect->BeginPass(passItr);
-                m_effect->SetTexture("g_DiffuseTex", tex);
+                m_effect->SetTexture("g_DiffuseTex", diffuseTex);
+                m_effect->SetTexture("g_NormalTex", normalTex);
                 m_effect->SetMatrix("g_WorldMat", &m_worldMat);
                 m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
-                m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(0.0f, 1.0f, -2.2f, 1.0f));
-                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+                m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f));
+                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.94f, 0.81f, 0.51f, 1.0f));
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));

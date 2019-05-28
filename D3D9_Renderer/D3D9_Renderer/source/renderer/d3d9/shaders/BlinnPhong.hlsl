@@ -18,22 +18,35 @@ uniform extern float4 g_specularLightColor;
 uniform extern texture g_DiffuseTex;
 uniform extern texture g_NormalTex;
 
-sampler TexD = sampler_state
+sampler DiffuseSampler = sampler_state
 {
     Texture = <g_DiffuseTex>;
     MinFilter = Anisotropic;
     MagFilter = Linear;
 	MipFilter = Linear;
     MaxAnisotropy = 4;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
+sampler NormalSampler = sampler_state
+{
+    Texture = <g_NormalTex>;
+    MinFilter = Anisotropic;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MaxAnisotropy = 4;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
 
 struct VS_OUTPUT
 {
     float4 position : POSITION0;
     float3 normal : NORMAL0;
     float3 worldPos : TEXCOORD0;
-	float2 diffTex : TEXCOORD1;
+    float2 diffTex : TEXCOORD1;
+    float2 normalTex : TEXCOORD2;
 };
 
 VS_OUTPUT RenderVS(float3 pos : POSITION0,
@@ -60,7 +73,7 @@ PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
     float3 vWorldNormal = normalize(psInput.normal);
     float3 lightDir = normalize(g_dirLightDir.xyz);
 	
-	float4 texColorDiff = tex2D(TexD, psInput.diffTex);
+	float4 texColorDiff = tex2D(DiffuseSampler, psInput.diffTex);
 
     float4 diffuse = texColorDiff * g_dirLightColor * saturate(dot(normalize(vWorldNormal), lightDir));
 	
