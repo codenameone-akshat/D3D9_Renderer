@@ -45,7 +45,7 @@ namespace renderer
         float m_vx, m_vy, m_vz; //Vertices
         float m_nx, m_ny, m_nz; //Indices
         float m_tx, m_ty; //TexCoords
-        float m_tangx, m_tangy, m_tangz; //tangents
-        float m_biTangx, m_biTangy, m_biTangz; //bi-tangents
+        float m_tangx, m_tangy, m_tangz; //Tangents
+        float m_biTangx, m_biTangy, m_biTangz; //Bi-Tangents
     };
 }

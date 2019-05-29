@@ -158,13 +158,13 @@ namespace renderer
 				materials[itr]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 				std::string fullTexturePath = m_fileDir + path.C_Str();
 				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Diffuse)));
-                material->SetPath(fullTexturePath);
 			}
             else
             {
                 std::string fullTexturePath = "data/DefaultTex/default_diffuse.png";
                 ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Diffuse)));
             }
+
 			if (materials[itr]->GetTextureCount(aiTextureType_HEIGHT) > 0)
 			{
 				materials[itr]->GetTexture(aiTextureType_HEIGHT, 0, &path);
@@ -176,6 +176,30 @@ namespace renderer
                 std::string fullTexturePath = "data/DefaultTex/default_normal.png";
                 ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Normal)));
             }
+
+			if (materials[itr]->GetTextureCount(aiTextureType_SHININESS) > 0)
+			{
+				materials[itr]->GetTexture(aiTextureType_SHININESS, 0, &path);
+				std::string fullTexturePath = m_fileDir + path.C_Str();
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Specular)));
+			}
+			else
+			{
+				std::string fullTexturePath = "data/DefaultTex/default_specular.png";
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Specular)));
+			}
+
+			if (materials[itr]->GetTextureCount(aiTextureType_OPACITY) > 0)
+			{
+				materials[itr]->GetTexture(aiTextureType_OPACITY, 0, &path);
+				std::string fullTexturePath = m_fileDir + path.C_Str();
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Specular)));
+			}
+			else
+			{
+				std::string fullTexturePath = "data/DefaultTex/default_opacity.png";
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Specular)));
+			}
            m_materials.emplace_back(material);
         }
     }

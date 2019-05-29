@@ -192,13 +192,17 @@ namespace renderer
             
             auto material = m_modelManager.GetModel()->GetMaterialAtIndex(matIndex);
             auto diffuseTex = material->GetTextureOfType(Material::TextureType::Diffuse);
-            auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
+			auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
+			auto specTex = material->GetTextureOfType(Material::TextureType::Specular);
+			auto opacityTex = material->GetTextureOfType(Material::TextureType::Opacity);
 
             for (UINT passItr = 0; passItr < numPasses; ++passItr)
             {
                 m_effect->BeginPass(passItr);
                 m_effect->SetTexture("g_DiffuseTex", diffuseTex);
-                m_effect->SetTexture("g_NormalTex", normalTex);
+				m_effect->SetTexture("g_NormalTex", normalTex);
+				m_effect->SetTexture("g_SpecularTex", specTex);
+				m_effect->SetTexture("g_OpacityTex", opacityTex);
                 m_effect->SetMatrix("g_WorldMat", &m_worldMat);
                 m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
                 m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f));
@@ -206,13 +210,14 @@ namespace renderer
                 m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
                 m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
                 m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
-                m_effect->SetFloat("g_specIntensity", 20.0f);
+                m_effect->SetFloat("g_specIntensity", 50.0f);
 
                 m_effect->CommitChanges();
                 m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices, startIndex, primitiveCount);
                 m_effect->EndPass();
             }
-            m_effect->End();
+
+			m_effect->End();
         }
         break;
         default:
