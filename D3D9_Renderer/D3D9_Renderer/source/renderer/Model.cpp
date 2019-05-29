@@ -75,6 +75,8 @@ namespace renderer
             mesh->SetNumVertices(meshes[itr]->mNumVertices);
             mesh->SetNumNormals(meshes[itr]->mNumVertices); //number of normals = number of vertices
             mesh->SetNumTexCoords(meshes[itr]->mNumVertices); //number of texcoord = number of vertices
+            mesh->SetNumTangents(meshes[itr]->mNumVertices);
+            mesh->SetNumBiTangents(meshes[itr]->mNumVertices);
             mesh->SetNumIndices(meshes[itr]->mNumFaces * 3);
             mesh->SetNumTris(meshes[itr]->mNumFaces);
 
@@ -96,6 +98,25 @@ namespace renderer
 				x = meshes[itr]->HasTextureCoords(0) ? meshes[itr]->mTextureCoords[0][iter].x : 0.0f;
                 y = meshes[itr]->HasTextureCoords(0) ? meshes[itr]->mTextureCoords[0][iter].y : 0.0f;
                 mesh->AppendTexCoords(x, y);
+
+                if (meshes[itr]->HasTangentsAndBitangents())
+                {
+                    x = meshes[itr]->mTangents[iter].x;
+                    y = meshes[itr]->mTangents[iter].y;
+                    z = meshes[itr]->mTangents[iter].z;
+                    mesh->AppendTangents(x, y, z);
+
+                    x = meshes[itr]->mBitangents[iter].x;
+                    y = meshes[itr]->mBitangents[iter].y;
+                    z = meshes[itr]->mBitangents[iter].z;
+                    mesh->AppendBiTangents(x, y, z);
+                }
+                else
+                {
+                    x = y = z = 0.0f;
+                    mesh->AppendTangents(x, y, z);
+                    mesh->AppendBiTangents(x, y, z);
+                }
             }
 
             const auto numFaces = meshes[itr]->mNumFaces;

@@ -33,9 +33,19 @@ namespace renderer
             m_nx(nx), m_ny(ny), m_nz(nz),
             m_tx(tx), m_ty(ty)
         {}
+        PositionVertex(float vx, float vy, float vz, float nx, float ny, float nz, float tx, float ty,
+            float tangx, float tangy, float tangz, float biTangx, float biTangy, float biTangz)
+            :m_vx(vx), m_vy(vy), m_vz(vz),
+            m_nx(nx), m_ny(ny), m_nz(nz),
+            m_tx(tx), m_ty(ty),
+            m_tangx(tangx), m_tangy(tangy), m_tangz(tangz),
+            m_biTangx(biTangx), m_biTangy(biTangy), m_biTangz(biTangz)
+        {}
 
         float m_vx, m_vy, m_vz; //Vertices
         float m_nx, m_ny, m_nz; //Indices
         float m_tx, m_ty; //TexCoords
+        float m_tangx, m_tangy, m_tangz; //tangents
+        float m_biTangx, m_biTangy, m_biTangz; //bi-tangents
     };
 }

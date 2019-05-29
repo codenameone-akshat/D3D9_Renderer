@@ -52,6 +52,22 @@ namespace renderer
         m_texcoords.emplace_back(y);
     }
 
+    void Mesh::AppendTangents(float x, float y, float z) noexcept
+    {
+        assert(m_numTangents > 0);
+        m_tangents.emplace_back(x);
+        m_tangents.emplace_back(y);
+        m_tangents.emplace_back(z);
+    }
+
+    void Mesh::AppendBiTangents(float x, float y, float z) noexcept
+    {
+        assert(m_numBiTangents > 0);
+        m_biTangents.emplace_back(x);
+        m_biTangents.emplace_back(y);
+        m_biTangents.emplace_back(z);
+    }
+
 	void Mesh::AppendIndices(const uint32_t vertexA, const uint32_t vertexB, const uint32_t vertexC) noexcept
 	{
 		assert(m_numIndices > 0);
@@ -78,7 +94,19 @@ namespace renderer
         m_texcoords.reserve(nTexCoords * 2);
     }
 
-	void Mesh::SetNumIndices(int32_t nIndices)
+    void Mesh::SetNumTangents(int32_t nTangents)
+    {
+        m_numTangents = nTangents;
+        m_tangents.reserve(nTangents * 3);
+    }
+
+    void Mesh::SetNumBiTangents(int32_t nBiTangents)
+    {
+        m_numBiTangents = nBiTangents;
+        m_biTangents.reserve(nBiTangents * 3);
+    }
+
+    void Mesh::SetNumIndices(int32_t nIndices)
 	{
 		m_numIndices = nIndices;
 		m_indices.reserve(nIndices);
