@@ -193,12 +193,12 @@ namespace renderer
 			{
 				materials[itr]->GetTexture(aiTextureType_OPACITY, 0, &path);
 				std::string fullTexturePath = m_fileDir + path.C_Str();
-				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Specular)));
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Opacity)));
 			}
 			else
 			{
 				std::string fullTexturePath = "data/DefaultTex/default_opacity.png";
-				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Specular)));
+				ComResult(D3DXCreateTextureFromFileA(m_deviceRef, fullTexturePath.c_str(), material->GetPtrToTextureOfType(Material::TextureType::Opacity)));
 			}
            m_materials.emplace_back(material);
         }

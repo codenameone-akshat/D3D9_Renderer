@@ -49,7 +49,7 @@ namespace renderer
         ParseModels();
         SetupVertexDeclaration();
         SetupStaticBuffers();
-        SetupEffect(LightingMode::Specular);
+        SetupEffect();
     }
     void D3D9Renderer::PreRender()
     {
@@ -69,7 +69,7 @@ namespace renderer
         {
             m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
             m_worldViewProjMat = m_worldMat * m_viewMat * m_projMat;
-            RenderEffect(LightingMode::Specular, batchList[itr].vertexCount, batchList[itr].indexStart, batchList[itr].primitiveCount, itr);
+            RenderEffect(batchList[itr].vertexCount, batchList[itr].indexStart, batchList[itr].primitiveCount, itr);
         }
     }
     void D3D9Renderer::PostRender()
@@ -180,49 +180,41 @@ namespace renderer
         m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
         m_device->SetTransform(D3DTS_WORLD, m_worldMat);
     }
-    void D3D9Renderer::RenderEffect(LightingMode mode, UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex)
+    void D3D9Renderer::RenderEffect(UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex)
     {
         UINT numPasses(0);
-        switch (mode)
+        ComResult(m_effect->SetTechnique("BlinnPhongTech"));
+        ComResult(m_effect->Begin(&numPasses, NULL));
+
+        auto material = m_modelManager.GetModel()->GetMaterialAtIndex(matIndex);
+        auto diffuseTex = material->GetTextureOfType(Material::TextureType::Diffuse);
+        auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
+        auto specTex = material->GetTextureOfType(Material::TextureType::Specular);
+        auto opacityTex = material->GetTextureOfType(Material::TextureType::Opacity);
+
+        for (UINT passItr = 0; passItr < numPasses; ++passItr)
         {
-        case LightingMode::Specular:
-        {
-            ComResult(m_effect->SetTechnique("BlinnPhongTech"));
-            ComResult(m_effect->Begin(&numPasses, NULL));
-            
-            auto material = m_modelManager.GetModel()->GetMaterialAtIndex(matIndex);
-            auto diffuseTex = material->GetTextureOfType(Material::TextureType::Diffuse);
-			auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
-			auto specTex = material->GetTextureOfType(Material::TextureType::Specular);
-			auto opacityTex = material->GetTextureOfType(Material::TextureType::Opacity);
+            m_effect->BeginPass(passItr);
+            m_effect->SetTexture("g_DiffuseTex", diffuseTex);
+            m_effect->SetTexture("g_NormalTex", normalTex);
+            m_effect->SetTexture("g_SpecularTex", specTex);
+            m_effect->SetTexture("g_OpacityTex", opacityTex);
+            m_effect->SetMatrix("g_WorldMat", &m_worldMat);
+            m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
+            m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f));
+            m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(1.0f, 0.69f, 0.32f, 1.0f));
+            m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.4f, 0.8f, 0.99f, 1.0f));
+            m_effect->SetFloat("g_ambientLightIntensity", 0.3f);
+            m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
+            m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
+            m_effect->SetFloat("g_specIntensity", 180.0f);
 
-            for (UINT passItr = 0; passItr < numPasses; ++passItr)
-            {
-                m_effect->BeginPass(passItr);
-                m_effect->SetTexture("g_DiffuseTex", diffuseTex);
-				m_effect->SetTexture("g_NormalTex", normalTex);
-				m_effect->SetTexture("g_SpecularTex", specTex);
-				m_effect->SetTexture("g_OpacityTex", opacityTex);
-                m_effect->SetMatrix("g_WorldMat", &m_worldMat);
-                m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
-                m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f));
-                m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(0.94f, 0.81f, 0.51f, 1.0f));
-                m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
-                m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
-                m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
-                m_effect->SetFloat("g_specIntensity", 50.0f);
-
-                m_effect->CommitChanges();
-                m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices, startIndex, primitiveCount);
-                m_effect->EndPass();
-            }
-
-			m_effect->End();
+            m_effect->CommitChanges();
+            m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices, startIndex, primitiveCount);
+            m_effect->EndPass();
         }
-        break;
-        default:
-            break;
-        }
+
+        m_effect->End();
     }
     void D3D9Renderer::OnDeviceLost()
     {
@@ -289,25 +281,13 @@ namespace renderer
         m_vBuffer.AddDataToBuffer(m_modelManager.GetVertexBufferData().data(), NULL, sizeof(PositionVertex) * m_modelManager.GetVBufferCount());
         m_iBuffer.AddDataToBuffer(m_modelManager.GetIndexBufferData().data(), NULL, sizeof(uint32_t) * m_modelManager.GetIBufferCount());
     }
-    void D3D9Renderer::SetupEffect(LightingMode mode)
+    void D3D9Renderer::SetupEffect()
     {
         ID3DXBuffer* errorBuffer = nullptr;
 
-        switch (mode) 
-        {
-        case LightingMode::Diffuse:
-            ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),
-                "source/renderer/d3d9/shaders/Lambert.hlsl", nullptr, nullptr,
-                D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
-            break;
-        case LightingMode::Specular:
-            ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),
-                "source/renderer/d3d9/shaders/BlinnPhong.hlsl", nullptr, nullptr,
-                D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
-            break;
-        default:
-            break;
-        }
+        ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),
+            "source/renderer/d3d9/shaders/BlinnPhong.hlsl", nullptr, nullptr,
+            D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
 
         if (errorBuffer)
         {

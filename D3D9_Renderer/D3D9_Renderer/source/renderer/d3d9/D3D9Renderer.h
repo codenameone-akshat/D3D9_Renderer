@@ -44,13 +44,6 @@ namespace renderer
 		void PreRender() override;
 		void RenderFrame() override;
 		void PostRender() override;
-  
-        //>Lighting Modes
-        enum class LightingMode
-        {
-            Diffuse,
-            Specular
-        };
 
 		//>Events
 		void OnDeviceLost() override;
@@ -66,7 +59,7 @@ namespace renderer
         
         void ParseModels();
         void SetupStaticBuffers();
-        void SetupEffect(LightingMode mode);
+        void SetupEffect();
 
 		[[maybe_unused]] inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
@@ -79,7 +72,7 @@ namespace renderer
         void SetupVertexDeclaration();
 		void BuildMatrices();
 		void UpdateMatrices();
-        void RenderEffect(LightingMode mode, UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex);
+        void RenderEffect(UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex);
 
 		int32_t m_vBufferVertexCount;
 		int32_t m_iBufferIndexCount;

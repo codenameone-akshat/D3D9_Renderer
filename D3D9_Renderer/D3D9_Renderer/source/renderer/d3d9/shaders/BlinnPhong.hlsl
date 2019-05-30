@@ -8,6 +8,7 @@ uniform extern float4 g_dirLightColor;
 
 //Ambient Light
 uniform extern float4 g_ambientLight;
+uniform extern float g_ambientLightIntensity;
 
 //Speculatiry
 uniform extern float g_specIntensity;
@@ -92,7 +93,7 @@ VS_OUTPUT RenderVS(float3 pos : POSITION0,
 
 struct PS_OUTPUT
 {
-    float4 RGBAcolor : COLOR0;
+    float4 color : COLOR0;
 };
 
 PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
@@ -102,25 +103,31 @@ PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
     float3 bumpTex = 2.0f * tex2D(NormalSampler, psInput.uv) - 1.0f; //from 0 to 1 to -1 to 1
 	float3 bumpedNormal = normalize(((bumpTex.x * psInput.tangent) + (bumpTex.y * psInput.biTangent) + (bumpTex.z * psInput.normal)));
 	
-    float3 lightDir = normalize(g_dirLightDir.xyz);
-	
 	float4 texColorDiff = tex2D(DiffuseSampler, psInput.uv);
 
-    float4 diffuse = texColorDiff * g_dirLightColor * saturate(dot(bumpedNormal, lightDir));
+    float3 lightDir = normalize(g_dirLightDir.xyz);
+    float NoL = saturate(dot(bumpedNormal, lightDir));
+    float4 diffuse = texColorDiff * g_dirLightColor * NoL;
 	
     float3 viewDir = normalize(g_viewDirection.xyz - psInput.worldPos); //get vector from vertex to light
     float3 halfVec = normalize(float3(viewDir + lightDir));
-    
     float NoH = saturate(dot(bumpedNormal, halfVec));
-
-    float4 specular = g_specularLightColor * pow(NoH, g_specIntensity);
-	float4 specMapIntensity = tex2D(SpecularSampler, psInput.uv);
-	specular = specular * specMapIntensity;
+    float4 specular = g_specularLightColor * pow(NoH, g_specIntensity) * NoL;
 	
-	float4 opacity = tex2D(OpacitySampler, psInput.uv);
+    float4 specMapIntensity = tex2D(SpecularSampler, psInput.uv);
+	specular = specular * specMapIntensity;
+    float4 ambientLight = g_ambientLight * texColorDiff * g_ambientLightIntensity;
 
-    psoutput.RGBAcolor = saturate(diffuse + specular + g_ambientLight);
-	psoutput.RGBAcolor.a = opacity.a;
+    psoutput.color = (diffuse + specular + ambientLight);
+    
+    float4 opacity = tex2D(OpacitySampler, psInput.uv);
+    if (opacity.r < 0.5f)
+        discard;
+
+    psoutput.color = psoutput.color * 5;
+    psoutput.color.rgb = pow(abs(psoutput.color.rgb), 1.6); //Gamma correction
+
+    psoutput.color.rgb = (psoutput.color.rgb) / (1 + psoutput.color.rgb);
     return psoutput;
 }
 
@@ -128,9 +135,6 @@ technique BlinnPhongTech
 {
     pass P0
     {
-		AlphaBlendEnable = TRUE;
-		DestBlend = INVSRCALPHA;
-		SrcBlend = SRCALPHA;
 		ShadeMode = PHONG;
 		FillMode = SOLID;
 		CullMode = CCW;
