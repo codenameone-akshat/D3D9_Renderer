@@ -16,6 +16,7 @@ namespace renderer
 
 		void AddModelToWorld(IDirect3DDevice9* deviceRef, std::string filePath);
 		void LoadModel();
+		void SetShaderInputsForMaterialIndex(uint32_t index, ID3DXEffect* shader);
 
         inline Model* GetModel() const { return m_model; }
         inline std::vector<PositionVertex> GetVertexBufferData() { return m_positionVertices; }

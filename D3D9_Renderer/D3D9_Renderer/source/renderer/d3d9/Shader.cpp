@@ -42,4 +42,10 @@ namespace renderer
             m_techniques.try_emplace(hTechnique, techDesc);
         }
     }
+
+	void Shader::SetTechniqueAndBegin(D3DXHANDLE technique)
+	{
+		m_shader->SetTechnique(technique);
+		m_shader->Begin(nullptr, NULL);
+	}
 }

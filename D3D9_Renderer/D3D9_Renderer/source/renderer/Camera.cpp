@@ -45,6 +45,8 @@ namespace renderer
         float multiplier(5.0f);
 		if (GetKeyState(VK_SHIFT) & (1 << 15))
 			multiplier = 20.0f;
+		if (GetKeyState(VK_CONTROL) & (1 << 15))
+			multiplier = 1.0f;
 		if (GetKeyState('W') & (1 << 15))
 			m_camPos += (forward * multiplier);
 		if (GetKeyState('S') & (1 << 15))

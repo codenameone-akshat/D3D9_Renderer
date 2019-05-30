@@ -6,7 +6,6 @@
 #include <memory>
 #include <cassert>
 
-#include "../enginecore/BaseObject.h"
 #include "Mesh.h"
 
 namespace renderer
@@ -21,10 +20,8 @@ namespace renderer
         std::vector<std::string> normalTexture;
     };
 
-	class Model :
-		public BaseObject
+	class Model
 	{
-		using super = BaseObject;
 	public:
 		Model();
 		~Model();

@@ -20,8 +20,8 @@ namespace renderer
 		inline void SetDeviceCharateristics(D3DPRESENT_PARAMETERS presentParams) { memcpy(&m_d3dPresentParams, &presentParams, sizeof(D3DPRESENT_PARAMETERS)); }
 
 		//>Getters
-		[[maybe_unused]] inline IDirect3DDevice9* GetDeviceObject() const { return m_d3dDevice; }  //TODO: overload -> maybe?
-		[[maybe_unused]] inline IDirect3DDevice9** GetDeviceObjectRef() { return &m_d3dDevice; } //TODO: overload & maybe?
+		[[maybe_unused]] inline IDirect3DDevice9* GetRawDevicePtr() const { return m_d3dDevice; }  //TODO: overload -> maybe?
+		[[maybe_unused]] inline IDirect3DDevice9** GetRawPtrToDevicePtr() { return &m_d3dDevice; } //TODO: overload & maybe?
 		inline void SetDeviceObject(IDirect3DDevice9* device) { m_d3dDevice = device; }
 
 		inline void ResetDevice() { m_d3dDevice->Reset(&m_d3dPresentParams); }

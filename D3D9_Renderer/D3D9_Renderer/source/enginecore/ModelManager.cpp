@@ -90,4 +90,24 @@ namespace renderer
 		m_iBufferIndexCount = iBufferIndexCount;
 		m_primitiveCount = primitiveCount;
 	}
+
+	void ModelManager::SetShaderInputsForMaterialIndex(uint32_t index, ID3DXEffect* shader)
+	{
+		auto material = m_model->GetMaterialAtIndex(index);
+		auto diffuseTex = material->GetTextureOfType(Material::TextureType::Diffuse);
+		auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
+		auto specTex = material->GetTextureOfType(Material::TextureType::Specular);
+		auto opacityTex = material->GetTextureOfType(Material::TextureType::Opacity);
+
+		shader->SetTexture("g_DiffuseTex", diffuseTex);
+		shader->SetTexture("g_NormalTex", normalTex);
+		shader->SetTexture("g_SpecularTex", specTex);
+		shader->SetTexture("g_OpacityTex", opacityTex);
+		shader->SetVector("g_dirLightDir", &D3DXVECTOR4(1.0f, 1.0f, 0.3f, 1.0f));
+		shader->SetVector("g_dirLightColor", &D3DXVECTOR4(1.0f, 0.69f, 0.32f, 1.0f));
+		shader->SetVector("g_ambientLight", &D3DXVECTOR4(0.4f, 0.8f, 0.99f, 1.0f));
+		shader->SetFloat("g_ambientLightIntensity", 0.3f);
+		shader->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
+		shader->SetFloat("g_specIntensity", 180.0f);
+	}
 }

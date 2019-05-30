@@ -3,15 +3,12 @@
 #include <assimp/scene.h>
 #include <vector>
 
-#include "../enginecore/BaseObject.h"
 #include "Material.h"
 
 namespace renderer
 {
-	class Mesh :
-		public BaseObject
+	class Mesh
 	{
-		using super = BaseObject;
 	public:
 		Mesh();
 		~Mesh();

@@ -57,11 +57,9 @@ namespace renderer
 		
         [[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
-        void ParseModels();
-        void SetupStaticBuffers();
-        void SetupEffect();
+        void AddModels();
 
-		[[maybe_unused]] inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
+		[[nodiscard]] inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
         {
             static D3D9Renderer instance;
             return instance;
@@ -72,7 +70,9 @@ namespace renderer
         void SetupVertexDeclaration();
 		void BuildMatrices();
 		void UpdateMatrices();
-        void RenderEffect(UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex);
+		void SetupStaticBuffers();
+		void RenderBatch(UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex);
+		void SetShaderConstants();
 
 		int32_t m_vBufferVertexCount;
 		int32_t m_iBufferIndexCount;
@@ -80,7 +80,7 @@ namespace renderer
 
 		D3DCAPS9 m_d3dCaps;
 		IDirect3D9* m_d3d9;
-		ID3DXEffect* m_effect;
+		Shader m_shader;
 		
 		StaticBuffer<IDirect3DVertexBuffer9> m_vBuffer;
 		StaticBuffer<IDirect3DIndexBuffer9> m_iBuffer;

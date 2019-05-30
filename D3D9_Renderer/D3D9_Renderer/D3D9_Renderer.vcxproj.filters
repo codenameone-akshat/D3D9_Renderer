@@ -22,9 +22,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\enginecore\BaseObject.cpp">
-      <Filter>EngineCore</Filter>
-    </ClCompile>
     <ClCompile Include="source\enginecore\EngineCore.cpp">
       <Filter>EngineCore</Filter>
     </ClCompile>
@@ -69,9 +66,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\enginecore\BaseObject.h">
-      <Filter>EngineCore</Filter>
-    </ClInclude>
     <ClInclude Include="source\enginecore\EngineCore.h">
       <Filter>EngineCore</Filter>
     </ClInclude>
@@ -123,5 +117,6 @@
     <FxCompile Include="source\renderer\d3d9\shaders\Lambert.hlsl" />
     <FxCompile Include="source\renderer\d3d9\shaders\Phong.hlsl" />
     <FxCompile Include="source\renderer\d3d9\shaders\BlinnPhong.hlsl" />
+    <FxCompile Include="source\renderer\d3d9\shaders\TexturedShader.hlsl" />
   </ItemGroup>
 </Project>

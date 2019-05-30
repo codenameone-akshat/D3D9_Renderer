@@ -10,7 +10,6 @@ namespace renderer
     D3D9Renderer::D3D9Renderer()
         :m_d3d9(Direct3DCreate9(D3D_SDK_VERSION)),
         m_device(std::make_unique<D3D9Device>()),
-        m_effect(nullptr),
         m_d3dCaps(),
         m_modelManager(),
         m_hWindow(),
@@ -20,18 +19,19 @@ namespace renderer
         m_camera(),
         m_vBufferVertexCount(0),
         m_iBufferIndexCount(0),
-        m_primitiveCount(0)
+        m_primitiveCount(0),
+		m_shader()
     {
         D3DXMatrixIdentity(&m_viewMat);
         D3DXMatrixIdentity(&m_projMat);
         D3DXMatrixIdentity(&m_worldMat);
     }
+
     D3D9Renderer::~D3D9Renderer()
     {
-        ComSafeRelease(m_d3d9);
-        ComSafeRelease(m_effect);
-        ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
+		this->UnInit();
     }
+
     void D3D9Renderer::Init(HWND hWindow)
     {
         memcpy(&m_hWindow, &hWindow, sizeof(HWND));
@@ -40,27 +40,33 @@ namespace renderer
         SetupDeviceConfiguration();
         PrepareForRendering();
     }
+
     void D3D9Renderer::UnInit()
     {
+		ComSafeRelease(m_d3d9);
+		ComSafeRelease(m_vertexDeclarations.positionVertexDecl);
     }
+
     void D3D9Renderer::PrepareForRendering()
     {
         BuildMatrices();
-        ParseModels();
+        AddModels();
         SetupVertexDeclaration();
         SetupStaticBuffers();
-        SetupEffect();
+		m_shader.CreateShader(m_device->GetRawDevicePtr(), "source/renderer/d3d9/shaders/TexturedShader.hlsl");
     }
+
     void D3D9Renderer::PreRender()
     {
         UpdateMatrices();
 
-        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 169, 255, 255), 1.0f, 0);
         HRESULT result = CheckDeviceStatus();
         if (result != S_OK)
             return;
         m_device->BeginScene();
     }
+
     void D3D9Renderer::RenderFrame()
     {
         m_device->SetIndices(m_iBuffer);
@@ -69,14 +75,16 @@ namespace renderer
         {
             m_device->SetStreamSource(0, m_vBuffer, 0, sizeof(PositionVertex));
             m_worldViewProjMat = m_worldMat * m_viewMat * m_projMat;
-            RenderEffect(batchList[itr].vertexCount, batchList[itr].indexStart, batchList[itr].primitiveCount, itr);
+            RenderBatch(batchList[itr].vertexCount, batchList[itr].indexStart, batchList[itr].primitiveCount, itr);
         }
     }
+
     void D3D9Renderer::PostRender()
     {
         m_device->EndScene();
         m_device->Present(nullptr, nullptr, nullptr, nullptr);
     }
+
     HRESULT D3D9Renderer::CheckDeviceStatus()
     {
         //check every-frame for lost devices
@@ -102,6 +110,7 @@ namespace renderer
 
         return E_NOTIMPL;
     }
+
     //>Present Params Setup
     void D3D9Renderer::SetupDeviceConfiguration()
     {
@@ -130,7 +139,7 @@ namespace renderer
 
         params.hDeviceWindow = m_hWindow;
         params.Windowed = true;
-        params.EnableAutoDepthStencil = true; //for now let's just renderer take care of this
+        params.EnableAutoDepthStencil = true;
         params.AutoDepthStencilFormat = D3DFMT_D24S8;
         params.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
         params.Flags = NULL;
@@ -140,6 +149,7 @@ namespace renderer
 
         ComResult(CreateD3DDevice(&params));
     }
+
     void D3D9Renderer::SetupVertexDeclaration()
     {
         constexpr int32_t defaultVal = 0;
@@ -159,6 +169,7 @@ namespace renderer
 
         m_device->SetVertexDeclaration(m_vertexDeclarations.positionVertexDecl);
     }
+
     void D3D9Renderer::BuildMatrices()
     {
         m_viewMat = m_camera.GetViewMatrix();
@@ -172,6 +183,7 @@ namespace renderer
         m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
         m_device->SetTransform(D3DTS_WORLD, m_worldMat);
     }
+
     void D3D9Renderer::UpdateMatrices()
     {
         m_camera.HandleCameraInput();
@@ -180,51 +192,45 @@ namespace renderer
         m_device->SetTransform(D3DTS_PROJECTION, m_projMat);
         m_device->SetTransform(D3DTS_WORLD, m_worldMat);
     }
-    void D3D9Renderer::RenderEffect(UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex)
+
+    void D3D9Renderer::RenderBatch(UINT numVertices, UINT startIndex, UINT primitiveCount, UINT matIndex)
     {
         UINT numPasses(0);
-        ComResult(m_effect->SetTechnique("BlinnPhongTech"));
-        ComResult(m_effect->Begin(&numPasses, NULL));
-
-        auto material = m_modelManager.GetModel()->GetMaterialAtIndex(matIndex);
-        auto diffuseTex = material->GetTextureOfType(Material::TextureType::Diffuse);
-        auto normalTex = material->GetTextureOfType(Material::TextureType::Normal);
-        auto specTex = material->GetTextureOfType(Material::TextureType::Specular);
-        auto opacityTex = material->GetTextureOfType(Material::TextureType::Opacity);
-
-        for (UINT passItr = 0; passItr < numPasses; ++passItr)
-        {
-            m_effect->BeginPass(passItr);
-            m_effect->SetTexture("g_DiffuseTex", diffuseTex);
-            m_effect->SetTexture("g_NormalTex", normalTex);
-            m_effect->SetTexture("g_SpecularTex", specTex);
-            m_effect->SetTexture("g_OpacityTex", opacityTex);
-            m_effect->SetMatrix("g_WorldMat", &m_worldMat);
-            m_effect->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
-            m_effect->SetVector("g_dirLightDir", &D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f));
-            m_effect->SetVector("g_dirLightColor", &D3DXVECTOR4(1.0f, 0.69f, 0.32f, 1.0f));
-            m_effect->SetVector("g_ambientLight", &D3DXVECTOR4(0.4f, 0.8f, 0.99f, 1.0f));
-            m_effect->SetFloat("g_ambientLightIntensity", 0.3f);
-            m_effect->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
-            m_effect->SetVector("g_specularLightColor", &D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
-            m_effect->SetFloat("g_specIntensity", 180.0f);
-
-            m_effect->CommitChanges();
-            m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices, startIndex, primitiveCount);
-            m_effect->EndPass();
-        }
-
-        m_effect->End();
+		std::map<D3DXHANDLE, D3DXTECHNIQUE_DESC> techniqueData = m_shader.GetTechniqueData();
+		
+		for (auto& keyVal : techniqueData)
+		{
+			m_shader.SetTechniqueAndBegin(keyVal.first);
+			for (uint32_t passItr = 0; passItr < keyVal.second.Passes; ++passItr)
+			{
+				m_shader.BeginPass(passItr);
+				this->SetShaderConstants();
+				m_modelManager.SetShaderInputsForMaterialIndex(matIndex, m_shader.GetRawPtr());
+				m_shader.ApplyPass();
+				m_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, numVertices, startIndex, primitiveCount);
+				m_shader.EndPass();
+			}
+			m_shader.EndTechnique();
+		}
     }
+
+	void D3D9Renderer::SetShaderConstants()
+	{
+		m_shader.GetRawPtr()->SetMatrix("g_WorldMat", &m_worldMat);
+		m_shader.GetRawPtr()->SetMatrix("g_worldViewProjMatrix", &m_worldViewProjMat);
+		m_shader.GetRawPtr()->SetVector("g_viewDirection", &D3DXVECTOR4(m_camera.GetCamPosition(), 1.0f));
+	}
+
     void D3D9Renderer::OnDeviceLost()
     {
         Sleep(200);
     }
+
     void D3D9Renderer::OnDeviceAvailable()
     {
         m_device->ResetDevice();
     }
-    //>Handle this in the mainloop of the game, define "FULLSCREEN" for fullscreen support in the game
+
     DWORD D3D9Renderer::GetSupportedFeaturesBehavioralFlags() const
     {
         D3DDISPLAYMODE displayMode;
@@ -244,11 +250,13 @@ namespace renderer
         }
         return flags;
     }
+
     HRESULT D3D9Renderer::CheckMultiSampleSupport(const D3DMULTISAMPLE_TYPE type, DWORD * quality, const bool isWindowed) const
     {
         HRESULT result = m_d3d9->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_D24S8, isWindowed, type, quality);
         return result;
     }
+
     bool D3D9Renderer::CheckShaderVersionSupport(int16_t version) const
     {
         if (m_d3dCaps.VertexShaderVersion < D3DVS_VERSION(version, 0) || m_d3dCaps.PixelShaderVersion < D3DPS_VERSION(version, 0))
@@ -256,23 +264,26 @@ namespace renderer
 
         return true;
     }
-    HRESULT D3D9Renderer::CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp)
+
+    HRESULT D3D9Renderer::CreateD3DDevice(D3DPRESENT_PARAMETERS* d3dpp)
     {
         assert(m_hWindow != nullptr);
 
-        HRESULT result = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT,
-            D3DDEVTYPE_HAL,
-            m_hWindow,
-            GetSupportedFeaturesBehavioralFlags(),
-            d3dpp,
-            m_device->GetDeviceObjectRef());
+		HRESULT result = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT,
+			D3DDEVTYPE_HAL,
+			m_hWindow,
+			GetSupportedFeaturesBehavioralFlags(),
+			d3dpp,
+			m_device->GetRawPtrToDevicePtr());
         return result;
     }
-    void D3D9Renderer::ParseModels()
+
+    void D3D9Renderer::AddModels()
     {
 		std::string filename = "data/Content/Sponza.fbx";
-		m_modelManager.AddModelToWorld(m_device->GetDeviceObject(), filename);
+		m_modelManager.AddModelToWorld(m_device->GetRawDevicePtr(), filename);
     }
+
     void D3D9Renderer::SetupStaticBuffers()
     {
         ComResult(m_device->CreateVertexBuffer((sizeof(PositionVertex) * m_modelManager.GetVBufferCount()), NULL, NULL, D3DPOOL_MANAGED, m_vBuffer, nullptr));
@@ -280,19 +291,5 @@ namespace renderer
 
         m_vBuffer.AddDataToBuffer(m_modelManager.GetVertexBufferData().data(), NULL, sizeof(PositionVertex) * m_modelManager.GetVBufferCount());
         m_iBuffer.AddDataToBuffer(m_modelManager.GetIndexBufferData().data(), NULL, sizeof(uint32_t) * m_modelManager.GetIBufferCount());
-    }
-    void D3D9Renderer::SetupEffect()
-    {
-        ID3DXBuffer* errorBuffer = nullptr;
-
-        ComResult(D3DXCreateEffectFromFileA(m_device->GetDeviceObject(),
-            "source/renderer/d3d9/shaders/BlinnPhong.hlsl", nullptr, nullptr,
-            D3DXSHADER_DEBUG, nullptr, &m_effect, &errorBuffer));
-
-        if (errorBuffer)
-        {
-            MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
-            Logger::GetInstance().LogInfo((char*)errorBuffer->GetBufferPointer());
-        }
     }
 }

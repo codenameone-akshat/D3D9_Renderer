@@ -120,15 +120,7 @@ PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
 
     psoutput.color = (diffuse + specular + ambientLight);
     
-    float4 opacity = tex2D(OpacitySampler, psInput.uv);
-    if (opacity.r < 0.5f)
-        discard;
-
-    psoutput.color = psoutput.color * 5;
-    psoutput.color.rgb = pow(abs(psoutput.color.rgb), 1.6); //Gamma correction
-
-    psoutput.color.rgb = (psoutput.color.rgb) / (1 + psoutput.color.rgb);
-    return psoutput;
+	return psoutput;
 }
 
 technique BlinnPhongTech

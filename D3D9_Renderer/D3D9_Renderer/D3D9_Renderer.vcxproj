@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{EBD7DE45-F6F1-471B-8C94-EB90940D7B53}</ProjectGuid>
     <RootNamespace>D3D9Renderer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -108,7 +108,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(DXSDK_DIR)include;$(SolutionDir)\D3D9_Renderer\extern\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;NOMINMAX;_CRTDBG_MAP_ALLOC;DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ );%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;NOMINMAX;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -178,7 +178,6 @@
     <ClInclude Include="source\enginecore\Batch.h" />
     <ClInclude Include="source\renderer\d3d9\Shader.h" />
     <ClInclude Include="source\renderer\Material.h" />
-    <ClInclude Include="source\enginecore\BaseObject.h" />
     <ClInclude Include="source\enginecore\EngineCore.h" />
     <ClInclude Include="source\enginecore\ModelManager.h" />
     <ClInclude Include="source\renderer\Camera.h" />
@@ -197,7 +196,6 @@
   <ItemGroup>
     <ClCompile Include="source\renderer\d3d9\Shader.cpp" />
     <ClCompile Include="source\renderer\Material.cpp" />
-    <ClCompile Include="source\enginecore\BaseObject.cpp" />
     <ClCompile Include="source\enginecore\EngineCore.cpp" />
     <ClCompile Include="source\enginecore\ModelManager.cpp" />
     <ClCompile Include="source\mainapp\EntryPoint.cpp" />
@@ -232,6 +230,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="source\renderer\d3d9\shaders\Phong.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="source\renderer\d3d9\shaders\TexturedShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
