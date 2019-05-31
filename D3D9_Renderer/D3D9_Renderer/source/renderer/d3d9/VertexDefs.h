@@ -4,9 +4,8 @@
 
 namespace renderer
 {
-    class VertexDeclContainer
+    struct VertexDeclContainer
     {
-    public:
         IDirect3DVertexDeclaration9* positionVertexDecl = nullptr;
     };
 

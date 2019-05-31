@@ -20,7 +20,9 @@ namespace renderer
         m_vBufferVertexCount(0),
         m_iBufferIndexCount(0),
         m_primitiveCount(0),
-		m_shader()
+		m_shader(),
+        m_fileWatcher(),
+        m_shaderFileWatchIndex(0)
     {
         D3DXMatrixIdentity(&m_viewMat);
         D3DXMatrixIdentity(&m_projMat);
@@ -53,14 +55,17 @@ namespace renderer
         AddModels();
         SetupVertexDeclaration();
         SetupStaticBuffers();
-		m_shader.CreateShader(m_device->GetRawDevicePtr(), "source/renderer/d3d9/shaders/TexturedShader.hlsl");
+
+        std::string shaderPath = "source/renderer/d3d9/shaders/TexturedShader.hlsl";
+		m_shader.CreateShader(m_device->GetRawDevicePtr(), shaderPath);
+        m_shaderFileWatchIndex = m_fileWatcher.AddFileForWatch(shaderPath);
     }
 
     void D3D9Renderer::PreRender()
     {
         UpdateMatrices();
 
-        m_device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 169, 255, 255), 1.0f, 0);
+        m_device->Clear(NULL, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 169, 255, 255), 1.0f, NULL);
         HRESULT result = CheckDeviceStatus();
         if (result != S_OK)
             return;
@@ -69,6 +74,9 @@ namespace renderer
 
     void D3D9Renderer::RenderFrame()
     {
+        if (m_fileWatcher.IsFileModified(m_shaderFileWatchIndex))
+            m_shader.ReloadShader();
+
         m_device->SetIndices(m_iBuffer);
         auto batchList = m_modelManager.GetBatchList();
         for (uint32_t itr = 0; itr < batchList.size(); ++itr)

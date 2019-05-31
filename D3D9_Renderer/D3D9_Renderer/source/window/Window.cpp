@@ -52,12 +52,10 @@ namespace renderer
 	{
 		switch (message)
 		{
-		case WM_DESTROY:
-			::PostQuitMessage(0);
-			::exit(0);
-			return 0;
-			break;
-
+        case WM_CLOSE:
+            ::PostQuitMessage(0);
+            return 0;
+            break;
 		default:
 			break;
 		}

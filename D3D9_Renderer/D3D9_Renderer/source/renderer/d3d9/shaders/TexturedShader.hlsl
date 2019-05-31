@@ -125,7 +125,7 @@ PS_OUTPUT RenderPS(in VS_OUTPUT psInput)
 		discard;
 
 	psoutput.color = psoutput.color * 5;
-	psoutput.color.rgb = pow(abs(psoutput.color.rgb), 1.6); //Gamma correction
+	psoutput.color.rgb = pow(abs(psoutput.color.rgb), 1.7); //Gamma correction
 
 	psoutput.color.rgb = (psoutput.color.rgb) / (1 + psoutput.color.rgb);
 	return psoutput;

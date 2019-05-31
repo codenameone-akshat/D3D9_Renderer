@@ -20,9 +20,6 @@ namespace renderer
 	{
 		D3DXMATRIX rotationMat;
         D3DXMatrixIdentity(&rotationMat);
-        D3DXVECTOR3 forward = { 0.0f, 0.0f, 1.0f };
-        D3DXVECTOR3 up = { 0.0f, 1.0f, 0.0f };
-        D3DXVECTOR3 right = { 1.0f, 0.0f, 0.0f };
 
 		POINT cursorPos;
 		GetCursorPos(&cursorPos);
@@ -36,6 +33,11 @@ namespace renderer
 		m_cursorPos = cursorPos;
 		D3DXMatrixRotationYawPitchRoll(&rotationMat, D3DXToRadian(m_camRot.x / 10.0f), D3DXToRadian(m_camRot.y / 15.0f), 0.0f);
 		
+
+        D3DXVECTOR3 forward = { 0.0f, 0.0f, 1.0f };
+        D3DXVECTOR3 up = { 0.0f, 1.0f, 0.0f };
+        D3DXVECTOR3 right = { 1.0f, 0.0f, 0.0f };
+
         D3DXVec3TransformNormal(&forward, &forward, &rotationMat);
 		D3DXVec3TransformNormal(&right, &right, &rotationMat);
         D3DXVec3Normalize(&forward, &forward);

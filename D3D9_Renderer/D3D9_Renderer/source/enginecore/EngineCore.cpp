@@ -2,14 +2,14 @@
 #include <thread>
 
 #include "EngineCore.h"
-#include "../renderer/d3d9/D3D9Renderer.h"
 #include "../utils/Time.h"
 #include "../utils/Logger.h"
 namespace renderer
 {
     EngineCore::EngineCore()
         :m_window(std::make_unique<Window>()),
-        m_timer(std::make_unique<Time>())
+        m_timer(std::make_unique<Time>()),
+        m_renderer(std::make_unique<D3D9Renderer>())
     {
     }
     EngineCore::~EngineCore()
@@ -42,15 +42,15 @@ namespace renderer
     }
     void EngineCore::InitRenderer()
     {
-        auto& dx9renderer = D3D9Renderer::GetInstance();
-        dx9renderer.Init(m_window->GetHandleToWindow());
+        //auto& dx9renderer = D3D9Renderer::GetInstance();
+        m_renderer->Init(m_window->GetHandleToWindow());
     }
     void EngineCore::RenderFrame()
     {
-        auto& dx9renderer = D3D9Renderer::GetInstance();
-        dx9renderer.PreRender();
-        dx9renderer.RenderFrame();
-        dx9renderer.PostRender();
+        //auto& dx9renderer = D3D9Renderer::GetInstance();
+        m_renderer->PreRender();
+        m_renderer->RenderFrame();
+        m_renderer->PostRender();
     }
     void EngineCore::PollMessage()
     {
@@ -64,7 +64,7 @@ namespace renderer
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
-            if (msg.message == WM_QUIT)
+            if (msg.message == WM_QUIT || msg.message == WM_DESTROY)
                 break;
 
             this->RenderFrame();

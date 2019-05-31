@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "../window/Window.h"
+#include "../renderer/d3d9/D3D9Renderer.h"
 
 namespace renderer
 {
@@ -25,5 +26,6 @@ namespace renderer
 	private:
 		std::unique_ptr<Window> m_window;
         std::unique_ptr<Time> m_timer;
+        std::unique_ptr<D3D9Renderer> m_renderer;
 	};
 }

@@ -16,6 +16,7 @@
 #include "../Camera.h"
 #include "../../enginecore/ModelManager.h"
 #include"../../enginecore/Batch.h"
+#include"../../enginecore/FileWatcher.h"
 
 constexpr int16_t SHADER_VERSION = 3;
 constexpr auto SCREEN_HEIGHT = 720;
@@ -30,12 +31,9 @@ namespace renderer
 		using super = GfxRendererBase;
 
 	private:
-		D3D9Renderer();
 	public:
-		virtual ~D3D9Renderer();
-
-		D3D9Renderer(const D3D9Renderer&) = delete;
-		D3D9Renderer& operator=(const D3D9Renderer&) = delete;
+        D3D9Renderer();
+        virtual ~D3D9Renderer();
 
 		//>Overrides
         void Init(HWND hWindow) override;
@@ -58,12 +56,6 @@ namespace renderer
         [[nodiscard]] HRESULT CreateD3DDevice(D3DPRESENT_PARAMETERS * d3dpp);
         
         void AddModels();
-
-		[[nodiscard]] inline static D3D9Renderer& GetInstance() //>Meyers' Singleton
-        {
-            static D3D9Renderer instance;
-            return instance;
-        }
 
 	private:
         void SetupDeviceConfiguration();
@@ -96,5 +88,7 @@ namespace renderer
 		std::unique_ptr<D3D9Device> m_device;
 		HWND m_hWindow;
         ModelManager m_modelManager;
+        FileWatcher m_fileWatcher;
+        size_t m_shaderFileWatchIndex;
 	};
 }

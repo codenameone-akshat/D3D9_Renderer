@@ -64,6 +64,9 @@
     <ClCompile Include="source\renderer\d3d9\Shader.cpp">
       <Filter>MainApp</Filter>
     </ClCompile>
+    <ClCompile Include="source\enginecore\FileWatcher.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\enginecore\EngineCore.h">
@@ -109,6 +112,7 @@
     <ClInclude Include="source\renderer\Material.h" />
     <ClInclude Include="source\renderer\d3d9\Shader.h" />
     <ClInclude Include="source\enginecore\Batch.h" />
+    <ClInclude Include="source\enginecore\FileWatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
