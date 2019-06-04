@@ -24,16 +24,24 @@ namespace renderer
         m_shaderPath = shaderPath;
         m_deviceRef = device;
 
+        ID3DXEffect* shader = nullptr;
+
         ID3DXBuffer* errorBuffer = nullptr;
         ComResult(D3DXCreateEffectFromFileA(m_deviceRef,
             m_shaderPath.c_str(), nullptr, nullptr,
-            D3DXSHADER_DEBUG, nullptr, &m_shader, &errorBuffer));
+            D3DXSHADER_DEBUG, nullptr, &shader, &errorBuffer));
 
         if (errorBuffer)
         {
             ::MessageBoxA(0, (char*)errorBuffer->GetBufferPointer(), 0, 0);
             Logger::GetInstance().LogInfo((char*)errorBuffer->GetBufferPointer());
+            ComSafeRelease(shader);
         }
+        else
+        {
+            m_shader = shader;
+        }
+
         ComSafeRelease(errorBuffer);
 
         m_shader->GetDesc(&m_shaderDesc);
